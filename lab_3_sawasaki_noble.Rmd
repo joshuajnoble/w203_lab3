@@ -1,0 +1,25 @@
+---
+title: "lab_3"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r pressure, echo=FALSE}
+library(tidyverse)
+library(effsize)
+library(plyr)
+library(reshape2)
+
+setwd("C:\\Users\\winbase\\MIDS\\w203\\lab_3-master")
+crime_data = read.csv("crime_v2.csv")
+
+crime_data = crime_data[which(crime_data$county != 'NA'),]
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
