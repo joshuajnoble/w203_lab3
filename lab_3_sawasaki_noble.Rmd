@@ -52,10 +52,35 @@ cor(crime_data$crmrte, crime_data$taxpc) #0.45, pretty strongly correlated
 cor(crime_data$crmrte, crime_data$wmfg) #0.35, also pretty strongly correlated
 cor(crime_data$crmrte, crime_data$prbarr) #-0.39, pretty neg strong
 
-#might look at places where crime is more face-face?
-summary(crime_data$mix)
+# what is wrong with prbconv?
+class(crime_data$prbconv[1][1]) #r thinks it's a factor?
 
+cleaned_convictions = as.numeric(levels(crime_data$prbconv)[as.integer(crime_data$prbconv)])
+ #not sure if /2 is correct but a lot of these variables are greater than 1
+cleaned_convictions = cleaned_convictions/2
+
+#does crime rate go down when convictions are more likely?
+crime_conviction = lm(crime_data$crmrte ~ cleaned_convictions)
+plot(jitter(crime_data$crmrte), jitter(cleaned_convictions), xlab = "Crime Rate", ylab = "Probability of conviction")
+abline(crime_conviction) #doesn/t seem to show much
+summary(crime_conviction)
+
+crime_tax = lm(crime_data$crmrte ~ crime_data$taxpc)
+plot(jitter(crime_data$crmrte), jitter(crime_data$taxpc), xlab = "Crime Rate", ylab = "Tax receipts")
+abline(crime_tax)
+summary(crime_tax)
+
+crime_arrest = lm(crime_data$crmrte ~ crime_data$prbarr)
+plot(jitter(crime_data$crmrte), jitter(crime_data$prbarr), xlab = "Crime Rate", ylab = "Probability of Arrest")
+abline(crime_arrest)
+summary(crime_arrest)
+
+crime_police = lm(crime_data$crmrte ~ crime_data$polpc)
+plot(jitter(crime_data$crmrte), jitter(crime_data$polpc), xlab = "Crime Rate", ylab = "Police Presence")
+abline(crime_police)
+summary(crime_police)
 ```
+
 
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
