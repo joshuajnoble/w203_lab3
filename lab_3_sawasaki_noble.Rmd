@@ -75,8 +75,10 @@ plot(jitter(crime_data$crmrte), jitter(crime_data$prbarr), xlab = "Crime Rate", 
 abline(crime_arrest)
 summary(crime_arrest)
 
-crime_police = lm(crime_data$crmrte ~ crime_data$polpc)
-plot(jitter(crime_data$crmrte), jitter(crime_data$polpc), xlab = "Crime Rate", ylab = "Police Presence")
+#maybe remove the outliers for polpc?
+outliers_removed_polpc = crime_data[which(crime_data$polpc < 0.004),]
+crime_police = lm(outliers_removed_polpc$crmrte ~ outliers_removed_polpc$polpc, data = outliers_removed_polpc)
+plot(jitter(outliers_removed_polpc$crmrte), jitter(outliers_removed_polpc$polpc), xlab = "Crime Rate", ylab = "Police Presence")
 abline(crime_police)
 summary(crime_police)
 ```
