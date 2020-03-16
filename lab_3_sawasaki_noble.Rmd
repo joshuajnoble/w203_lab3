@@ -60,30 +60,49 @@ cleaned_convictions = as.numeric(levels(crime_data$prbconv)[as.integer(crime_dat
 cleaned_convictions = cleaned_convictions/2
 
 #does crime rate go down when convictions are more likely?
+#predict crmrte with conviction rate
 crime_conviction = lm(crime_data$crmrte ~ cleaned_convictions)
-plot(jitter(crime_data$crmrte), jitter(cleaned_convictions), xlab = "Crime Rate", ylab = "Probability of conviction")
+plot(jitter(cleaned_convictions), jitter(crime_data$crmrte), xlab = "Crime Rate", ylab = "Probability of conviction")
 abline(crime_conviction) #doesn/t seem to show much
-summary(crime_conviction)
+#summary(crime_conviction)
 
+#predict crmrte with tax income
 crime_tax = lm(crime_data$crmrte ~ crime_data$taxpc)
-plot(jitter(crime_data$crmrte), jitter(crime_data$taxpc), xlab = "Crime Rate", ylab = "Tax receipts")
+plot(jitter(crime_data$taxpc), jitter(crime_data$crmrte), xlab = "Crime Rate", ylab = "Tax receipts")
 abline(crime_tax)
-summary(crime_tax)
-
-crime_arrest = lm(crime_data$crmrte ~ crime_data$prbarr)
-plot(jitter(crime_data$crmrte), jitter(crime_data$prbarr), xlab = "Crime Rate", ylab = "Probability of Arrest")
-abline(crime_arrest)
-summary(crime_arrest)
-
-#maybe remove the outliers for polpc?
-outliers_removed_polpc = crime_data[which(crime_data$polpc < 0.004),]
-crime_police = lm(outliers_removed_polpc$crmrte ~ outliers_removed_polpc$polpc, data = outliers_removed_polpc)
-plot(jitter(outliers_removed_polpc$crmrte), jitter(outliers_removed_polpc$polpc), xlab = "Crime Rate", ylab = "Police Presence")
-abline(crime_police)
-summary(crime_police)
+#summary(crime_tax)
 ```
 
+We probably need to start removing outliers so that we have a better insight into the trends and relations:
 
+```{r}
+
+remove_outliers = function(data, field, min, max) {
+  tmp = quantile(data[[field]], probs=c(min, max), na.rm = TRUE)
+  return( data[which(crime_data[[field]] > tmp[1] & data[[field]] < tmp[2]),] )
+}
+
+#predict crmrte with police presence
+outliers_removed_prbarr = remove_outliers(crime_data, 'prbarr', 0.05, 0.95)
+crime_arrest = lm(outliers_removed_prbarr$prbarr ~ outliers_removed_prbarr$crmrte)
+plot(jitter(outliers_removed_prbarr$crmrte), jitter(outliers_removed_prbarr$prbarr), xlab = "Crime Rate", ylab = "Probability of Arrest")
+abline(crime_arrest)
+
+#maybe remove the outliers for polpc?
+outliers_removed_polpc = remove_outliers(crime_data, 'polpc', 0.05, 0.95)
+crime_police = lm(outliers_removed_polpc$polpc ~ outliers_removed_polpc$crmrte, data = outliers_removed_polpc)
+plot(jitter(outliers_removed_polpc$crmrte), jitter(outliers_removed_polpc$polpc), xlab = "Crime Rate", ylab = "Police Presence")
+abline(crime_police)
+
+```
+
+To see if data became more clear with some of the outliers removed, we can use the Quantile function:
+
+```{r}
+
+
+
+```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
