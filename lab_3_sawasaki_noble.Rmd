@@ -55,48 +55,59 @@ cor(crime_data$crmrte, crime_data$prbarr) #-0.39, pretty neg strong
 # what is wrong with prbconv?
 class(crime_data$prbconv[1][1]) #r thinks it's a factor?
 
-cleaned_convictions = as.numeric(levels(crime_data$prbconv)[as.integer(crime_data$prbconv)])
+```
+
+We seem to have some encoding errors in the provided data set so we need to remedy that by making sure that all of the data is numeric.
+
+```{r}
+
+# let's clean these up
+crime_data$prbconv = as.numeric(levels(crime_data$prbconv)[as.integer(crime_data$prbconv)])
  #not sure if /2 is correct but a lot of these variables are greater than 1
-cleaned_convictions = cleaned_convictions/2
+crime_data$prbconv = crime_data$prbconv/2
 
-#does crime rate go down when convictions are more likely?
-#predict crmrte with conviction rate
-crime_conviction = lm(crime_data$crmrte ~ cleaned_convictions)
-plot(jitter(cleaned_convictions), jitter(crime_data$crmrte), xlab = "Crime Rate", ylab = "Probability of conviction")
-abline(crime_conviction) #doesn/t seem to show much
-#summary(crime_conviction)
-
-#predict crmrte with tax income
-crime_tax = lm(crime_data$crmrte ~ crime_data$taxpc)
-plot(jitter(crime_data$taxpc), jitter(crime_data$crmrte), xlab = "Crime Rate", ylab = "Tax receipts")
-abline(crime_tax)
-#summary(crime_tax)
 ```
 
 We probably need to start removing outliers so that we have a better insight into the trends and relations:
 
 ```{r}
 
-remove_outliers = function(data, field, min, max) {
-  tmp = quantile(data[[field]], probs=c(min, max), na.rm = TRUE)
-  return( data[which(crime_data[[field]] > tmp[1] & data[[field]] < tmp[2]),] )
+remove_outliers_sd = function(d, field, numDevs) {
+  s = numDevs * sd(d[[field]])
+  m = mean(d[[field]])
+  return( d[ which( d[[field]] > (m-s) & d[[field]] < (m+s)),])
 }
 
+
+#does crime rate go down when convictions are more likely?
+#predict crmrte with conviction rate
+outliers_removed_convictions = remove_outliers_sd(crime_data, 'prbconv', 2.0)
+crime_conviction = lm(outliers_removed_convictions$crmrte ~ outliers_removed_convictions$prbconv)
+plot(jitter(outliers_removed_convictions$prbconv), jitter(outliers_removed_convictions$crmrte), xlab = "Crime Rate", ylab = "Probability of conviction")
+abline(crime_conviction) #doesn/t seem to show much
+
+#predict crmrte with tax income
+outliers_removed_tax = remove_outliers_sd(crime_data, 'taxpc', 2.0)
+crime_tax = lm(outliers_removed_tax$crmrte ~ outliers_removed_tax$taxpc)
+plot(jitter(outliers_removed_tax$taxpc), jitter(outliers_removed_tax$crmrte), xlab = "Crime Rate", ylab = "Tax receipts")
+abline(crime_tax)
+#summary(crime_tax)
+
 #predict crmrte with police presence
-outliers_removed_prbarr = remove_outliers(crime_data, 'prbarr', 0.05, 0.95)
+outliers_removed_prbarr = remove_outliers_sd(crime_data, 'prbarr', 2.0)
 crime_arrest = lm(outliers_removed_prbarr$prbarr ~ outliers_removed_prbarr$crmrte)
 plot(jitter(outliers_removed_prbarr$crmrte), jitter(outliers_removed_prbarr$prbarr), xlab = "Crime Rate", ylab = "Probability of Arrest")
 abline(crime_arrest)
 
 #maybe remove the outliers for polpc?
-outliers_removed_polpc = remove_outliers(crime_data, 'polpc', 0.05, 0.95)
+outliers_removed_polpc = remove_outliers_sd(crime_data, 'polpc', 2.0)
 crime_police = lm(outliers_removed_polpc$polpc ~ outliers_removed_polpc$crmrte, data = outliers_removed_polpc)
 plot(jitter(outliers_removed_polpc$crmrte), jitter(outliers_removed_polpc$polpc), xlab = "Crime Rate", ylab = "Police Presence")
 abline(crime_police)
 
 ```
 
-To see if data became more clear with some of the outliers removed, we can use the Quantile function:
+We can see a as police presence increases, so does our crime rate. Police presence could be required by an increased crime rate of course, but we can also see some evidence that it does not seem to reduce the crime rate significantly. There is evidence that probability of arrest seems to correspond to a lower crime rate. 
 
 ```{r}
 
@@ -104,6 +115,6 @@ To see if data became more clear with some of the outliers removed, we can use t
 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Note that the `echo = FALSE` parameter was added to the code chunk to prevThisent printing of the R code that generated the plot.
 
 ```Test code from Ryan```
