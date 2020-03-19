@@ -40,6 +40,7 @@ library(tidyverse)
 library(effsize)
 library(plyr)
 library(reshape2)
+library(ggiraphExtra)
 
 setwd("C:\\Users\\winbase\\MIDS\\w203\\lab_3-master")
 crime_data = read.csv("crime_v2.csv")
@@ -78,32 +79,45 @@ remove_outliers_sd = function(d, field, numDevs) {
   return( d[ which( d[[field]] > (m-s) & d[[field]] < (m+s)),])
 }
 
+#predict crmrte with tax income
+outliers_removed_tax = remove_outliers_sd(crime_data, 'taxpc', 2.0)
+crime_tax = lm(outliers_removed_tax$crmrte ~ outliers_removed_tax$taxpc)
+plot( jitter(outliers_removed_tax$crmrte), jitter(outliers_removed_tax$taxpc), ylab = "Crime Rate", xlab = "Tax receipts")
+abline(crime_tax)
+#summary(crime_tax)
 
-#does crime rate go down when convictions are more likely?
 #predict crmrte with conviction rate
 outliers_removed_convictions = remove_outliers_sd(crime_data, 'prbconv', 2.0)
 crime_conviction = lm(outliers_removed_convictions$crmrte ~ outliers_removed_convictions$prbconv)
 plot(jitter(outliers_removed_convictions$prbconv), jitter(outliers_removed_convictions$crmrte), xlab = "Crime Rate", ylab = "Probability of conviction")
 abline(crime_conviction) #doesn/t seem to show much
 
-#predict crmrte with tax income
-outliers_removed_tax = remove_outliers_sd(crime_data, 'taxpc', 2.0)
-crime_tax = lm(outliers_removed_tax$crmrte ~ outliers_removed_tax$taxpc)
-plot(jitter(outliers_removed_tax$taxpc), jitter(outliers_removed_tax$crmrte), xlab = "Crime Rate", ylab = "Tax receipts")
-abline(crime_tax)
-#summary(crime_tax)
-
 #predict crmrte with police presence
 outliers_removed_prbarr = remove_outliers_sd(crime_data, 'prbarr', 2.0)
-crime_arrest = lm(outliers_removed_prbarr$prbarr ~ outliers_removed_prbarr$crmrte)
-plot(jitter(outliers_removed_prbarr$crmrte), jitter(outliers_removed_prbarr$prbarr), xlab = "Crime Rate", ylab = "Probability of Arrest")
+crime_arrest = lm(outliers_removed_prbarr$crmrte ~ outliers_removed_prbarr$prbarr)
+plot(jitter(outliers_removed_prbarr$prbarr), jitter(outliers_removed_prbarr$crmrte), ylab = "Crime Rate", xlab = "Probability of Arrest")
 abline(crime_arrest)
+
+#predict crmrte with prison sentence
+outliers_removed_prison = remove_outliers_sd(crime_data, 'prbpris', 2.0)
+crime_prison = lm(outliers_removed_prison$crmrte ~ outliers_removed_prison$prbpris)
+plot(jitter(outliers_removed_prison$prbpris), jitter(outliers_removed_prison$crmrte), ylab = "Crime Rate", xlab = "Probability of Arrest")
+abline(crime_prison)
 
 #maybe remove the outliers for polpc?
 outliers_removed_polpc = remove_outliers_sd(crime_data, 'polpc', 2.0)
-crime_police = lm(outliers_removed_polpc$polpc ~ outliers_removed_polpc$crmrte, data = outliers_removed_polpc)
-plot(jitter(outliers_removed_polpc$crmrte), jitter(outliers_removed_polpc$polpc), xlab = "Crime Rate", ylab = "Police Presence")
+crime_police = lm(outliers_removed_polpc$crmrte ~ outliers_removed_polpc$polpc, data = outliers_removed_polpc)
+plot(jitter(outliers_removed_polpc$polpc), jitter(outliers_removed_polpc$crmrte), ylab = "Crime Rate", xlab = "Police Presence")
 abline(crime_police)
+
+#
+crime_ym = lm(crime_data$crmrte ~ crime_data$pctymle, data = crime_data)
+plot(jitter(crime_data$pctymle), jitter(crime_data$crmrte), ylab = "Crime Rate", xlab = "Young Men")
+abline(crime_ym)
+
+crime_dens = lm(crime_data$crmrte ~ crime_data$density, data = crime_data)
+plot(jitter(crime_data$density), jitter(crime_data$crmrte), ylab = "Crime Rate", xlab = "Pop Dens")
+abline(crime_dens)
 
 ```
 
@@ -118,3 +132,18 @@ We can see a as police presence increases, so does our crime rate. Police presen
 Note that the `echo = FALSE` parameter was added to the code chunk to prevThisent printing of the R code that generated the plot.
 
 ```Test code from Ryan```
+
+Let's look at a few variables together:
+
+```{r}
+
+arr_and_conv = lm(crime_data$crmrte ~ crime_data$prbconv + crime_data$prbarr, data = crime_data)
+ggplot(crime_data,aes(y=prbarr,x=prbconv,color=crmrte)) + 
+  geom_point(size=2) +
+  stat_smooth(method="lm",se=FALSE) +
+  scale_color_gradient(low = "green", high = "red", space = "Lab" )
+
+
+arr_conv_prbpris = lm(crime_data$crmrte ~ crime_data$prbconv + crime_data$prbarr + crime_data$prbpris, data = crime_data)
+
+```
