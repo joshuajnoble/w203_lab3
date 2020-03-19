@@ -64,8 +64,7 @@ We seem to have some encoding errors in the provided data set so we need to reme
 
 # let's clean these up
 crime_data$prbconv = as.numeric(levels(crime_data$prbconv)[as.integer(crime_data$prbconv)])
- #not sure if /2 is correct but a lot of these variables are greater than 1
-crime_data$prbconv = crime_data$prbconv/2
+
 
 ```
 
@@ -101,11 +100,10 @@ abline(crime_arrest)
 #predict crmrte with prison sentence
 outliers_removed_prison = remove_outliers_sd(crime_data, 'prbpris', 2.0)
 crime_prison = lm(outliers_removed_prison$crmrte ~ outliers_removed_prison$prbpris)
-plot(jitter(outliers_removed_prison$prbpris), jitter(outliers_removed_prison$crmrte), ylab = "Crime Rate", xlab = "Probability of Arrest")
+plot(jitter(outliers_removed_prison$prbpris), jitter(outliers_removed_prison$crmrte), ylab = "Crime Rate", xlab = "Probability of Prison")
 abline(crime_prison)
 
 #maybe remove the outliers for polpc?
-outliers_removed_polpc = remove_outliers_sd(crime_data, 'polpc', 2.0)
 crime_police = lm(outliers_removed_polpc$crmrte ~ outliers_removed_polpc$polpc, data = outliers_removed_polpc)
 plot(jitter(outliers_removed_polpc$polpc), jitter(outliers_removed_polpc$crmrte), ylab = "Crime Rate", xlab = "Police Presence")
 abline(crime_police)
@@ -115,6 +113,7 @@ crime_ym = lm(crime_data$crmrte ~ crime_data$pctymle, data = crime_data)
 plot(jitter(crime_data$pctymle), jitter(crime_data$crmrte), ylab = "Crime Rate", xlab = "Young Men")
 abline(crime_ym)
 
+#
 crime_dens = lm(crime_data$crmrte ~ crime_data$density, data = crime_data)
 plot(jitter(crime_data$density), jitter(crime_data$crmrte), ylab = "Crime Rate", xlab = "Pop Dens")
 abline(crime_dens)
@@ -143,7 +142,11 @@ ggplot(crime_data,aes(y=prbarr,x=prbconv,color=crmrte)) +
   stat_smooth(method="lm",se=FALSE) +
   scale_color_gradient(low = "green", high = "red", space = "Lab" )
 
-
 arr_conv_prbpris = lm(crime_data$crmrte ~ crime_data$prbconv + crime_data$prbarr + crime_data$prbpris, data = crime_data)
+summary(arr_conv_prbpris)
+
+dens_ym_taxpc = lm(crime_data$crmrte ~ crime_data$pctymle + crime_data$density + crime_data$taxpc, data = crime_data)
+summary(dens_ym_taxpc)
+
 
 ```
