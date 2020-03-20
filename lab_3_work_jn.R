@@ -135,11 +135,35 @@ summary(wage_model)
 plot(wage_model)
 
 #mixing them seems to do best
-mm = lm(crime_data$crmrte ~ crime_data$pctymle + crime_data$density + crime_data$taxpc + crime_data$pctmin80 + crime_data$prbarr + crime_data$prbconv, data = crime_data)
-summary(mm) #rsqyared of 0.7494, quite high
-plot(mm)
+mixed_model = lm(crime_data$crmrte ~ crime_data$pctymle + crime_data$density + crime_data$taxpc + crime_data$pctmin80 + crime_data$prbarr + crime_data$prbconv, data = crime_data)
+summary(mixed_model) #rsqyared of 0.7494
+plot(mixed_model)
 
-#mixing them with outliers removed seems to do really really well
-mm2 = lm(crmrte ~ pctymle + density + taxpc + pctmin80 + prbarr + prbconv, data = crime_data[-c(25, 51),])
-summary(mm2) #rsqyared of 0.8084, quite high
-plot(mm2)
+# compute standardized residuals
+mm_standard = rstandard(mixed_model)
+id = order(mm_standard)
+mm_standard[id[1]] #biggest overestimate is -2.23 SDs over regression line
+
+#this graph shows the two big outliers
+std_resid = rstandard(mixed_model) 
+cooks_D = cooks.distance(mixed_model) 
+hat_values = hatvalues(mixed_model) 
+plot(hat_values, std_resid, cex=10*sqrt(cooks_D))
+abline(h=c(-2,	2),	lty=2)
+
+
+#mixing them with outliers removed seems to do realy well
+mixed_model_2 = lm(crmrte ~ pctymle + density + taxpc + pctmin80 + prbarr + prbconv, data = crime_data[-c(25, 51),])
+summary(mixed_model_2) #rsqyared of 0.8084
+plot(mixed_model_2)
+
+std_resid = rstandard(mixed_model_2) 
+cooks_D = cooks.distance(mixed_model_2) 
+hat_values = hatvalues(mixed_model_2) 
+plot(hat_values, std_resid, cex=10*sqrt(cooks_D))
+abline(h=c(-2,	2),	lty=2)
+
+mm2_standard = rstandard(mixed_model_2)
+id = order(mm2_standard)
+mm2_standard[id[1]] #biggest overestimate is -2.29 SDs over regression line
+
