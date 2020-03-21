@@ -145,9 +145,9 @@ id = order(mm_standard)
 mm_standard[id[1]] #biggest overestimate is -2.23 SDs over regression line
 
 #this graph shows the two big outliers
-std_resid = rstandard(mixed_model) 
-cooks_D = cooks.distance(mixed_model) 
-hat_values = hatvalues(mixed_model) 
+std_resid = rstandard(mixed_model)  #map all of the residuals
+cooks_D = cooks.distance(mixed_model) #get the cooks distance
+hat_values = hatvalues(mixed_model) #calculate all the hat values
 plot(hat_values, std_resid, cex=10*sqrt(cooks_D))
 abline(h=c(-2,	2),	lty=2)
 
@@ -156,24 +156,33 @@ ggplot(mmframe, aes(pred, abs(resid))) + geom_point() + geom_smooth()
 
 
 
-#mixing them with outliers removed seems to do realy well
+#mixing them with outliers removed seems to doS well
 mixed_model_2 = lm(crmrte ~ pctymle + density + pctmin80 + prbarr + prbconv, data = crime_data[-c(25, 51),])
+# lets find out about our model
 summary(mixed_model_2) #rsqyared of 0.8099
+# this gives us 4 charts
 plot(mixed_model_2)
 
-std_resid = rstandard(mixed_model_2) 
-cooks_D = cooks.distance(mixed_model_2) 
-hat_values = hatvalues(mixed_model_2) 
+#map all of the residuals
+std_resid = rstandard(mixed_model_2)
+#get the cooks distance
+cooks_D = cooks.distance(mixed_model_2)
+#calculate the 'hat values' aka leverage for each observation
+hat_values = hatvalues(mixed_model_2)
+#now plot our residuals by our leverages, we can see the obs that have extremely high leverage
 plot(hat_values, std_resid, cex=10*sqrt(cooks_D))
 abline(h=c(-2,	2),	lty=2)
 
+#find how far each obs is from the SDs as a whole
 mm2_standard = rstandard(mixed_model_2)
+#sort them
 id = order(mm2_standard)
 mm2_standard[id[1]] #biggest overestimate is -2.29 SDs over regression line
 
+#now let's see how much our residuals vary
 mmframe2 = data.frame(resid	= residuals(mixed_model_2), pred = predict(mixed_model_2)) 
 ggplot(mmframe2, aes(pred, abs(resid))) + geom_point() + geom_smooth()
 
 
-mixed_model_3 = lm(crmrte * 100 ~ pctymle + density + pctmin80 + prbarr + prbconv + mix, data = crime_data)
+mixed_model_3 = lm((crmrte * 1000) ~ pctymle + density + pctmin80 + prbarr + prbconv, data =  crime_data[-c(25, 51),])
 summary(mixed_model_3) #rsqyared of 0.8084
