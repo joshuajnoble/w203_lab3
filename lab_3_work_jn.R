@@ -151,10 +151,14 @@ hat_values = hatvalues(mixed_model)
 plot(hat_values, std_resid, cex=10*sqrt(cooks_D))
 abline(h=c(-2,	2),	lty=2)
 
+mmframe = data.frame(resid	= residuals(mixed_model), pred = predict(mixed_model)) 
+ggplot(mmframe, aes(pred, abs(resid))) + geom_point() + geom_smooth()
+
+
 
 #mixing them with outliers removed seems to do realy well
-mixed_model_2 = lm(crmrte ~ pctymle + density + taxpc + pctmin80 + prbarr + prbconv, data = crime_data[-c(25, 51),])
-summary(mixed_model_2) #rsqyared of 0.8084
+mixed_model_2 = lm(crmrte ~ pctymle + density + pctmin80 + prbarr + prbconv, data = crime_data[-c(25, 51),])
+summary(mixed_model_2) #rsqyared of 0.8099
 plot(mixed_model_2)
 
 std_resid = rstandard(mixed_model_2) 
@@ -167,3 +171,9 @@ mm2_standard = rstandard(mixed_model_2)
 id = order(mm2_standard)
 mm2_standard[id[1]] #biggest overestimate is -2.29 SDs over regression line
 
+mmframe2 = data.frame(resid	= residuals(mixed_model_2), pred = predict(mixed_model_2)) 
+ggplot(mmframe2, aes(pred, abs(resid))) + geom_point() + geom_smooth()
+
+
+mixed_model_3 = lm(crmrte * 100 ~ pctymle + density + pctmin80 + prbarr + prbconv + mix, data = crime_data)
+summary(mixed_model_3) #rsqyared of 0.8084
