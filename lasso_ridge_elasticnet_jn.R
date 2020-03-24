@@ -21,6 +21,24 @@ class(crime_data$prbconv[1][1]) #r thinks it's a factor?
 crime_data$prbconv = as.numeric(levels(crime_data$prbconv)[as.integer(crime_data$prbconv)])
 
 
+##########################################################################################
+# Compute R^2 from true and predicted values
+eval_results = function(true, predicted, df) {
+  SSE = sum((predicted - true)^2)
+  SST = sum((true - mean(true))^2)
+  R_square = 1 - SSE / SST
+  RMSE = sqrt(SSE/nrow(df))
+  
+  
+  # Model performance metrics
+  data.frame(
+    RMSE = RMSE,
+    Rsquare = R_square
+  )
+  
+}
+##########################################################################################
+
 #keep .75 of original 
 sample_size = floor(0.75 * nrow(crime_data))
 training_index = sample(seq_len(nrow(crime_data)), size = sample_size)
@@ -32,29 +50,45 @@ test = crime_data[-training_index, ]
 x = model.matrix(crmrte~., train)[,-1]# Response
 y = train$crmrte
 
+x_test = model.matrix(crmrte~., test)[,-1]# Response
+y_test = test$crmrte
+
 #first create a ridge model
-cv.r = cv.glmnet(x, y, alpha = 0)
-print(cv.r$lambda.min) #what's our L?
-model.ridge = glmnet(x, y, alpha = 0, lambda = cv.r$lambda.min)
+cv.ridge = cv.glmnet(x, y, alpha = 0)
+print(cv.ridge$lambda.min) #what's our L?
+model.ridge = glmnet(x, y, alpha = 0, lambda = cv.ridge$lambda.min)
 ridgecoefs = coef(model.ridge) #what are our coefficients
 
-cv.l = cv.glmnet(x, y, alpha = 1)
-print(cv.l$lambda.min) #what's our L?
-model.lasso = glmnet(x, y, alpha = 1, lambda = cv.l$lambda.min)
+#try on our training data
+predictions_train <- predict(cv.ridge, s = cv.ridge$lambda.min, newx = x)
+eval_results(y, predictions_train, train)
+
+# Prediction and evaluation on test data
+predictions_test <- predict(cv.ridge, s = cv.ridge$lambda.min, newx = x_test)
+eval_results(y_test, predictions_test, test) #awful rsquared, why?
+
+# now work up a lasso
+cv.lasso = cv.glmnet(x, y, alpha = 1)
+print(cv.lasso$lambda.min) #what's our L?
+model.lasso = glmnet(x, y, alpha = 1, lambda = cv.lasso$lambda.min)
 lassocoefs = coef(model.lasso)
 
-x.test.lasso = model.matrix(crmrte ~., test)[,-1]
-predictions.lasso = model.lasso
-lasso_predictions = predict(predictions.lasso, x.test.lasso)
-RMSE( as.vector(lasso_predictions), crime_data$crmrte)
+lasso_predictions_train = predict(cv.lasso, s = cv.lasso$lambda.min, newx = x)
+eval_results(y, lasso_predictions_train, train)
 
-model.net = train(crmrte ~., data = train, method = "glmnet",trControl = trainControl("cv", number = 10), tuneLength = 10)
-print(model.net$bestTune)
+lasso_predictions_test = predict(cv.lasso, s = cv.lasso$lambda.min, newx = x_test)
+eval_results(y_test, lasso_predictions_test, test) #similarly awful?
 
-coef(model.net$finalModel, model.net$bestTune$lambda)
-x.test.net = model.matrix(crmrte ~., test)[,-1]
-#predictions.net = model.net %>% predict(x.test.net)
-predictions.net = predict(model.net, x.test.net)
+
+enet_model = train(crmrte ~., data = train, method = "glmnet",trControl = trainControl("cv", number = 10), tuneLength = 10)
+print(enet_model$bestTune)
+
+coef(enet_model$finalModel, enet_model$bestTune$lambda)
+
+enet_train = predict(enet_model, s = enet_model$bestTune$lambda, newx = x)
+eval_results(y, enet_train, train)
+
+enet_predictions = predict(enet_model, x_test)
+eval_results(y_test, enet_predictions, test) #also bad. Hmm
 
 data.frame( RMSE.net = RMSE(predictions.net, test$crmrte), Rsquare.net = R2(predictions.net, test$crmrte))
-
