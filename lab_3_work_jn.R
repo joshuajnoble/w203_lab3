@@ -31,7 +31,6 @@ library(tidyverse)
 library(effsize)
 library(plyr)
 library(reshape2)
-library(ggiraphExtra)
 
 setwd("C:\\Users\\winbase\\MIDS\\w203\\w203_lab3")
 crime_data = read.csv("crime_v2.csv")
@@ -113,6 +112,7 @@ abline(crime_dens)
 # 
 ###########################################################################################
 
+#really basic model
 arr_and_conv = lm(crime_data$crmrte ~ crime_data$prbconv + crime_data$prbarr, data = crime_data)
 ggplot(crime_data,aes(y=prbarr,x=prbconv,color=crmrte)) + 
   geom_point(size=2) +
@@ -154,14 +154,36 @@ abline(h=c(-2,	2),	lty=2)
 mmframe = data.frame(resid	= residuals(mixed_model), pred = predict(mixed_model)) 
 ggplot(mmframe, aes(pred, abs(resid))) + geom_point() + geom_smooth()
 
-
-
 #mixing them with outliers removed seems to doS well
-mixed_model_2 = lm(crmrte ~ pctymle + density + pctmin80 + prbarr + prbconv, data = crime_data[-c(25, 51),])
+mixed_model_2 = lm(crmrte ~ pctymle + density + pctmin80 + taxpc + prbarr + prbconv + polpc, data = crime_data)
 # lets find out about our model
 summary(mixed_model_2) #rsqyared of 0.8099
 # this gives us 4 charts
 plot(mixed_model_2)
+
+# extract the Aikike information criterion for each model
+extractAIC(mixed_model_2)
+extractAIC(wage_model)
+extractAIC(arr_conv_prbpris)
+extractAIC(dens_ym_taxpc)
+
+# extract the Bayes information criterion for each model
+BIC(mixed_model_2)
+BIC(wage_model)
+BIC(arr_conv_prbpris)
+BIC(dens_ym_taxpc)
+
+# examine the effect of each element
+base = lm(crmrte ~ 1, data = crime_data)
+mm_step = step(base, scope = formula(mixed_model_2), direction = "forward")
+
+library(lmtest)
+library(sandwich)
+library(stargazer)
+
+vcov = vcovHC(mixed_model_2, type = "HC1")
+errors = coeftest(mixed_model_2, vcov)
+stargazer(mixed_model_2, errors)
 
 #map all of the residuals
 std_resid = rstandard(mixed_model_2)
@@ -177,12 +199,34 @@ abline(h=c(-2,	2),	lty=2)
 mm2_standard = rstandard(mixed_model_2)
 #sort them
 id = order(mm2_standard)
-mm2_standard[id[1]] #biggest overestimate is -2.29 SDs over regression line
+mm2_standard[id[1]] #biggest overestimate is -2.35 SDs over regression line
 
 #now let's see how much our residuals vary
 mmframe2 = data.frame(resid	= residuals(mixed_model_2), pred = predict(mixed_model_2)) 
 ggplot(mmframe2, aes(pred, abs(resid))) + geom_point() + geom_smooth()
 
 
-mixed_model_3 = lm((crmrte * 1000) ~ pctymle + density + pctmin80 + prbarr + prbconv, data =  crime_data[-c(25, 51),])
-summary(mixed_model_3) #rsqyared of 0.8084
+# from Robert
+
+all_in_model = lm(crmrte ~ prbarr + prbconv + prbpris + avgsen + polpc + density
+                   + taxpc + west + central + urban + pctmin80 + wcon
+                   + wtuc + wtrd + wfir + wser + wmfg + wfed + wsta + wloc
+                   + mix + pctymle,
+                   data = crime_data)
+
+mm_step = step(base, scope = formula(all_in_model), direction = "forward")
+
+BIC(all_in_model)
+BIC(mixed_model_2)
+extractAIC(all_in_model)
+extractAIC(mixed_model_2)
+
+summary(mixed_model_2)
+summary(all_in_model)
+
+######################
+
+terse_model = lm(crmrte ~ pctmin80 + polpc + density + prbarr + prbconv, data=crime_data)
+summary(terse_model)
+
+######################
