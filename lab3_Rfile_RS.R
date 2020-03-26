@@ -6,7 +6,7 @@
 
 # Setup
 
-setwd("~C:/Users/rsawa/OneDrive/Desktop/lab3_working")
+setwd("C:/Users/rsawa/OneDrive/Desktop/lab3_working")
 getwd()
 
 library(car) # not working. issues with 'rlang' package
@@ -31,6 +31,7 @@ crime_data = crime_data[which(crime_data$county != 'NA'),]
 # prbconv is factor with 92 levels, convert to numeric, probability
 crime_data$prbconv = as.numeric(crime_data$prbconv)/100
 
+
 # view dataframe
 str(crime_data)
 
@@ -42,8 +43,8 @@ round(corr_matrix[3,], 2)
 
 # Bivariate Model (review individual cases)
 
-var1 = crime_data$prbconv
-crime_data$prbarr/crime_data$prbconv
+var1 = crime_data$prbarr
+var1
 
 # Examine Variable
 summary(var1)
@@ -70,23 +71,20 @@ plot(model1)
 
 # model 2
 model2 = lm(crime_data$crmrte ~ crime_data$density 
-                              + crime_data$polpc
                               + crime_data$prbarr
                               + crime_data$prbconv
                                ,data = crime_data)
 plot(model2)
-coefficients(model2)
 
 # model 3
 model3 = lm(crime_data$crmrte ~ crime_data$density 
-                              + crime_data$polpc
                               + crime_data$prbarr
                               + crime_data$prbconv
                               + crime_data$pctmin80
-                              + crime_data$pctymle
                              # + crime_data$
                              # + crime_data$
                                ,data = crime_data)
+coeftest(model3,vcov = vcovHC)
 plot(model3)
 
 #####################################################################
@@ -147,7 +145,13 @@ shapiro.test(model3$residuals)
 
 # to address zero conditional mean and/or heteroskedasticity
 # try changing the functional form
-model3_log = lm(log(crime_data$crmrte) ~ crime_data$density, data = crime_data)
+model3_log = lm(log(crime_data$crmrte) ~ crime_data$density 
+                                  + crime_data$prbarr
+                                  + crime_data$prbconv
+                                  + crime_data$pctmin80
+                                  # + crime_data$
+                                  # + crime_data$
+                                  ,data = crime_data)
 plot(model3_log)
 
 # Check Tests 
@@ -166,8 +170,8 @@ bptest(model3_log)
 #####################################################################
 
 # To address heteroskedasticity, we use robust standard errors.
-coeftest(model3_log, vcov = vcovHC)
-vcovHC(model3_log)
+coeftest(model3, vcov = vcovHC)
+vcovHC(model3)
 
 # display the model with robust standard errors
 (se.model3_log = sqrt(diag(vcovHC(model3_log))))
@@ -175,3 +179,47 @@ vcovHC(model3_log)
 stargazer(model3_log, type = "text",
           se = list(se.model3_log ),
           star.cutoffs = c(0.05, 0.01, 0.001))
+
+#####################################################################
+
+# Joint Hypothesis Testing
+
+# Our restricted model is formed by removing the performance indicators
+model_rest = lm(log(crime_data$crmrte) ~ crime_data$density, data = crime_data)
+coeftest(model_rest, vcov = vcovHC)
+
+# To test whether the difference in fit is significant, we use the wald test,
+# which generalizes the usual F-test of overall significance,
+# but allows for a heteroskedasticity-robust covariance matrix
+waldtest(model3_log, model_rest, vcov = vcovHC)
+
+# Another useful command is linearHypothesis, which allows us
+# to write the hypothesis we're testing clearly in string form.
+
+####### Not working because library(car) is required ###########
+
+linearHypothesis(model3_log, c("crime_data$prbarr = 0",
+                               "crime_data$prbconv = 0",
+                               "crime_data$pctmin80 = 0"), vcov = vcovHC)
+
+#####################################################################
+
+# Testing whether coefficients are different
+# Does variable A and variable B affect crime rate the same.  
+# We write an alternate specification as follows:
+var_A = crime_data$prbarr
+var_B = crime_data$prbconv
+
+model_AB = lm(log(crime_data$crmrte)~ var_A + var_B, data = crime_data)
+coeftest(model_AB, vcov = vcovHC)
+
+# Our hypothesis is that the coefficients for A and B are the same.
+# We can test this manually by creating a new variable to equal the total
+# A_plus_B.
+A_plus_B = var_A + var_B
+
+# We then put this variable into our model along with variable A 
+# The coefficient for variable A will then measure
+# the difference between the effects of A and B.
+model_test = lm(log(crime_data$crmrte)~ var_A + A_plus_B, data = crime_data)
+coeftest(model_test, vcov = vcovHC)
