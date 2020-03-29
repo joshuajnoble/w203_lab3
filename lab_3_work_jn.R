@@ -154,28 +154,29 @@ abline(h=c(-2,	2),	lty=2)
 mmframe = data.frame(resid	= residuals(mixed_model), pred = predict(mixed_model)) 
 ggplot(mmframe, aes(pred, abs(resid))) + geom_point() + geom_smooth()
 
-#mixing them with outliers removed seems to doS well
+
 mixed_model_2 = lm(crmrte ~ pctymle + density + pctmin80 + taxpc + prbarr + prbconv + polpc, data = crime_data)
+
 # lets find out about our model
-summary(mixed_model_2) #rsqyared of 0.8099
+summary(mixed_model_2)
 # this gives us 4 charts
-plot(mixed_model_2)
+plot(mixed_model_2, 1)
+plot(mixed_model_2, 3)
+plot(mixed_model_2, 5)
+
+hist(mixed_model_2$residuals, breaks=20)
 
 # extract the Aikike information criterion for each model
 extractAIC(mixed_model_2)
-extractAIC(wage_model)
-extractAIC(arr_conv_prbpris)
-extractAIC(dens_ym_taxpc)
 
 # extract the Bayes information criterion for each model
 BIC(mixed_model_2)
-BIC(wage_model)
-BIC(arr_conv_prbpris)
-BIC(dens_ym_taxpc)
 
 # examine the effect of each element
 base = lm(crmrte ~ 1, data = crime_data)
 mm_step = step(base, scope = formula(mixed_model_2), direction = "forward")
+
+mm2 = data.frame( resid(mixed_model_2), rstandard(mixed_model_2), rstudent(mixed_model_2), hatvalues(mixed_model_2), cooks.distance(mixed_model_2))
 
 library(lmtest)
 library(sandwich)
@@ -226,7 +227,18 @@ summary(all_in_model)
 
 ######################
 
-terse_model = lm(crmrte ~ pctmin80 + polpc + density + prbarr + prbconv, data=crime_data)
+terse_model = lm(crmrte ~ polpc + density + pctmin80 + prbconv + prbarr, data=crime_data)
 summary(terse_model)
 
 ######################
+
+library(lmtest)
+
+mixed_model_3 = lm(crmrte ~ pctymle + density + pctmin80 + prbarr + prbconv + polpc + , data = crime_data)
+summary(mixed_model_3)
+
+plot(mixed_model_3, 1)
+plot(mixed_model_3, 3)
+plot(mixed_model_3, 5)
+
+linearHypothesis(mixed_model_3, "wcon = 0", vcov = vcovHC)
