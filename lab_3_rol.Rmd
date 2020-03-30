@@ -153,7 +153,9 @@ boxplot(wages_data)
 
 ```
 \
-There is an obvious outlier in wser. This seems like a typo. The next highest average weekly wage in any sector is 646 versus the value of 2177.If you take the average of all weekly wages it has the highest average but only the 24th highest taxpc (though tax revenue is driven largely by sales and property taxes, many areas have local income tax as well. It is very possible that it is an error but we will revisit this later. For now, we create an additional variable that is the median of all wage variables for each observation. If it conveys as much information, it has the benefit of increasing our degress of freedom and removing the effect of the outlier.\
+There is an obvious outlier for wser in 84 . The mean services wage across all the counties is $275 ( with a std dev of  206) and 84 has wser of 2177 (~9sd from mean), which seems like a measurement or typographical error. The next highest average weekly wage in any sector is 646 versus the value of 2177.It is very possible that it is an error but we will revisit this later. 
+
+For now, we create an additional variable that is the median of all wage variables for each observation. If it conveys as much information, it has the benefit of increasing our degress of freedom and removing the effect of the outlier.\
 
 ```{r}
 data_crmrte$median_wage <- apply(data_crmrte[c("wcon", "wtuc", "wtrd",
