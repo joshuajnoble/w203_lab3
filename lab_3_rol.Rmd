@@ -4,6 +4,8 @@ output:
   html_document: default
 ---
 
+
+
 ```{r echo=FALSE}
 library(car)
 library(lmtest)
@@ -20,8 +22,24 @@ opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
 
 ```{r}
 #read in the data
-data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv')
+#data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
+
+data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
+
+
+
 ```
+
+
+__1. Introduction__
+
+###########################################################################################
+#
+# Ryan's section
+# 
+###########################################################################################
+
+
 
 __2. A Model Building Process__
 
@@ -72,7 +90,7 @@ plot(data_crmrte$crmrte)
 qqnorm(data_crmrte$crmrte)
 ```
 \
-There are several outliers in the variable crmrte and the distribution is right skewed. We have ninety observations so perhaps we normality is not a top concern but this distribution is not perfectly normal. The largest outliers on the right side of the distribution are examined. Unfortunately, looking at these observations in a dataframe does not show any obvious patterns (e.g. they are all in the same region, they all have similar values of a variable like density, etc.) 
+There are several outliers in the variable crmrte and the distribution is right skewed. We have ninety observations so non-normality is not a top concern but this distribution is not perfectly normal. The largest outliers on the right side of the distribution are examined. Unfortunately, looking at these observations in a dataframe does not show any obvious patterns (e.g. they are all in the same region, they all have similar values of a variable like density, etc.) 
 ```{r}
 data_crmrte[data_crmrte$crmrte > 0.065,] 
 ```
