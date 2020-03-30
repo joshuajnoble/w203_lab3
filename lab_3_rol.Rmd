@@ -69,13 +69,14 @@ summary(data)
 This function provides a high level view of each variable. Six rows have missing values for all variables. In addition, there is one duplicate row. Also the variable prbconv is loaded as a factor, so it needs to be converted to numeric. These issues are handled below to create the initial data set. 
 
 ```{r}
-#eliminate N/A's
+#eliminate N/A's (6 rows of NA were removed)
 data_crmrte <- data[!is.na(data$crmrte),]
 
-#remove duplicates
+#remove duplicates (1 duplicate record was found)
 data_crmrte <- data_crmrte %>% distinct()
 
-#make prbconv numeric
+#prbconv was defined as factor data type , we convert it to numeric
+class(data_crmrte$prbconv)
 data_crmrte$prbconv <- as.numeric(as.character(data_crmrte$prbconv))
 
 ```
@@ -90,7 +91,9 @@ plot(data_crmrte$crmrte)
 qqnorm(data_crmrte$crmrte)
 ```
 \
-There are several outliers in the variable crmrte and the distribution is right skewed. We have ninety observations so non-normality is not a top concern but this distribution is not perfectly normal. The largest outliers on the right side of the distribution are examined. Unfortunately, looking at these observations in a dataframe does not show any obvious patterns (e.g. they are all in the same region, they all have similar values of a variable like density, etc.) 
+There are several outliers in the variable crmrte and the distribution is right skewed. We have ninety observations so non-normality is not a top concern but this distribution is not perfectly normal. 
+
+The largest outliers on the right side of the distribution are examined. There are no clear 
 ```{r}
 data_crmrte[data_crmrte$crmrte > 0.065,] 
 ```
@@ -173,6 +176,7 @@ ggplot(gather(dummies_data), aes(value)) +
 
 #just a quick check that there is no overlap
 region_check <- data_crmrte[which(data_crmrte$west == 1 && data_crmrte$central == 1)]
+summary(region_check)
 ```
 The regions are broken up into central, west, and east. East is left out of the data set and it's effect as the final level of the indicator variable will move to the intercept.\
 
@@ -180,6 +184,7 @@ The regions are broken up into central, west, and east. East is left out of the 
 __Urban Data__\
 ```{r}
 #plot histograms of just the wage variables
+sum(data_crmrte$urban) # There are 8 Urban areas out of 90
 hist(data_crmrte$urban)
 
 ```
