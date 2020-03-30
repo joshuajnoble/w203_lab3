@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 
 ```{r echo=FALSE}
 library(car)
@@ -360,7 +365,11 @@ Unsuprisingly, the r-squared of the "kitchen sink" model is substantially higher
 __Model 2: Balanced Model__\
 We took two approaches to building the balanced model. We used a bottom up approach that relied on both the correlation matrix and stepwide regression. We also used a top down approach that started with the "kitchen sink" model and excluded variables. Both methods are discussed below. Both approaches relied on our categories of variables to simplify the process.\
 
-<Bottom up approach>
+```{r}
+base_forward = lm(log_crmrte ~ density,
+                             data = data_crmrte)
+forward_step = step(base_forward, scope = formula(all_in_model_log_level), direction = "forward")
+```
 
 With the top down approach, we started with model 3 and looked to exclude variables that weren't as predictive. We ran hypothesis testing on all five groups, one group at a time.
 
@@ -426,3 +435,31 @@ stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1,
 
 ```
 
+\
+Three of the five groups have been eliminated, with only the deterrent and demographic groups remaining. We will use step wise regression to evaluate.\
+
+```{r}
+base_backward = lm(log_crmrte ~ prbarr + prbconv + prbpris 
+                             + avgsen + polpc + density
+                             + taxpc + pctmin80 + mix + pctymle,
+                             data = data_crmrte)
+backward_step = step(base_backward, scope = formula(base_backward), direction = "backward")
+```
+```{r}
+balanced_model_top_3 <- lm(log_crmrte ~ mix + density
+                           + polpc + pctmin80
+                           + prbarr + prbconv,
+                             data = data_crmrte)
+se.balanced_model_top_3 = sqrt(diag(vcovHC(balanced_model_top_3)))
+coeftest(balanced_model_top_2, vcov = vcovHC)
+AIC(balanced_model_top_2, k=2)
+stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1, balanced_model_top_3,
+          type = "text", omit.stat = "f",
+          se = list(se.simple_regression_model, se.all_in_model_log_level, 
+                    se.balanced_model_top_1, se.balanced_model_top_3),
+          star.cutoffs = c(0.05, 0.01, 0.001))
+```
+
+The difference between the backward and forward model is that the backward model chooses variables for exclusion based on comparing significance while the forward model looks for significance in inclusion. We also used the f-tests (hypothesis tests) to give the backward stepwise regression a head start.\
+
+The backward stepwise regression yielded a more reasonable model so that is the model we are choosing for our balanced model. This model strikes a nice balance between parsimony and explanatory power. The variables included are prbarr, prbconv, polpc, density, pctmin80, and mix. Six out of the original 24 independent variables are included. The adjust r-squared is only 3% lower (77.6% vs. 80.6%). It includes a blend of actionable items for the campaign in the deterrent data as well as demographic variables that perhaps can focus the campaign's efforts.

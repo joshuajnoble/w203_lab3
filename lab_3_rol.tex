@@ -1,0 +1,1819 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs}
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+
+\begin{verbatim}
+## Loading required package: carData
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: zoo
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'zoo'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     as.Date, as.Date.numeric
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Please cite as:
+\end{verbatim}
+
+\begin{verbatim}
+##  Hlavac, Marek (2018). stargazer: Well-Formatted Regression and Summary Statistics Tables.
+\end{verbatim}
+
+\begin{verbatim}
+##  R package version 5.2.2. https://CRAN.R-project.org/package=stargazer
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'dplyr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:car':
+## 
+##     recode
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'reshape2'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:tidyr':
+## 
+##     smiths
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#read in the data}
+\NormalTok{data <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\DataTypeTok{file =} \StringTok{'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{2. A Model Building Process}
+
+\textbf{Exploratory Data Analaysis}
+
+We started by conducting exploratory data analysis. First, we read the
+original paper to get a better understanding of each variable. We
+defined the variables in the table below and grouped them into five
+groups in order to get a better handle on them.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{crime_count <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{25}\NormalTok{)}
+\NormalTok{data_variables <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"county"}\NormalTok{,}\StringTok{"year"}\NormalTok{,}\StringTok{"crmrte"}\NormalTok{,}\StringTok{"prbarr"}\NormalTok{,}\StringTok{"prbconv"}\NormalTok{,}\StringTok{"prbpris"}\NormalTok{,}\StringTok{"avgsen"}\NormalTok{,}\StringTok{"polpc"}\NormalTok{,}\StringTok{"density"}\NormalTok{,}\StringTok{"taxpc"}\NormalTok{,}\StringTok{"west"}\NormalTok{,}\StringTok{"central"}\NormalTok{,}\StringTok{"urban"}\NormalTok{,}\StringTok{"pctmin80"}\NormalTok{,}\StringTok{"wcon"}\NormalTok{,}\StringTok{"wtuc"}\NormalTok{,}\StringTok{"wtrd"}\NormalTok{,}\StringTok{"wfir"}\NormalTok{,}\StringTok{"wser"}\NormalTok{,}\StringTok{"wmfg"}\NormalTok{,}\StringTok{"wfed"}\NormalTok{,}\StringTok{"wsta"}\NormalTok{,}\StringTok{"wloc"}\NormalTok{,}\StringTok{"mix"}\NormalTok{,}\StringTok{"pctymle"}\NormalTok{)}
+\NormalTok{data_description <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"county identifier"}\NormalTok{,}\StringTok{"1987"}\NormalTok{,}\StringTok{"crimes committed per person"}\NormalTok{,}\StringTok{"'probability' of arrest"}\NormalTok{,}\StringTok{"'probability' of conviction"}\NormalTok{,}\StringTok{"'probability' of prison sentence"}\NormalTok{,}\StringTok{"avg. sentence, days"}\NormalTok{,}\StringTok{"police per capita"}\NormalTok{,}\StringTok{"people per sq. mile"}\NormalTok{,}\StringTok{"tax revenue per capita"}\NormalTok{,}\StringTok{"=1 if in western N.C."}\NormalTok{,}\StringTok{"=1 if in central N.C."}\NormalTok{,}\StringTok{"=1 if in SMSA"}\NormalTok{,}\StringTok{"perc. minority, 1980"}\NormalTok{,}\StringTok{"weekly wage, construction"}\NormalTok{,}\StringTok{"wkly wge, trns, util, commun"}\NormalTok{,}\StringTok{"wkly wge, whlesle, retail trade"}\NormalTok{,}\StringTok{"wkly wge, fin, ins, real est"}\NormalTok{,}\StringTok{"wkly wge, service industry"}\NormalTok{,}\StringTok{"wkly wge, manufacturing"}\NormalTok{,}\StringTok{"wkly wge, fed employees"}\NormalTok{,}\StringTok{"wkly wge, state employees"}\NormalTok{,}\StringTok{"wkly wge, local gov emps"}\NormalTok{,}\StringTok{"offense mix: face-to-face/other"}\NormalTok{,}\StringTok{"percent young male"}\NormalTok{)}
+\NormalTok{data_group <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Control"}\NormalTok{,}\StringTok{""}\NormalTok{,}\StringTok{""}\NormalTok{,}\StringTok{"Deterrent"}\NormalTok{,}\StringTok{"Deterrent"}\NormalTok{,}\StringTok{"Deterrent"}\NormalTok{,}\StringTok{"Deterrent"}\NormalTok{,}\StringTok{"Deterrent"}\NormalTok{,}\StringTok{"Demographic"}\NormalTok{,}\StringTok{"Demographic"}\NormalTok{,}\StringTok{"Region"}\NormalTok{,}\StringTok{"Region"}\NormalTok{,}\StringTok{"Urban"}\NormalTok{,}\StringTok{"Demographic"}\NormalTok{,}\StringTok{"Wages"}\NormalTok{,}\StringTok{"Wages"}\NormalTok{,}\StringTok{"Wages"}\NormalTok{,}\StringTok{"Wages"}\NormalTok{,}\StringTok{"Wages"}\NormalTok{,}\StringTok{"Wages"}\NormalTok{,}\StringTok{"Wages"}\NormalTok{,}\StringTok{"Wages"}\NormalTok{,}\StringTok{"Wages"}\NormalTok{,}\StringTok{"Demographic"}\NormalTok{,}\StringTok{"Demographic"}\NormalTok{)}
+\NormalTok{data_notes <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{""}\NormalTok{,}\StringTok{""}\NormalTok{,}\StringTok{"ratio of FBI index crimes to county population"}\NormalTok{,}\StringTok{"ratio of arrests to offenses"}\NormalTok{,}\StringTok{"ratio of convictions to arrests"}\NormalTok{,}\StringTok{"proportion of total convictions resulting in prison sentences"}\NormalTok{,}\StringTok{"average sentence in days"}\NormalTok{,}\StringTok{""}\NormalTok{,}\StringTok{"country population divided by county land area"}\NormalTok{,}\StringTok{""}\NormalTok{,}\StringTok{"dummy"}\NormalTok{,}\StringTok{"dummy"}\NormalTok{,}\StringTok{"dummy"}\NormalTok{,}\StringTok{"proportion of country population that is minority or nonwhite"}\NormalTok{,}\StringTok{"average weekly wage in that sector"}\NormalTok{,}\StringTok{"average weekly wage in that sector"}\NormalTok{,}\StringTok{"average weekly wage in that sector"}\NormalTok{,}\StringTok{"average weekly wage in that sector"}\NormalTok{,}\StringTok{"average weekly wage in that sector"}\NormalTok{,}\StringTok{"average weekly wage in that sector"}\NormalTok{,}\StringTok{"average weekly wage in that sector"}\NormalTok{,}\StringTok{"average weekly wage in that sector"}\NormalTok{,}\StringTok{"average weekly wage in that sector"}\NormalTok{,}\StringTok{"ratio of face-to-face crimes (robbery, assault, rape) to non-face-to-face crimes"}\NormalTok{,}\StringTok{"proportion of country population that is male between 15 and 24"}
+\NormalTok{)}
+\NormalTok{data_headers <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Variable"}\NormalTok{, }\StringTok{"Description"}\NormalTok{, }\StringTok{"Group"}\NormalTok{, }\StringTok{"Note"}\NormalTok{)}
+\NormalTok{data_table <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(data_variables, data_description, data_group, data_notes)}
+\KeywordTok{kable}\NormalTok{(data_table, }\DataTypeTok{col.names =}\NormalTok{ data_headers, }\DataTypeTok{caption =} \StringTok{"Descriptions and Groups of Variables"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}llll@{}}
+\caption{Descriptions and Groups of Variables}\tabularnewline
+\toprule
+Variable & Description & Group & Note\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Variable & Description & Group & Note\tabularnewline
+\midrule
+\endhead
+county & county identifier & Control &\tabularnewline
+year & 1987 & &\tabularnewline
+crmrte & crimes committed per person & & ratio of FBI index crimes to
+county population\tabularnewline
+prbarr & `probability' of arrest & Deterrent & ratio of arrests to
+offenses\tabularnewline
+prbconv & `probability' of conviction & Deterrent & ratio of convictions
+to arrests\tabularnewline
+prbpris & `probability' of prison sentence & Deterrent & proportion of
+total convictions resulting in prison sentences\tabularnewline
+avgsen & avg. sentence, days & Deterrent & average sentence in
+days\tabularnewline
+polpc & police per capita & Deterrent &\tabularnewline
+density & people per sq. mile & Demographic & country population divided
+by county land area\tabularnewline
+taxpc & tax revenue per capita & Demographic &\tabularnewline
+west & =1 if in western N.C. & Region & dummy\tabularnewline
+central & =1 if in central N.C. & Region & dummy\tabularnewline
+urban & =1 if in SMSA & Urban & dummy\tabularnewline
+pctmin80 & perc. minority, 1980 & Demographic & proportion of country
+population that is minority or nonwhite\tabularnewline
+wcon & weekly wage, construction & Wages & average weekly wage in that
+sector\tabularnewline
+wtuc & wkly wge, trns, util, commun & Wages & average weekly wage in
+that sector\tabularnewline
+wtrd & wkly wge, whlesle, retail trade & Wages & average weekly wage in
+that sector\tabularnewline
+wfir & wkly wge, fin, ins, real est & Wages & average weekly wage in
+that sector\tabularnewline
+wser & wkly wge, service industry & Wages & average weekly wage in that
+sector\tabularnewline
+wmfg & wkly wge, manufacturing & Wages & average weekly wage in that
+sector\tabularnewline
+wfed & wkly wge, fed employees & Wages & average weekly wage in that
+sector\tabularnewline
+wsta & wkly wge, state employees & Wages & average weekly wage in that
+sector\tabularnewline
+wloc & wkly wge, local gov emps & Wages & average weekly wage in that
+sector\tabularnewline
+mix & offense mix: face-to-face/other & Demographic & ratio of
+face-to-face crimes (robbery, assault, rape) to non-face-to-face
+crimes\tabularnewline
+pctymle & percent young male & Demographic & proportion of country
+population that is male between 15 and 24\tabularnewline
+\bottomrule
+\end{longtable}
+
+To get a better sense of the data set the summary function was run.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      county           year        crmrte             prbarr       
+##  Min.   :  1.0   Min.   :87   Min.   :0.005533   Min.   :0.09277  
+##  1st Qu.: 52.0   1st Qu.:87   1st Qu.:0.020927   1st Qu.:0.20568  
+##  Median :105.0   Median :87   Median :0.029986   Median :0.27095  
+##  Mean   :101.6   Mean   :87   Mean   :0.033400   Mean   :0.29492  
+##  3rd Qu.:152.0   3rd Qu.:87   3rd Qu.:0.039642   3rd Qu.:0.34438  
+##  Max.   :197.0   Max.   :87   Max.   :0.098966   Max.   :1.09091  
+##  NA's   :6       NA's   :6    NA's   :6          NA's   :6        
+##         prbconv      prbpris           avgsen           polpc         
+##             : 5   Min.   :0.1500   Min.   : 5.380   Min.   :0.000746  
+##  0.588859022: 2   1st Qu.:0.3648   1st Qu.: 7.340   1st Qu.:0.001231  
+##  `          : 1   Median :0.4234   Median : 9.100   Median :0.001485  
+##  0.068376102: 1   Mean   :0.4108   Mean   : 9.647   Mean   :0.001702  
+##  0.140350997: 1   3rd Qu.:0.4568   3rd Qu.:11.420   3rd Qu.:0.001877  
+##  0.154451996: 1   Max.   :0.6000   Max.   :20.700   Max.   :0.009054  
+##  (Other)    :86   NA's   :6        NA's   :6        NA's   :6         
+##     density            taxpc             west           central      
+##  Min.   :0.00002   Min.   : 25.69   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.54741   1st Qu.: 30.66   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.96226   Median : 34.87   Median :0.0000   Median :0.0000  
+##  Mean   :1.42884   Mean   : 38.06   Mean   :0.2527   Mean   :0.3736  
+##  3rd Qu.:1.56824   3rd Qu.: 40.95   3rd Qu.:0.5000   3rd Qu.:1.0000  
+##  Max.   :8.82765   Max.   :119.76   Max.   :1.0000   Max.   :1.0000  
+##  NA's   :6         NA's   :6        NA's   :6        NA's   :6       
+##      urban            pctmin80           wcon            wtuc      
+##  Min.   :0.00000   Min.   : 1.284   Min.   :193.6   Min.   :187.6  
+##  1st Qu.:0.00000   1st Qu.: 9.845   1st Qu.:250.8   1st Qu.:374.6  
+##  Median :0.00000   Median :24.312   Median :281.4   Median :406.5  
+##  Mean   :0.08791   Mean   :25.495   Mean   :285.4   Mean   :411.7  
+##  3rd Qu.:0.00000   3rd Qu.:38.142   3rd Qu.:314.8   3rd Qu.:443.4  
+##  Max.   :1.00000   Max.   :64.348   Max.   :436.8   Max.   :613.2  
+##  NA's   :6         NA's   :6        NA's   :6       NA's   :6      
+##       wtrd            wfir            wser             wmfg      
+##  Min.   :154.2   Min.   :170.9   Min.   : 133.0   Min.   :157.4  
+##  1st Qu.:190.9   1st Qu.:286.5   1st Qu.: 229.7   1st Qu.:288.9  
+##  Median :203.0   Median :317.3   Median : 253.2   Median :320.2  
+##  Mean   :211.6   Mean   :322.1   Mean   : 275.6   Mean   :335.6  
+##  3rd Qu.:225.1   3rd Qu.:345.4   3rd Qu.: 280.5   3rd Qu.:359.6  
+##  Max.   :354.7   Max.   :509.5   Max.   :2177.1   Max.   :646.9  
+##  NA's   :6       NA's   :6       NA's   :6        NA's   :6      
+##       wfed            wsta            wloc            mix         
+##  Min.   :326.1   Min.   :258.3   Min.   :239.2   Min.   :0.01961  
+##  1st Qu.:400.2   1st Qu.:329.3   1st Qu.:297.3   1st Qu.:0.08074  
+##  Median :449.8   Median :357.7   Median :308.1   Median :0.10186  
+##  Mean   :442.9   Mean   :357.5   Mean   :312.7   Mean   :0.12884  
+##  3rd Qu.:478.0   3rd Qu.:382.6   3rd Qu.:329.2   3rd Qu.:0.15175  
+##  Max.   :598.0   Max.   :499.6   Max.   :388.1   Max.   :0.46512  
+##  NA's   :6       NA's   :6       NA's   :6       NA's   :6        
+##     pctymle       
+##  Min.   :0.06216  
+##  1st Qu.:0.07443  
+##  Median :0.07771  
+##  Mean   :0.08396  
+##  3rd Qu.:0.08350  
+##  Max.   :0.24871  
+##  NA's   :6
+\end{verbatim}
+
+This function provides a high level view of each variable. Six rows have
+missing values for all variables. In addition, there is one duplicate
+row. Also the variable prbconv is loaded as a factor, so it needs to be
+converted to numeric. These issues are handled below to create the
+initial data set.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#eliminate N/A's}
+\NormalTok{data_crmrte <-}\StringTok{ }\NormalTok{data[}\OperatorTok{!}\KeywordTok{is.na}\NormalTok{(data}\OperatorTok{$}\NormalTok{crmrte),]}
+
+\CommentTok{#remove duplicates}
+\NormalTok{data_crmrte <-}\StringTok{ }\NormalTok{data_crmrte }\OperatorTok{%>%}\StringTok{ }\KeywordTok{distinct}\NormalTok{()}
+
+\CommentTok{#make prbconv numeric}
+\NormalTok{data_crmrte}\OperatorTok{$}\NormalTok{prbconv <-}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{as.character}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{prbconv))}
+\end{Highlighting}
+\end{Shaded}
+
+With 25 original variables in the data set the natural place to start is
+with the dependent variable, crmrte. To get a better sense of this
+variable, the distribution is graphed below.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{quantile}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{crmrte, }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{.01}\NormalTok{, }\FloatTok{.05}\NormalTok{, }\FloatTok{.10}\NormalTok{, }\FloatTok{.25}\NormalTok{, }\FloatTok{.50}\NormalTok{,  }\FloatTok{.75}\NormalTok{, }\FloatTok{.90}\NormalTok{, }\FloatTok{.95}\NormalTok{, }\FloatTok{.99}\NormalTok{, }\FloatTok{1.0}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         0%         1%         5%        10%        25%        50%        75% 
+## 0.00553320 0.01006330 0.01235660 0.01418007 0.02060425 0.03000200 0.04024925 
+##        90%        95%        99%       100% 
+## 0.06054659 0.07191830 0.08954881 0.09896590
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{hist}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{crmrte,}\DataTypeTok{breaks=}\DecValTok{20}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{boxplot}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{crmrte, }\DataTypeTok{main=}\StringTok{"Boxplot of crmrte"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-6-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{crmrte)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-6-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{qqnorm}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{crmrte)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-6-4.pdf}\\
+There are several outliers in the variable crmrte and the distribution
+is right skewed. We have ninety observations so perhaps we normality is
+not a top concern but this distribution is not perfectly normal. The
+largest outliers on the right side of the distribution are examined.
+Unfortunately, looking at these observations in a dataframe does not
+show any obvious patterns (e.g.~they are all in the same region, they
+all have similar values of a variable like density, etc.)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data_crmrte[data_crmrte}\OperatorTok{$}\NormalTok{crmrte }\OperatorTok{>}\StringTok{ }\FloatTok{0.065}\NormalTok{,] }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    county year    crmrte   prbarr  prbconv  prbpris avgsen      polpc   density
+## 23     51   87 0.0883849 0.155248 0.259833 0.407628  11.93 0.00190802 3.9345510
+## 25     55   87 0.0790163 0.224628 0.207831 0.304348  13.57 0.00400962 0.5115089
+## 29     63   87 0.0706599 0.133225 0.459216 0.363636  11.51 0.00237609 5.6744967
+## 30     65   87 0.0658801 0.287330 0.154452 0.403922   9.84 0.00185739 1.1679842
+## 53    119   87 0.0989659 0.149094 0.347800 0.486183   7.13 0.00223135 8.8276520
+## 57    129   87 0.0834982 0.236601 0.393413 0.415158   9.57 0.00255849 6.2864866
+## 82    181   87 0.0729479 0.182590 0.343023 0.548023   7.06 0.00172948 1.5702811
+##        taxpc west central urban pctmin80     wcon     wtuc     wtrd     wfir
+## 23  35.69936    0       0     1 37.77920 283.6695 412.4720 213.7524 324.8357
+## 25 119.76145    0       0     0  6.49622 309.5238 445.2762 189.7436 284.5933
+## 29  50.19918    0       1     1 38.22300 349.3267 548.9865 238.9154 435.1107
+## 30  30.62824    0       0     0 51.69320 362.1527 540.1061 209.0579 316.2955
+## 53  75.67243    0       1     1 28.54600 436.7666 548.3239 354.6761 509.4655
+## 57  67.67963    0       0     1 23.04410 315.5760 392.0999 220.4530 363.2880
+## 82  27.59179    0       1     0 44.62830 244.8362 365.4716 279.2273 325.0271
+##        wser   wmfg   wfed   wsta   wloc        mix    pctymle
+## 23 257.3344 441.72 433.94 367.34 333.71 0.10474319 0.14223780
+## 25 221.3903 319.21 338.91 361.68 326.08 0.08437271 0.07613807
+## 29 391.3081 646.85 563.77 415.51 362.58 0.07585382 0.09468981
+## 30 216.4589 313.71 543.03 348.88 329.16 0.09364294 0.07622346
+## 53 354.3007 494.30 568.40 329.22 379.77 0.16869897 0.07916495
+## 57 292.7027 464.49 548.49 421.36 319.08 0.07871422 0.08109921
+## 82 213.5822 290.69 453.53 317.23 286.45 0.10003893 0.07977433
+\end{verbatim}
+
+For campaign purposes, we want to predict crime. We want our candidate
+to be able to say that he or she can reduce crime in order to win votes.
+What is the most effective way to convey that? Using crime rate as it
+appears in the data set is using the level of crime rate and would
+suggest the following statement as a campaign slogan - ``I can reduce
+crime to this rate by doing x, y, and z''. Transforming crime rate into
+the log of crime rate allows for the statement ``I can reduce crime by
+n\% by doing x, y, and z.'' We find the latter more powerful and
+meaningful to voters since voters have no idea about the level of crime
+rates. In addition, we will show that the transformation of crime rate
+imrpoves the normaility and distribution of the variable, which will
+often reduce skew in the errors as well.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data_crmrte}\OperatorTok{$}\NormalTok{log_crmrte <-}\StringTok{ }\KeywordTok{log}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{crmrte)}
+\KeywordTok{hist}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{log_crmrte,}\DataTypeTok{breaks=}\DecValTok{20}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{boxplot}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{log_crmrte, }\DataTypeTok{main=}\StringTok{"Boxplot of log of crmrte"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-8-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{log_crmrte)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-8-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{qqnorm}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{log_crmrte)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-8-4.pdf} The
+histogram of the transformed crime rate is much more symmetrical and
+shows much less right skew. The box plot shows all of the outliers on
+the high end have been removed, though one outlier on the low end has
+been introduced. The scatter plot looks much more normal, and the Q-Q
+plot is much closer to normal with the data points hugging the 45 degree
+line much more closely. Given the stronger argument for the political
+campaign and the benefits to normality we have chosen to model the
+tranformation of crime rate as opposed to crime rate.\\
+
+\textbf{Groupings}\\
+In order to digest the data in the data set we decided to group the
+variables into five groups: deterrent, wages, demographic, region, and
+urban. We performed exploratory data analysis on all of these
+variables.\\
+
+The group is deterrent data. As cited in the original paper, these
+variables were hypothesized to reduce crime rate through
+disincentivizing crime. Essentially, as the probability of getting
+caught increases, criminals' desire to commit crimes decreases.\\
+
+\textbf{Deterrent Data}\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{deterrent_data <-}\StringTok{ }\NormalTok{data_crmrte[,}\KeywordTok{c}\NormalTok{(}\StringTok{'prbarr'}\NormalTok{,}\StringTok{'prbconv'}\NormalTok{,}\StringTok{'prbpris'}\NormalTok{,}\StringTok{'crmrte'}\NormalTok{,}
+                          \StringTok{'avgsen'}\NormalTok{,}\StringTok{'polpc'}\NormalTok{)]}
+
+\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{gather}\NormalTok{(deterrent_data[,}\KeywordTok{c}\NormalTok{(}\StringTok{'prbarr'}\NormalTok{,}\StringTok{'prbconv'}\NormalTok{,}\StringTok{'prbpris'}\NormalTok{,}
+                                    \StringTok{'avgsen'}\NormalTok{,}\StringTok{'polpc'}\NormalTok{)]), }\KeywordTok{aes}\NormalTok{(value)) }\OperatorTok{+}\StringTok{ }
+\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{bins =} \DecValTok{10}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\NormalTok{key, }\DataTypeTok{scales =} \StringTok{'free_x'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my_vars1 <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"prbarr"}\NormalTok{,}\StringTok{"prbconv"}\NormalTok{,}\StringTok{"prbpris"}\NormalTok{)}
+\NormalTok{deterrent_data2 <-}\StringTok{ }\NormalTok{deterrent_data[my_vars1]}
+\NormalTok{my_vars2 <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"polpc"}\NormalTok{)}
+\NormalTok{deterrent_data3 <-}\StringTok{ }\NormalTok{deterrent_data[my_vars2]}
+
+\KeywordTok{boxplot}\NormalTok{(deterrent_data2, }\DataTypeTok{main=}\StringTok{"Boxplot of prbarr, prbconv, prbpris"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-9-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{boxplot}\NormalTok{(deterrent_data3, }\DataTypeTok{main=}\StringTok{"Boxplot of polpc"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-9-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{boxplot}\NormalTok{(deterrent_data}\OperatorTok{$}\NormalTok{avgsen, }\DataTypeTok{main=}\StringTok{"Boxplot of avgsen"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-9-4.pdf}\\
+The first four histograms show right skew while prbpris shows left skew.
+The biggest outlier is observation 51. This observation has the lowest
+crime rate in the data set, obviously the highest polpc (police per
+capita), the highest avg sentence, the third highest prbconv, and the
+lowest pctmin80. This observation is likely to affect many of the
+regressions so it will need to be examined further. These variables are
+candidates to be transformed.\\
+
+\textbf{Wages Data}\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#create a dataframe of just the wage variables}
+\NormalTok{wages_data <-}\StringTok{ }\NormalTok{data_crmrte[,}\KeywordTok{c}\NormalTok{(}\StringTok{'wcon'}\NormalTok{,}\StringTok{'wtuc'}\NormalTok{,}\StringTok{'wtrd'}\NormalTok{,}\StringTok{'wfir'}\NormalTok{, }\StringTok{'wser'}\NormalTok{,}
+                      \StringTok{'wmfg'}\NormalTok{,}\StringTok{'wfed'}\NormalTok{, }\StringTok{'wsta'}\NormalTok{, }\StringTok{'wloc'}\NormalTok{)]}
+
+\CommentTok{#plot histograms of just the wage variables}
+\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{gather}\NormalTok{(wages_data), }\KeywordTok{aes}\NormalTok{(value)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{bins =} \DecValTok{10}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\NormalTok{key, }\DataTypeTok{scales =} \StringTok{'free_x'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#generate boxplots of just the wage variables}
+\KeywordTok{boxplot}\NormalTok{(wages_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-10-2.pdf}\\
+There is an obvious outlier in wser. This seems like a typo. The next
+highest average weekly wage in any sector is 646 versus the value of
+2177.If you take the average of all weekly wages it has the highest
+average but only the 24th highest taxpc (though tax revenue is driven
+largely by sales and property taxes, many areas have local income tax as
+well. It is very possible that it is an error but we will revisit this
+later. For now, we create an additional variable that is the median of
+all wage variables for each observation. If it conveys as much
+information, it has the benefit of increasing our degress of freedom and
+removing the effect of the outlier.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data_crmrte}\OperatorTok{$}\NormalTok{median_wage <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(data_crmrte[}\KeywordTok{c}\NormalTok{(}\StringTok{"wcon"}\NormalTok{, }\StringTok{"wtuc"}\NormalTok{, }\StringTok{"wtrd"}\NormalTok{,}
+                                               \StringTok{"wfir"}\NormalTok{, }\StringTok{"wser"}\NormalTok{, }\StringTok{"wmfg"}\NormalTok{,}
+                                               \StringTok{"wfed"}\NormalTok{, }\StringTok{"wsta"}\NormalTok{, }\StringTok{"wloc"}\NormalTok{)], }
+                                 \DecValTok{1}\NormalTok{, }\DataTypeTok{FUN=}\NormalTok{median, }\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Region Data\_\_\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#create a dataframe of just the wage variables}
+\NormalTok{dummies_data <-}\StringTok{ }\NormalTok{data_crmrte[,}\KeywordTok{c}\NormalTok{(}\StringTok{'west'}\NormalTok{,}\StringTok{'central'}\NormalTok{)]}
+
+\CommentTok{#plot histograms of just the dummy variables}
+\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{gather}\NormalTok{(dummies_data), }\KeywordTok{aes}\NormalTok{(value)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{bins =} \DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\NormalTok{key)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#just a quick check that there is no overlap}
+\NormalTok{region_check <-}\StringTok{ }\NormalTok{data_crmrte[}\KeywordTok{which}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{west }\OperatorTok{==}\StringTok{ }\DecValTok{1} \OperatorTok{&&}\StringTok{ }\NormalTok{data_crmrte}\OperatorTok{$}\NormalTok{central }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{)]}
+\end{Highlighting}
+\end{Shaded}
+
+The regions are broken up into central, west, and east. East is left out
+of the data set and it's effect as the final level of the indicator
+variable will move to the intercept.\\
+
+\textbf{Urban Data}\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#plot histograms of just the wage variables}
+\KeywordTok{hist}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{urban)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-13-1.pdf}
+Urban did not fit into a great grouping so we left this variable on its
+own. A histogram shows that the state has relatively few urban counties,
+something to keep in mind when analyzing other variables such as
+density.\\
+
+\textbf{Demographic Data}\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#create a dataframe of just the demographic variables}
+\NormalTok{demographic_data <-}\StringTok{ }\NormalTok{data_crmrte[,}\KeywordTok{c}\NormalTok{(}\StringTok{'density'}\NormalTok{, }\StringTok{'taxpc'}\NormalTok{, }\StringTok{'pctmin80'}\NormalTok{,}
+                                   \StringTok{'mix'}\NormalTok{, }\StringTok{'pctymle'}\NormalTok{)]}
+
+\CommentTok{#plot histograms of just the demographic variables}
+\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{gather}\NormalTok{(demographic_data), }\KeywordTok{aes}\NormalTok{(value)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{bins =} \DecValTok{10}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\NormalTok{key, }\DataTypeTok{scales =} \StringTok{'free_x'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Lots of skewed distributions above, particularly in pctymle and taxpc}
+\CommentTok{#generate boxplots of just the demographic variables}
+\NormalTok{demographic_data2 <-}\StringTok{ }\NormalTok{demographic_data[}\KeywordTok{c}\NormalTok{(}\StringTok{"taxpc"}\NormalTok{, }\StringTok{"pctmin80"}\NormalTok{)]}
+\KeywordTok{boxplot}\NormalTok{(demographic_data2)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-14-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{demographic_data3 <-}\StringTok{ }\NormalTok{demographic_data[}\KeywordTok{c}\NormalTok{(}\StringTok{"pctymle"}\NormalTok{)]}
+\KeywordTok{boxplot}\NormalTok{(demographic_data3)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-14-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{demographic_data4 <-}\StringTok{ }\NormalTok{demographic_data[}\KeywordTok{c}\NormalTok{(}\StringTok{"density"}\NormalTok{)]}
+\KeywordTok{boxplot}\NormalTok{(demographic_data4)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-14-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{demographic_data5 <-}\StringTok{ }\NormalTok{demographic_data[}\KeywordTok{c}\NormalTok{(}\StringTok{"mix"}\NormalTok{)]}
+\KeywordTok{boxplot}\NormalTok{(demographic_data5)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-14-5.pdf}
+Once again we see a lot of right skewed distributions in the historgams
+and in the box plots.\\
+
+After exploring all of the variables we decided to tranform the other
+variables that are potentially under a politican's control - the
+deterrent variables. This gives us our final data set andso we can start
+running regressions.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data_crmrte}\OperatorTok{$}\NormalTok{prbconv <-}\StringTok{ }\KeywordTok{as.numeric}\NormalTok{(}\KeywordTok{as.character}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{prbconv))}
+\NormalTok{data_crmrte}\OperatorTok{$}\NormalTok{log_prbarr <-}\StringTok{ }\KeywordTok{log}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{prbarr)}
+\NormalTok{data_crmrte}\OperatorTok{$}\NormalTok{log_prbconv <-}\StringTok{ }\KeywordTok{log}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{prbconv)}
+\NormalTok{data_crmrte}\OperatorTok{$}\NormalTok{log_prbpris <-}\StringTok{ }\KeywordTok{log}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{prbpris)}
+\NormalTok{data_crmrte}\OperatorTok{$}\NormalTok{log_avgsen <-}\StringTok{ }\KeywordTok{log}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{avgsen)}
+\NormalTok{data_crmrte}\OperatorTok{$}\NormalTok{log_polpc <-}\StringTok{ }\KeywordTok{log}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{polpc)}
+\NormalTok{data_crmrte}\OperatorTok{$}\NormalTok{log_taxpc <-}\StringTok{ }\KeywordTok{log}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{taxpc)}
+
+
+\CommentTok{#plot histograms of just the demographic variables}
+\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{gather}\NormalTok{(data_crmrte[,}\KeywordTok{c}\NormalTok{(}\StringTok{'log_prbarr'}\NormalTok{, }\StringTok{'log_prbconv'}\NormalTok{, }\StringTok{'log_prbpris'}\NormalTok{, }\StringTok{'log_avgsen'}\NormalTok{, }\StringTok{'log_polpc'}\NormalTok{, }\StringTok{'log_taxpc'}\NormalTok{) ]), }\KeywordTok{aes}\NormalTok{(value)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{bins =} \DecValTok{10}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\NormalTok{key, }\DataTypeTok{scales =} \StringTok{'free_x'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-15-1.pdf}\\
+Though the distribution of the variables still exhibits skew, the skew
+does seem to be reduced.
+
+\textbf{Log Tranformed Dependent Variable Comparison}
+
+In order to settle on the final data set we compare an all-in log-log
+model with an all-in log-linear to see which dependent variables are
+more suitable.\\
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{###### Initial Models #####}
+\NormalTok{all_in_model <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(crmrte }\OperatorTok{~}\StringTok{ }\NormalTok{prbarr }\OperatorTok{+}\StringTok{ }\NormalTok{prbconv }\OperatorTok{+}\StringTok{ }\NormalTok{prbpris }
+                   \OperatorTok{+}\StringTok{ }\NormalTok{avgsen }\OperatorTok{+}\StringTok{ }\NormalTok{polpc }\OperatorTok{+}\StringTok{ }\NormalTok{density}
+                   \OperatorTok{+}\StringTok{ }\NormalTok{taxpc }\OperatorTok{+}\StringTok{ }\NormalTok{west }\OperatorTok{+}\StringTok{ }\NormalTok{central }\OperatorTok{+}\StringTok{ }\NormalTok{urban }\OperatorTok{+}\StringTok{ }\NormalTok{pctmin80 }\OperatorTok{+}\StringTok{ }\NormalTok{wcon}
+                   \OperatorTok{+}\StringTok{ }\NormalTok{wtuc }\OperatorTok{+}\StringTok{ }\NormalTok{wtrd }\OperatorTok{+}\StringTok{ }\NormalTok{wfir }\OperatorTok{+}\StringTok{ }\NormalTok{wser }\OperatorTok{+}\StringTok{ }\NormalTok{wmfg }
+                   \OperatorTok{+}\StringTok{ }\NormalTok{wfed }\OperatorTok{+}\StringTok{ }\NormalTok{wsta }\OperatorTok{+}\StringTok{ }\NormalTok{wloc}
+                   \OperatorTok{+}\StringTok{ }\NormalTok{mix }\OperatorTok{+}\StringTok{ }\NormalTok{pctymle,}
+                   \DataTypeTok{data =}\NormalTok{ data_crmrte)}
+\NormalTok{se.all_in_model =}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{diag}\NormalTok{(}\KeywordTok{vcovHC}\NormalTok{(all_in_model)))}
+\KeywordTok{coeftest}\NormalTok{(all_in_model, }\DataTypeTok{vcov =}\NormalTok{ vcovHC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## t test of coefficients:
+## 
+##                Estimate  Std. Error t value  Pr(>|t|)    
+## (Intercept)  1.3853e-02  3.0755e-02  0.4504 0.6538622    
+## prbarr      -5.1466e-02  1.5689e-02 -3.2805 0.0016467 ** 
+## prbconv     -1.8633e-02  6.5853e-03 -2.8295 0.0061464 ** 
+## prbpris      3.1727e-03  1.3586e-02  0.2335 0.8160642    
+## avgsen      -3.9858e-04  5.5361e-04 -0.7200 0.4740570    
+## polpc        6.9679e+00  2.9536e+00  2.3591 0.0212406 *  
+## density      5.3314e-03  1.4895e-03  3.5793 0.0006464 ***
+## taxpc        1.6240e-04  2.8408e-04  0.5717 0.5694537    
+## west        -2.5652e-03  4.4698e-03 -0.5739 0.5679579    
+## central     -4.2416e-03  3.7423e-03 -1.1334 0.2610725    
+## urban       -9.6498e-05  8.2752e-03 -0.0117 0.9907307    
+## pctmin80     3.2542e-04  1.3849e-04  2.3497 0.0217429 *  
+## wcon         2.3025e-05  3.2876e-05  0.7004 0.4861334    
+## wtuc         6.1914e-06  1.9862e-05  0.3117 0.7562178    
+## wtrd         2.8767e-05  8.7294e-05  0.3295 0.7427756    
+## wfir        -3.5455e-05  3.5699e-05 -0.9932 0.3242068    
+## wser        -1.7158e-06  9.9447e-05 -0.0173 0.9862856    
+## wmfg        -8.9675e-06  1.7469e-05 -0.5133 0.6094087    
+## wfed         2.9075e-05  3.7780e-05  0.7696 0.4442480    
+## wsta        -2.2302e-05  3.6828e-05 -0.6056 0.5468431    
+## wloc         1.4456e-05  8.5367e-05  0.1693 0.8660410    
+## mix         -1.8693e-02  2.2922e-02 -0.8155 0.4176761    
+## pctymle      1.0125e-01  4.7826e-02  2.1170 0.0379748 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{AIC}\NormalTok{(all_in_model, }\DataTypeTok{k=}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] -585.5858
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all_in_model_log_level <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(log_crmrte }\OperatorTok{~}\StringTok{ }\NormalTok{prbarr }\OperatorTok{+}\StringTok{ }\NormalTok{prbconv }\OperatorTok{+}\StringTok{ }\NormalTok{prbpris }
+                             \OperatorTok{+}\StringTok{ }\NormalTok{avgsen }\OperatorTok{+}\StringTok{ }\NormalTok{polpc }\OperatorTok{+}\StringTok{ }\NormalTok{density}
+                             \OperatorTok{+}\StringTok{ }\NormalTok{taxpc }\OperatorTok{+}\StringTok{ }\NormalTok{west }\OperatorTok{+}\StringTok{ }\NormalTok{central }\OperatorTok{+}\StringTok{ }\NormalTok{urban }
+                             \OperatorTok{+}\StringTok{ }\NormalTok{pctmin80 }\OperatorTok{+}\StringTok{ }\NormalTok{wcon}
+                             \OperatorTok{+}\StringTok{ }\NormalTok{wtuc }\OperatorTok{+}\StringTok{ }\NormalTok{wtrd }\OperatorTok{+}\StringTok{ }\NormalTok{wfir }\OperatorTok{+}\StringTok{ }\NormalTok{wser }\OperatorTok{+}\StringTok{ }\NormalTok{wmfg }
+                             \OperatorTok{+}\StringTok{ }\NormalTok{wfed }\OperatorTok{+}\StringTok{ }\NormalTok{wsta }\OperatorTok{+}\StringTok{ }\NormalTok{wloc}
+                             \OperatorTok{+}\StringTok{ }\NormalTok{mix }\OperatorTok{+}\StringTok{ }\NormalTok{pctymle,}
+                             \DataTypeTok{data =}\NormalTok{ data_crmrte)}
+\NormalTok{se.all_in_model_log_level =}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{diag}\NormalTok{(}\KeywordTok{vcovHC}\NormalTok{(all_in_model_log_level)))}
+\KeywordTok{coeftest}\NormalTok{(all_in_model_log_level, }\DataTypeTok{vcov =}\NormalTok{ vcovHC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## t test of coefficients:
+## 
+##                Estimate  Std. Error t value  Pr(>|t|)    
+## (Intercept) -4.0261e+00  8.4822e-01 -4.7466 1.128e-05 ***
+## prbarr      -1.8891e+00  3.7955e-01 -4.9773 4.770e-06 ***
+## prbconv     -6.5603e-01  1.7443e-01 -3.7611 0.0003579 ***
+## prbpris     -9.3077e-02  3.9921e-01 -0.2332 0.8163542    
+## avgsen      -7.8769e-03  1.6125e-02 -0.4885 0.6267962    
+## polpc        1.5484e+02  8.6523e+01  1.7895 0.0780510 .  
+## density      1.1653e-01  5.4037e-02  2.1566 0.0346326 *  
+## taxpc        3.3224e-03  7.2890e-03  0.4558 0.6500012    
+## west        -1.1492e-01  1.2509e-01 -0.9187 0.3615403    
+## central     -1.0078e-01  9.2053e-02 -1.0948 0.2775232    
+## urban       -1.6923e-01  2.2872e-01 -0.7399 0.4619535    
+## pctmin80     9.9770e-03  3.0480e-03  3.2733 0.0016833 ** 
+## wcon         4.6001e-04  8.3564e-04  0.5505 0.5838140    
+## wtuc         1.0174e-04  6.0187e-04  0.1690 0.8662750    
+## wtrd         2.5964e-04  1.7638e-03  0.1472 0.8834136    
+## wfir        -1.1015e-03  1.1960e-03 -0.9210 0.3603557    
+## wser        -1.3142e-04  1.5060e-03 -0.0873 0.9307193    
+## wmfg        -2.0528e-04  5.1630e-04 -0.3976 0.6921878    
+## wfed         2.3405e-03  1.0820e-03  2.1632 0.0340968 *  
+## wsta        -1.1357e-03  8.9769e-04 -1.2651 0.2102213    
+## wloc         5.8983e-04  2.4003e-03  0.2457 0.8066400    
+## mix         -2.3924e-01  6.2632e-01 -0.3820 0.7036869    
+## pctymle      2.7706e+00  1.4330e+00  1.9334 0.0574191 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{AIC}\NormalTok{(all_in_model_log_level, }\DataTypeTok{k=}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 21.354
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all_in_model_log_log <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(log_crmrte }\OperatorTok{~}\StringTok{ }\NormalTok{log_prbarr }\OperatorTok{+}\StringTok{ }\NormalTok{log_prbconv }
+                             \OperatorTok{+}\StringTok{ }\NormalTok{log_prbpris }\OperatorTok{+}\StringTok{ }\NormalTok{log_avgsen }\OperatorTok{+}\StringTok{ }\NormalTok{log_polpc}
+                             \OperatorTok{+}\StringTok{ }\NormalTok{density}\OperatorTok{+}\StringTok{ }\NormalTok{log_taxpc }\OperatorTok{+}\StringTok{ }\NormalTok{west }\OperatorTok{+}\StringTok{ }\NormalTok{central }
+                             \OperatorTok{+}\StringTok{ }\NormalTok{urban }\OperatorTok{+}\StringTok{ }\NormalTok{pctmin80 }\OperatorTok{+}\StringTok{ }\NormalTok{wcon}
+                             \OperatorTok{+}\StringTok{ }\NormalTok{wtuc }\OperatorTok{+}\StringTok{ }\NormalTok{wtrd }\OperatorTok{+}\StringTok{ }\NormalTok{wfir }
+                             \OperatorTok{+}\StringTok{ }\NormalTok{wser }\OperatorTok{+}\StringTok{ }\NormalTok{wmfg }\OperatorTok{+}\StringTok{ }\NormalTok{wfed }\OperatorTok{+}\StringTok{ }\NormalTok{wsta }\OperatorTok{+}\StringTok{ }\NormalTok{wloc}
+                             \OperatorTok{+}\StringTok{ }\NormalTok{mix }\OperatorTok{+}\StringTok{ }\NormalTok{pctymle,}
+                             \DataTypeTok{data =}\NormalTok{ data_crmrte)}
+\NormalTok{se.all_in_model_log_log =}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{diag}\NormalTok{(}\KeywordTok{vcovHC}\NormalTok{(all_in_model_log_log)))}
+\KeywordTok{coeftest}\NormalTok{(all_in_model_log_log, }\DataTypeTok{vcov =}\NormalTok{ vcovHC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## t test of coefficients:
+## 
+##                Estimate  Std. Error t value Pr(>|t|)   
+## (Intercept) -3.36882669  2.97497990 -1.1324 0.261508   
+## log_prbarr  -0.52143620  0.16459898 -3.1679 0.002313 **
+## log_prbconv -0.33101341  0.15365522 -2.1543 0.034820 * 
+## log_prbpris -0.06569465  0.19741379 -0.3328 0.740342   
+## log_avgsen  -0.19652151  0.18205821 -1.0794 0.284261   
+## log_polpc    0.29132794  0.27176129  1.0720 0.287567   
+## density      0.12320127  0.06040422  2.0396 0.045335 * 
+## log_taxpc    0.06158051  0.30979897  0.1988 0.843040   
+## west        -0.18453792  0.16353910 -1.1284 0.263174   
+## central     -0.10789292  0.09991865 -1.0798 0.284100   
+## urban       -0.14767055  0.26670745 -0.5537 0.581641   
+## pctmin80     0.00956927  0.00358175  2.6717 0.009466 **
+## wcon         0.00078953  0.00090745  0.8701 0.387376   
+## wtuc         0.00010106  0.00075559  0.1337 0.894001   
+## wtrd         0.00029022  0.00177967  0.1631 0.870952   
+## wfir        -0.00108230  0.00125937 -0.8594 0.393186   
+## wser        -0.00042887  0.00096365 -0.4451 0.657718   
+## wmfg        -0.00014147  0.00061356 -0.2306 0.818343   
+## wfed         0.00224918  0.00136611  1.6464 0.104363   
+## wsta        -0.00102039  0.00106131 -0.9614 0.339787   
+## wloc         0.00017815  0.00261968  0.0680 0.945986   
+## mix         -0.44834658  0.77846459 -0.5759 0.566587   
+## pctymle      2.00755501  2.60186976  0.7716 0.443075   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{AIC}\NormalTok{(all_in_model_log_log, }\DataTypeTok{k=}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 44.17803
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Not comparing r-squared, just looking at significant variables}
+\KeywordTok{stargazer}\NormalTok{(all_in_model, all_in_model_log_level, }
+\NormalTok{          all_in_model_log_log,}
+          \DataTypeTok{type =} \StringTok{"text"}\NormalTok{, }\DataTypeTok{omit.stat =} \StringTok{"f"}\NormalTok{,}
+          \DataTypeTok{se =} \KeywordTok{list}\NormalTok{(se.all_in_model, se.all_in_model_log_level,}
+\NormalTok{                    se.all_in_model_log_log),}
+          \DataTypeTok{star.cutoffs =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.05}\NormalTok{, }\FloatTok{0.01}\NormalTok{, }\FloatTok{0.001}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## =============================================================
+##                                     Dependent variable:      
+##                               -------------------------------
+##                                 crmrte        log_crmrte     
+##                                  (1)        (2)        (3)   
+## -------------------------------------------------------------
+## prbarr                         -0.051**  -1.889***           
+##                                (0.016)    (0.380)            
+##                                                              
+## prbconv                        -0.019**  -0.656***           
+##                                (0.007)    (0.174)            
+##                                                              
+## prbpris                         0.003      -0.093            
+##                                (0.014)    (0.399)            
+##                                                              
+## avgsen                         -0.0004     -0.008            
+##                                (0.001)    (0.016)            
+##                                                              
+## polpc                           6.968*    154.835            
+##                                (2.954)    (86.523)           
+##                                                              
+## log_prbarr                                          -0.521** 
+##                                                      (0.165) 
+##                                                              
+## log_prbconv                                          -0.331* 
+##                                                      (0.154) 
+##                                                              
+## log_prbpris                                          -0.066  
+##                                                      (0.197) 
+##                                                              
+## log_avgsen                                           -0.197  
+##                                                      (0.182) 
+##                                                              
+## log_polpc                                             0.291  
+##                                                      (0.272) 
+##                                                              
+## density                        0.005***    0.117*    0.123*  
+##                                (0.001)    (0.054)    (0.060) 
+##                                                              
+## taxpc                           0.0002     0.003             
+##                                (0.0003)   (0.007)            
+##                                                              
+## log_taxpc                                             0.062  
+##                                                      (0.310) 
+##                                                              
+## west                            -0.003     -0.115    -0.185  
+##                                (0.004)    (0.125)    (0.164) 
+##                                                              
+## central                         -0.004     -0.101    -0.108  
+##                                (0.004)    (0.092)    (0.100) 
+##                                                              
+## urban                          -0.0001     -0.169    -0.148  
+##                                (0.008)    (0.229)    (0.267) 
+##                                                              
+## pctmin80                       0.0003*    0.010**    0.010** 
+##                                (0.0001)   (0.003)    (0.004) 
+##                                                              
+## wcon                           0.00002     0.0005     0.001  
+##                               (0.00003)   (0.001)    (0.001) 
+##                                                              
+## wtuc                           0.00001     0.0001    0.0001  
+##                               (0.00002)   (0.001)    (0.001) 
+##                                                              
+## wtrd                           0.00003     0.0003    0.0003  
+##                                (0.0001)   (0.002)    (0.002) 
+##                                                              
+## wfir                           -0.00004    -0.001    -0.001  
+##                               (0.00004)   (0.001)    (0.001) 
+##                                                              
+## wser                           -0.00000   -0.0001    -0.0004 
+##                                (0.0001)   (0.002)    (0.001) 
+##                                                              
+## wmfg                           -0.00001   -0.0002    -0.0001 
+##                               (0.00002)   (0.001)    (0.001) 
+##                                                              
+## wfed                           0.00003     0.002*     0.002  
+##                               (0.00004)   (0.001)    (0.001) 
+##                                                              
+## wsta                           -0.00002    -0.001    -0.001  
+##                               (0.00004)   (0.001)    (0.001) 
+##                                                              
+## wloc                           0.00001     0.001     0.0002  
+##                                (0.0001)   (0.002)    (0.003) 
+##                                                              
+## mix                             -0.019     -0.239    -0.448  
+##                                (0.023)    (0.626)    (0.778) 
+##                                                              
+## pctymle                         0.101*     2.771      2.008  
+##                                (0.048)    (1.433)    (2.602) 
+##                                                              
+## Constant                        0.014    -4.026***   -3.369  
+##                                (0.031)    (0.848)    (2.975) 
+##                                                              
+## -------------------------------------------------------------
+## Observations                      90         90        90    
+## R2                              0.855      0.854      0.812  
+## Adjusted R2                     0.807      0.806      0.750  
+## Residual Std. Error (df = 67)   0.008      0.242      0.275  
+## =============================================================
+## Note:                           *p<0.05; **p<0.01; ***p<0.001
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# #r-squared comparison of final two models}
+\CommentTok{# yhat_level_level <- predict(all_in_model)}
+\CommentTok{# }
+\CommentTok{# #get the coefficients}
+\CommentTok{# for (b in coef(all_in_model_log_level))}
+\CommentTok{# \{}
+\CommentTok{#   beta_log_level <- c(beta_log_level, b)}
+\CommentTok{# \}}
+\CommentTok{# #calculate the predictions}
+\CommentTok{# for (b in coef(all_in_model_log_level))}
+\CommentTok{# \{}
+\CommentTok{#   beta_log_level <- c(beta_log_level, b)}
+\CommentTok{# \}}
+\CommentTok{# }
+\CommentTok{# data_crmrte$log_level_yhat <- exp(--3.36882669}
+\CommentTok{#                                   -0.5214362*data_crmrte$log_prbarr}
+\CommentTok{#                                   -0.33101341*data_crmrte$log_prbconv}
+\CommentTok{#                                   -0.06569465*data_crmrte$log_prbpris}
+\CommentTok{#                                   -0.19652151*data_crmrte$log_avgsen}
+\CommentTok{#                                   +0.29132794*data_crmrte$log_polpc}
+\CommentTok{#                                   +0.12320127*data_crmrte$density}
+\CommentTok{#                                   +0.06158051*data_crmrte$log_taxpc}
+\CommentTok{#                                   -0.18453792*data_crmrte$west}
+\CommentTok{#                                   -0.10789292*data_crmrte$central}
+\CommentTok{#                                   -0.14767055*data_crmrte$urban}
+\CommentTok{#                                   +0.00956927*data_crmrte$pctmin80}
+\CommentTok{#                                   +0.00078953*data_crmrte$wcon}
+\CommentTok{#                                   +0.00010106*data_crmrte$wtuc}
+\CommentTok{#                                   +0.00029022*data_crmrte$wtrd}
+\CommentTok{#                                   -0.0010823*data_crmrte$wfir}
+\CommentTok{#                                   -0.00042887*data_crmrte$wser}
+\CommentTok{#                                   -0.00014147*data_crmrte$wmfg}
+\CommentTok{#                                   +0.00224918*data_crmrte$wfed}
+\CommentTok{#                                   -0.00102039*data_crmrte$wsta}
+\CommentTok{#                                   +0.00017815*data_crmrte$wloc}
+\CommentTok{#                                   -0.44834658*data_crmrte$mix}
+\CommentTok{#                                   +2.00755501*data_crmrte$pctymle}
+\CommentTok{#                                   )}
+\CommentTok{# r_squared_level_level <- cor(data_crmrte$crmrte, yhat_level_level)}
+\CommentTok{# r_squared_log_level <- cor(data_crmrte$crmrte, data_crmrte$log_level_yhat)}
+\CommentTok{# (r_squared_level_level)}
+\CommentTok{# (r_squared_log_level)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Model 1: Simple Model}\\
+
+In order to create a simple model we decided to build using a bottom up
+approach. We looked at a correlation matrix
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Anyone know how to print this better?}
+\KeywordTok{cor}\NormalTok{(data_crmrte}\OperatorTok{$}\NormalTok{log_crmrte,data_crmrte)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in cor(data_crmrte$log_crmrte, data_crmrte): the standard deviation is
+## zero
+\end{verbatim}
+
+\begin{verbatim}
+##          county year    crmrte     prbarr    prbconv    prbpris      avgsen
+## [1,] 0.02376789   NA 0.9415465 -0.4727669 -0.4468136 0.02147024 -0.04936931
+##          polpc   density     taxpc       west   central     urban  pctmin80
+## [1,] 0.0104058 0.6330234 0.3583234 -0.4143996 0.1847192 0.4914645 0.2329182
+##           wcon      wtuc      wtrd      wfir      wser      wmfg      wfed
+## [1,] 0.3937149 0.2014649 0.3937924 0.2932426 -0.113128 0.3075373 0.5233058
+##           wsta      wloc        mix   pctymle log_crmrte median_wage log_prbarr
+## [1,] 0.1697021 0.2885668 -0.1247344 0.2781547          1    0.454422 -0.4357539
+##      log_prbconv log_prbpris log_avgsen log_polpc log_taxpc
+## [1,]  -0.3724961  0.06960729 0.02341717 0.2845396 0.3398432
+\end{verbatim}
+
+/ In the above correlation matrix, focusing on the correlations between
+the log\_crmrte and all other variables, denisty has the highest
+correlation. This variable makes intuitive sense. As a single variable
+it might encompass a lot of other factors. Lower income people with more
+incentive to commit crimes tend to live in more highly populated areas.
+Below is the simple regression.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{simple_regression_model <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(log_crmrte }\OperatorTok{~}\StringTok{ }\NormalTok{density, }\DataTypeTok{data =}\NormalTok{ data_crmrte)}
+\NormalTok{se.simple_regression_model =}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{diag}\NormalTok{(}\KeywordTok{vcovHC}\NormalTok{(simple_regression_model)))}
+\KeywordTok{coeftest}\NormalTok{(simple_regression_model, }\DataTypeTok{vcov =}\NormalTok{ vcovHC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## t test of coefficients:
+## 
+##              Estimate Std. Error  t value Pr(>|t|)    
+## (Intercept) -3.869488   0.068563 -56.4366  < 2e-16 ***
+## density      0.228298   0.030439   7.5003  4.8e-11 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{AIC}\NormalTok{(simple_regression_model, }\DataTypeTok{k=}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 106.2991
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{stargazer}\NormalTok{(simple_regression_model,}
+          \DataTypeTok{type =} \StringTok{"text"}\NormalTok{, }\DataTypeTok{omit.stat =} \StringTok{"f"}\NormalTok{,}
+          \DataTypeTok{se =} \KeywordTok{list}\NormalTok{(se.simple_regression_model),}
+          \DataTypeTok{star.cutoffs =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.05}\NormalTok{, }\FloatTok{0.01}\NormalTok{, }\FloatTok{0.001}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## =================================================
+##                          Dependent variable:     
+##                     -----------------------------
+##                              log_crmrte          
+## -------------------------------------------------
+## density                       0.228***           
+##                                (0.030)           
+##                                                  
+## Constant                      -3.869***          
+##                                (0.069)           
+##                                                  
+## -------------------------------------------------
+## Observations                     90              
+## R2                              0.401            
+## Adjusted R2                     0.394            
+## Residual Std. Error        0.427 (df = 88)       
+## =================================================
+## Note:               *p<0.05; **p<0.01; ***p<0.001
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(simple_regression_model)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-19-1.pdf}
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-19-2.pdf}
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-19-3.pdf}
+\includegraphics{lab_3_rol_files/figure-latex/unnamed-chunk-19-4.pdf}
+
+The variable density explains 40.1\% of the variation in the log of
+crime rate. As density increases by 1 unit (as the county population
+divided by the county land area increases by 1\%) crime increases by
+22\%. The residuals vs.~fitted plot indicates that the zero conditional
+mean assumpotion is violated. The Q-Q plot shows that the residuals are
+normally distributed, and the residuals vs leverage plot shows that
+there are no influential outliers.\\
+
+\textbf{Model 3: Kitchen Sink Model}\\
+Still, we can do better in predicting the log crime rate than simply
+using one variable. We know examine a ``kitchen sink'' model. This model
+includes all of the variables in the data set except county (which has
+too many values to be a useful indicator variable) and year, which is a
+constant (1987). Below are the results.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all_in_model_log_level <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(log_crmrte }\OperatorTok{~}\StringTok{ }\NormalTok{prbarr }\OperatorTok{+}\StringTok{ }\NormalTok{prbconv }\OperatorTok{+}\StringTok{ }\NormalTok{prbpris }
+                             \OperatorTok{+}\StringTok{ }\NormalTok{avgsen }\OperatorTok{+}\StringTok{ }\NormalTok{polpc }\OperatorTok{+}\StringTok{ }\NormalTok{density}
+                             \OperatorTok{+}\StringTok{ }\NormalTok{taxpc }\OperatorTok{+}\StringTok{ }\NormalTok{west }\OperatorTok{+}\StringTok{ }\NormalTok{central }\OperatorTok{+}\StringTok{ }\NormalTok{urban }
+                             \OperatorTok{+}\StringTok{ }\NormalTok{pctmin80 }\OperatorTok{+}\StringTok{ }\NormalTok{wcon}
+                             \OperatorTok{+}\StringTok{ }\NormalTok{wtuc }\OperatorTok{+}\StringTok{ }\NormalTok{wtrd }\OperatorTok{+}\StringTok{ }\NormalTok{wfir }\OperatorTok{+}\StringTok{ }\NormalTok{wser }\OperatorTok{+}\StringTok{ }\NormalTok{wmfg }
+                             \OperatorTok{+}\StringTok{ }\NormalTok{wfed }\OperatorTok{+}\StringTok{ }\NormalTok{wsta }\OperatorTok{+}\StringTok{ }\NormalTok{wloc}
+                             \OperatorTok{+}\StringTok{ }\NormalTok{mix }\OperatorTok{+}\StringTok{ }\NormalTok{pctymle,}
+                             \DataTypeTok{data =}\NormalTok{ data_crmrte)}
+\NormalTok{se.all_in_model_log_level =}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{diag}\NormalTok{(}\KeywordTok{vcovHC}\NormalTok{(all_in_model_log_level)))}
+\KeywordTok{coeftest}\NormalTok{(all_in_model_log_level, }\DataTypeTok{vcov =}\NormalTok{ vcovHC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## t test of coefficients:
+## 
+##                Estimate  Std. Error t value  Pr(>|t|)    
+## (Intercept) -4.0261e+00  8.4822e-01 -4.7466 1.128e-05 ***
+## prbarr      -1.8891e+00  3.7955e-01 -4.9773 4.770e-06 ***
+## prbconv     -6.5603e-01  1.7443e-01 -3.7611 0.0003579 ***
+## prbpris     -9.3077e-02  3.9921e-01 -0.2332 0.8163542    
+## avgsen      -7.8769e-03  1.6125e-02 -0.4885 0.6267962    
+## polpc        1.5484e+02  8.6523e+01  1.7895 0.0780510 .  
+## density      1.1653e-01  5.4037e-02  2.1566 0.0346326 *  
+## taxpc        3.3224e-03  7.2890e-03  0.4558 0.6500012    
+## west        -1.1492e-01  1.2509e-01 -0.9187 0.3615403    
+## central     -1.0078e-01  9.2053e-02 -1.0948 0.2775232    
+## urban       -1.6923e-01  2.2872e-01 -0.7399 0.4619535    
+## pctmin80     9.9770e-03  3.0480e-03  3.2733 0.0016833 ** 
+## wcon         4.6001e-04  8.3564e-04  0.5505 0.5838140    
+## wtuc         1.0174e-04  6.0187e-04  0.1690 0.8662750    
+## wtrd         2.5964e-04  1.7638e-03  0.1472 0.8834136    
+## wfir        -1.1015e-03  1.1960e-03 -0.9210 0.3603557    
+## wser        -1.3142e-04  1.5060e-03 -0.0873 0.9307193    
+## wmfg        -2.0528e-04  5.1630e-04 -0.3976 0.6921878    
+## wfed         2.3405e-03  1.0820e-03  2.1632 0.0340968 *  
+## wsta        -1.1357e-03  8.9769e-04 -1.2651 0.2102213    
+## wloc         5.8983e-04  2.4003e-03  0.2457 0.8066400    
+## mix         -2.3924e-01  6.2632e-01 -0.3820 0.7036869    
+## pctymle      2.7706e+00  1.4330e+00  1.9334 0.0574191 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{AIC}\NormalTok{(all_in_model_log_level, }\DataTypeTok{k=}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 21.354
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{stargazer}\NormalTok{(simple_regression_model, all_in_model_log_level, }
+          \DataTypeTok{type =} \StringTok{"text"}\NormalTok{, }\DataTypeTok{omit.stat =} \StringTok{"f"}\NormalTok{,}
+          \DataTypeTok{se =} \KeywordTok{list}\NormalTok{(se.simple_regression_model, se.all_in_model_log_level),}
+          \DataTypeTok{star.cutoffs =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.05}\NormalTok{, }\FloatTok{0.01}\NormalTok{, }\FloatTok{0.001}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## ===================================================
+##                           Dependent variable:      
+##                     -------------------------------
+##                               log_crmrte           
+##                           (1)             (2)      
+## ---------------------------------------------------
+## prbarr                                 -1.889***   
+##                                         (0.380)    
+##                                                    
+## prbconv                                -0.656***   
+##                                         (0.174)    
+##                                                    
+## prbpris                                 -0.093     
+##                                         (0.399)    
+##                                                    
+## avgsen                                  -0.008     
+##                                         (0.016)    
+##                                                    
+## polpc                                   154.835    
+##                                        (86.523)    
+##                                                    
+## density                0.228***         0.117*     
+##                         (0.030)         (0.054)    
+##                                                    
+## taxpc                                    0.003     
+##                                         (0.007)    
+##                                                    
+## west                                    -0.115     
+##                                         (0.125)    
+##                                                    
+## central                                 -0.101     
+##                                         (0.092)    
+##                                                    
+## urban                                   -0.169     
+##                                         (0.229)    
+##                                                    
+## pctmin80                                0.010**    
+##                                         (0.003)    
+##                                                    
+## wcon                                    0.0005     
+##                                         (0.001)    
+##                                                    
+## wtuc                                    0.0001     
+##                                         (0.001)    
+##                                                    
+## wtrd                                    0.0003     
+##                                         (0.002)    
+##                                                    
+## wfir                                    -0.001     
+##                                         (0.001)    
+##                                                    
+## wser                                    -0.0001    
+##                                         (0.002)    
+##                                                    
+## wmfg                                    -0.0002    
+##                                         (0.001)    
+##                                                    
+## wfed                                    0.002*     
+##                                         (0.001)    
+##                                                    
+## wsta                                    -0.001     
+##                                         (0.001)    
+##                                                    
+## wloc                                     0.001     
+##                                         (0.002)    
+##                                                    
+## mix                                     -0.239     
+##                                         (0.626)    
+##                                                    
+## pctymle                                  2.771     
+##                                         (1.433)    
+##                                                    
+## Constant               -3.869***       -4.026***   
+##                         (0.069)         (0.848)    
+##                                                    
+## ---------------------------------------------------
+## Observations              90              90       
+## R2                       0.401           0.854     
+## Adjusted R2              0.394           0.806     
+## Residual Std. Error 0.427 (df = 88) 0.242 (df = 67)
+## ===================================================
+## Note:                 *p<0.05; **p<0.01; ***p<0.001
+\end{verbatim}
+
+Unsuprisingly, the r-squared of the ``kitchen sink'' model is
+substantially higher (85.4\% vs.~40.1\%). More importantly, the adjusted
+r-squared which accounts for the number of variables in the models, is
+also higher (80.6\% vs 39.4\%). Interestingly, density is no longer the
+variable with the highest statistical significance. The coefficients
+show the effect after all the other variables have been controlled for
+(partialled out). In the ``kitchen sink'' model prbarr and prbconv both
+have the lowest p-values.\\
+
+\textbf{Model 2: Balanced Model}\\
+We took two approaches to building the balanced model. We used a bottom
+up approach that relied on both the correlation matrix and stepwide
+regression. We also used a top down approach that started with the
+``kitchen sink'' model and excluded variables. Both methods are
+discussed below. Both approaches relied on our categories of variables
+to simplify the process.\\
+
+With the top down approach, we started with model 3 and looked to
+exclude variables that weren't as predictive. We ran hypothesis testing
+on all five groups, one group at a time.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#deterrent}
+\KeywordTok{linearHypothesis}\NormalTok{(all_in_model_log_level, }
+                 \KeywordTok{c}\NormalTok{(}\StringTok{"prbarr = 0"}\NormalTok{, }\StringTok{"prbconv = 0"}\NormalTok{, }\StringTok{"prbpris = 0"}\NormalTok{,}
+                   \StringTok{"avgsen = 0"}\NormalTok{, }\StringTok{"polpc = 0"}\NormalTok{), }
+                 \DataTypeTok{vcov =}\NormalTok{ vcovHC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Linear hypothesis test
+## 
+## Hypothesis:
+## prbarr = 0
+## prbconv = 0
+## prbpris = 0
+## avgsen = 0
+## polpc = 0
+## 
+## Model 1: restricted model
+## Model 2: log_crmrte ~ prbarr + prbconv + prbpris + avgsen + polpc + density + 
+##     taxpc + west + central + urban + pctmin80 + wcon + wtuc + 
+##     wtrd + wfir + wser + wmfg + wfed + wsta + wloc + mix + pctymle
+## 
+## Note: Coefficient covariance matrix supplied.
+## 
+##   Res.Df Df      F    Pr(>F)    
+## 1     72                        
+## 2     67  5 6.0582 0.0001101 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#wage}
+\KeywordTok{linearHypothesis}\NormalTok{(all_in_model_log_level, }
+                 \KeywordTok{c}\NormalTok{(}\StringTok{"wcon = 0"}\NormalTok{, }\StringTok{"wtuc = 0"}\NormalTok{, }\StringTok{"wtrd = 0"}\NormalTok{,}
+                   \StringTok{"wfir = 0"}\NormalTok{, }\StringTok{"wser = 0"}\NormalTok{, }\StringTok{"wmfg = 0"}\NormalTok{,}
+                   \StringTok{"wfed = 0"}\NormalTok{, }\StringTok{"wsta = 0"}\NormalTok{, }\StringTok{"wloc = 0"}\NormalTok{), }
+                 \DataTypeTok{vcov =}\NormalTok{ vcovHC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Linear hypothesis test
+## 
+## Hypothesis:
+## wcon = 0
+## wtuc = 0
+## wtrd = 0
+## wfir = 0
+## wser = 0
+## wmfg = 0
+## wfed = 0
+## wsta = 0
+## wloc = 0
+## 
+## Model 1: restricted model
+## Model 2: log_crmrte ~ prbarr + prbconv + prbpris + avgsen + polpc + density + 
+##     taxpc + west + central + urban + pctmin80 + wcon + wtuc + 
+##     wtrd + wfir + wser + wmfg + wfed + wsta + wloc + mix + pctymle
+## 
+## Note: Coefficient covariance matrix supplied.
+## 
+##   Res.Df Df     F Pr(>F)
+## 1     76                
+## 2     67  9 1.372 0.2185
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#region}
+\KeywordTok{linearHypothesis}\NormalTok{(all_in_model_log_level, }
+                 \KeywordTok{c}\NormalTok{(}\StringTok{"west = 0"}\NormalTok{, }\StringTok{"central = 0"}\NormalTok{), }
+                 \DataTypeTok{vcov =}\NormalTok{ vcovHC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Linear hypothesis test
+## 
+## Hypothesis:
+## west = 0
+## central = 0
+## 
+## Model 1: restricted model
+## Model 2: log_crmrte ~ prbarr + prbconv + prbpris + avgsen + polpc + density + 
+##     taxpc + west + central + urban + pctmin80 + wcon + wtuc + 
+##     wtrd + wfir + wser + wmfg + wfed + wsta + wloc + mix + pctymle
+## 
+## Note: Coefficient covariance matrix supplied.
+## 
+##   Res.Df Df     F Pr(>F)
+## 1     69                
+## 2     67  2 0.623 0.5394
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#urban}
+\KeywordTok{linearHypothesis}\NormalTok{(all_in_model_log_level, }
+                 \KeywordTok{c}\NormalTok{(}\StringTok{"urban = 0"}\NormalTok{), }
+                 \DataTypeTok{vcov =}\NormalTok{ vcovHC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Linear hypothesis test
+## 
+## Hypothesis:
+## urban = 0
+## 
+## Model 1: restricted model
+## Model 2: log_crmrte ~ prbarr + prbconv + prbpris + avgsen + polpc + density + 
+##     taxpc + west + central + urban + pctmin80 + wcon + wtuc + 
+##     wtrd + wfir + wser + wmfg + wfed + wsta + wloc + mix + pctymle
+## 
+## Note: Coefficient covariance matrix supplied.
+## 
+##   Res.Df Df      F Pr(>F)
+## 1     68                 
+## 2     67  1 0.5474  0.462
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#demographic}
+\KeywordTok{linearHypothesis}\NormalTok{(all_in_model_log_level, }
+                 \KeywordTok{c}\NormalTok{(}\StringTok{"density = 0"}\NormalTok{, }\StringTok{"taxpc = 0"}\NormalTok{, }\StringTok{"pctmin80 = 0"}\NormalTok{,}
+                   \StringTok{"mix = 0"}\NormalTok{, }\StringTok{"pctymle = 0"}\NormalTok{), }
+                 \DataTypeTok{vcov =}\NormalTok{ vcovHC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Linear hypothesis test
+## 
+## Hypothesis:
+## density = 0
+## taxpc = 0
+## pctmin80 = 0
+## mix = 0
+## pctymle = 0
+## 
+## Model 1: restricted model
+## Model 2: log_crmrte ~ prbarr + prbconv + prbpris + avgsen + polpc + density + 
+##     taxpc + west + central + urban + pctmin80 + wcon + wtuc + 
+##     wtrd + wfir + wser + wmfg + wfed + wsta + wloc + mix + pctymle
+## 
+## Note: Coefficient covariance matrix supplied.
+## 
+##   Res.Df Df      F   Pr(>F)   
+## 1     72                      
+## 2     67  5 3.9627 0.003298 **
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+/ The hypothesis tests below show that of the five groups the only
+groups that are jointly significant are the deterrent data and the
+demographic data. These tests measure whether removing all the variables
+within a group reduces the r-squared by s attsitically signficant
+amount. We will re-run the models and compare.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{balanced_model_top_}\DecValTok{1}\NormalTok{ <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(log_crmrte }\OperatorTok{~}\StringTok{ }\NormalTok{prbarr }\OperatorTok{+}\StringTok{ }\NormalTok{prbconv }\OperatorTok{+}\StringTok{ }\NormalTok{prbpris }
+                             \OperatorTok{+}\StringTok{ }\NormalTok{avgsen }\OperatorTok{+}\StringTok{ }\NormalTok{polpc }\OperatorTok{+}\StringTok{ }\NormalTok{density}
+                             \OperatorTok{+}\StringTok{ }\NormalTok{taxpc }\OperatorTok{+}\StringTok{ }\NormalTok{pctmin80 }\OperatorTok{+}\StringTok{ }\NormalTok{mix }\OperatorTok{+}\StringTok{ }\NormalTok{pctymle,}
+                             \DataTypeTok{data =}\NormalTok{ data_crmrte)}
+\NormalTok{se.balanced_model_top_}\DecValTok{1}\NormalTok{ =}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{diag}\NormalTok{(}\KeywordTok{vcovHC}\NormalTok{(balanced_model_top_}\DecValTok{1}\NormalTok{)))}
+\KeywordTok{coeftest}\NormalTok{(balanced_model_top_}\DecValTok{1}\NormalTok{, }\DataTypeTok{vcov =}\NormalTok{ vcovHC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## t test of coefficients:
+## 
+##                Estimate  Std. Error t value  Pr(>|t|)    
+## (Intercept)  -3.3522918   0.3558217 -9.4213 1.467e-14 ***
+## prbarr       -1.9627484   0.4014808 -4.8888 5.228e-06 ***
+## prbconv      -0.7672158   0.1366862 -5.6130 2.846e-07 ***
+## prbpris      -0.0764993   0.4732818 -0.1616  0.872005    
+## avgsen       -0.0044749   0.0140406 -0.3187  0.750789    
+## polpc       176.1347220  82.5884550  2.1327  0.036056 *  
+## density       0.1135225   0.0351279  3.2317  0.001796 ** 
+## taxpc         0.0020988   0.0055753  0.3764  0.707593    
+## pctmin80      0.0125062   0.0016215  7.7128 3.155e-11 ***
+## mix          -0.7304967   0.5396416 -1.3537  0.179702    
+## pctymle       1.3832565   1.6211791  0.8532  0.396105    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{AIC}\NormalTok{(balanced_model_top_}\DecValTok{1}\NormalTok{, }\DataTypeTok{k=}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 27.4514
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{stargazer}\NormalTok{(simple_regression_model, all_in_model_log_level, balanced_model_top_}\DecValTok{1}\NormalTok{,}
+          \DataTypeTok{type =} \StringTok{"text"}\NormalTok{, }\DataTypeTok{omit.stat =} \StringTok{"f"}\NormalTok{,}
+          \DataTypeTok{se =} \KeywordTok{list}\NormalTok{(se.simple_regression_model, se.all_in_model_log_level, se.balanced_model_top_}\DecValTok{1}\NormalTok{),}
+          \DataTypeTok{star.cutoffs =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.05}\NormalTok{, }\FloatTok{0.01}\NormalTok{, }\FloatTok{0.001}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## ===================================================================
+##                                   Dependent variable:              
+##                     -----------------------------------------------
+##                                       log_crmrte                   
+##                           (1)             (2)             (3)      
+## -------------------------------------------------------------------
+## prbarr                                 -1.889***       -1.963***   
+##                                         (0.380)         (0.401)    
+##                                                                    
+## prbconv                                -0.656***       -0.767***   
+##                                         (0.174)         (0.137)    
+##                                                                    
+## prbpris                                 -0.093          -0.076     
+##                                         (0.399)         (0.473)    
+##                                                                    
+## avgsen                                  -0.008          -0.004     
+##                                         (0.016)         (0.014)    
+##                                                                    
+## polpc                                   154.835        176.135*    
+##                                        (86.523)        (82.588)    
+##                                                                    
+## density                0.228***         0.117*          0.114**    
+##                         (0.030)         (0.054)         (0.035)    
+##                                                                    
+## taxpc                                    0.003           0.002     
+##                                         (0.007)         (0.006)    
+##                                                                    
+## west                                    -0.115                     
+##                                         (0.125)                    
+##                                                                    
+## central                                 -0.101                     
+##                                         (0.092)                    
+##                                                                    
+## urban                                   -0.169                     
+##                                         (0.229)                    
+##                                                                    
+## pctmin80                                0.010**        0.013***    
+##                                         (0.003)         (0.002)    
+##                                                                    
+## wcon                                    0.0005                     
+##                                         (0.001)                    
+##                                                                    
+## wtuc                                    0.0001                     
+##                                         (0.001)                    
+##                                                                    
+## wtrd                                    0.0003                     
+##                                         (0.002)                    
+##                                                                    
+## wfir                                    -0.001                     
+##                                         (0.001)                    
+##                                                                    
+## wser                                    -0.0001                    
+##                                         (0.002)                    
+##                                                                    
+## wmfg                                    -0.0002                    
+##                                         (0.001)                    
+##                                                                    
+## wfed                                    0.002*                     
+##                                         (0.001)                    
+##                                                                    
+## wsta                                    -0.001                     
+##                                         (0.001)                    
+##                                                                    
+## wloc                                     0.001                     
+##                                         (0.002)                    
+##                                                                    
+## mix                                     -0.239          -0.730     
+##                                         (0.626)         (0.540)    
+##                                                                    
+## pctymle                                  2.771           1.383     
+##                                         (1.433)         (1.621)    
+##                                                                    
+## Constant               -3.869***       -4.026***       -3.352***   
+##                         (0.069)         (0.848)         (0.356)    
+##                                                                    
+## -------------------------------------------------------------------
+## Observations              90              90              90       
+## R2                       0.401           0.854           0.796     
+## Adjusted R2              0.394           0.806           0.770     
+## Residual Std. Error 0.427 (df = 88) 0.242 (df = 67) 0.263 (df = 79)
+## ===================================================================
+## Note:                                 *p<0.05; **p<0.01; ***p<0.001
+\end{verbatim}
+
+Our adjusted r-squared has only fallen from 80.6\% to 77.6\% but we have
+dropped 12 variables. This is a much more parisimous model. In order to
+double check wages, we decided to try to one more model that included
+just the median wage from all industries. The fundamental concept behind
+this is that the median could capture all opportunity for potential
+criminals, and it has the benefit of not being affected by the outlier
+in wser. Unfortunately, though it was much better, it was still not
+predictive.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{balanced_model_top_}\DecValTok{2}\NormalTok{ <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(log_crmrte }\OperatorTok{~}\StringTok{ }\NormalTok{prbarr }\OperatorTok{+}\StringTok{ }\NormalTok{prbconv }\OperatorTok{+}\StringTok{ }\NormalTok{prbpris }
+                             \OperatorTok{+}\StringTok{ }\NormalTok{avgsen }\OperatorTok{+}\StringTok{ }\NormalTok{polpc }\OperatorTok{+}\StringTok{ }\NormalTok{density}
+                             \OperatorTok{+}\StringTok{ }\NormalTok{taxpc }\OperatorTok{+}\StringTok{ }\NormalTok{pctmin80 }\OperatorTok{+}\StringTok{ }\NormalTok{mix }\OperatorTok{+}\StringTok{ }\NormalTok{pctymle}
+                             \OperatorTok{+}\StringTok{ }\NormalTok{median_wage,}
+                             \DataTypeTok{data =}\NormalTok{ data_crmrte)}
+\NormalTok{se.balanced_model_top_}\DecValTok{2}\NormalTok{ =}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{diag}\NormalTok{(}\KeywordTok{vcovHC}\NormalTok{(balanced_model_top_}\DecValTok{2}\NormalTok{)))}
+\KeywordTok{coeftest}\NormalTok{(balanced_model_top_}\DecValTok{2}\NormalTok{, }\DataTypeTok{vcov =}\NormalTok{ vcovHC)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## t test of coefficients:
+## 
+##                Estimate  Std. Error t value  Pr(>|t|)    
+## (Intercept)  -3.7018614   0.6241512 -5.9310 7.799e-08 ***
+## prbarr       -1.9379154   0.4176289 -4.6403 1.381e-05 ***
+## prbconv      -0.7650603   0.1360985 -5.6214 2.826e-07 ***
+## prbpris      -0.1114352   0.4509889 -0.2471  0.805487    
+## avgsen       -0.0046181   0.0137443 -0.3360  0.737770    
+## polpc       167.9127417  85.2311288  1.9701  0.052378 .  
+## density       0.0977596   0.0343625  2.8450  0.005671 ** 
+## taxpc         0.0020705   0.0056750  0.3648  0.716214    
+## pctmin80      0.0123893   0.0016202  7.6467 4.534e-11 ***
+## mix          -0.5896970   0.5806401 -1.0156  0.312961    
+## pctymle       1.5670818   1.9109317  0.8201  0.414680    
+## median_wage   0.0011536   0.0014133  0.8162  0.416848    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{AIC}\NormalTok{(balanced_model_top_}\DecValTok{2}\NormalTok{, }\DataTypeTok{k=}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 28.07462
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{stargazer}\NormalTok{(simple_regression_model, all_in_model_log_level, balanced_model_top_}\DecValTok{1}\NormalTok{, balanced_model_top_}\DecValTok{2}\NormalTok{,}
+          \DataTypeTok{type =} \StringTok{"text"}\NormalTok{, }\DataTypeTok{omit.stat =} \StringTok{"f"}\NormalTok{,}
+          \DataTypeTok{se =} \KeywordTok{list}\NormalTok{(se.simple_regression_model, se.all_in_model_log_level, }
+\NormalTok{                    se.balanced_model_top_}\DecValTok{1}\NormalTok{, se.balanced_model_top_}\DecValTok{2}\NormalTok{),}
+          \DataTypeTok{star.cutoffs =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.05}\NormalTok{, }\FloatTok{0.01}\NormalTok{, }\FloatTok{0.001}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## ===================================================================================
+##                                           Dependent variable:                      
+##                     ---------------------------------------------------------------
+##                                               log_crmrte                           
+##                           (1)             (2)             (3)             (4)      
+## -----------------------------------------------------------------------------------
+## prbarr                                 -1.889***       -1.963***       -1.938***   
+##                                         (0.380)         (0.401)         (0.418)    
+##                                                                                    
+## prbconv                                -0.656***       -0.767***       -0.765***   
+##                                         (0.174)         (0.137)         (0.136)    
+##                                                                                    
+## prbpris                                 -0.093          -0.076          -0.111     
+##                                         (0.399)         (0.473)         (0.451)    
+##                                                                                    
+## avgsen                                  -0.008          -0.004          -0.005     
+##                                         (0.016)         (0.014)         (0.014)    
+##                                                                                    
+## polpc                                   154.835        176.135*        167.913*    
+##                                        (86.523)        (82.588)        (85.231)    
+##                                                                                    
+## density                0.228***         0.117*          0.114**         0.098**    
+##                         (0.030)         (0.054)         (0.035)         (0.034)    
+##                                                                                    
+## taxpc                                    0.003           0.002           0.002     
+##                                         (0.007)         (0.006)         (0.006)    
+##                                                                                    
+## west                                    -0.115                                     
+##                                         (0.125)                                    
+##                                                                                    
+## central                                 -0.101                                     
+##                                         (0.092)                                    
+##                                                                                    
+## urban                                   -0.169                                     
+##                                         (0.229)                                    
+##                                                                                    
+## pctmin80                                0.010**        0.013***        0.012***    
+##                                         (0.003)         (0.002)         (0.002)    
+##                                                                                    
+## wcon                                    0.0005                                     
+##                                         (0.001)                                    
+##                                                                                    
+## wtuc                                    0.0001                                     
+##                                         (0.001)                                    
+##                                                                                    
+## wtrd                                    0.0003                                     
+##                                         (0.002)                                    
+##                                                                                    
+## wfir                                    -0.001                                     
+##                                         (0.001)                                    
+##                                                                                    
+## wser                                    -0.0001                                    
+##                                         (0.002)                                    
+##                                                                                    
+## wmfg                                    -0.0002                                    
+##                                         (0.001)                                    
+##                                                                                    
+## wfed                                    0.002*                                     
+##                                         (0.001)                                    
+##                                                                                    
+## wsta                                    -0.001                                     
+##                                         (0.001)                                    
+##                                                                                    
+## wloc                                     0.001                                     
+##                                         (0.002)                                    
+##                                                                                    
+## mix                                     -0.239          -0.730          -0.590     
+##                                         (0.626)         (0.540)         (0.581)    
+##                                                                                    
+## pctymle                                  2.771           1.383           1.567     
+##                                         (1.433)         (1.621)         (1.911)    
+##                                                                                    
+## median_wage                                                              0.001     
+##                                                                         (0.001)    
+##                                                                                    
+## Constant               -3.869***       -4.026***       -3.352***       -3.702***   
+##                         (0.069)         (0.848)         (0.356)         (0.624)    
+##                                                                                    
+## -----------------------------------------------------------------------------------
+## Observations              90              90              90              90       
+## R2                       0.401           0.854           0.796           0.799     
+## Adjusted R2              0.394           0.806           0.770           0.770     
+## Residual Std. Error 0.427 (df = 88) 0.242 (df = 67) 0.263 (df = 79) 0.263 (df = 78)
+## ===================================================================================
+## Note:                                                 *p<0.05; **p<0.01; ***p<0.001
+\end{verbatim}
+
+\end{document}
