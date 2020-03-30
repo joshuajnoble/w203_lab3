@@ -7,146 +7,16 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Note to self: 
-
-1    county|               county identifier
-2      year|                            1987
-3    crmrte|     crimes committed per person
-4    prbarr|         'probability' of arrest
-5   prbconv|     'probability' of conviction
-6   prbpris| 'probability' of prison sentence
-7    avgsen|             avg. sentence, days
-8     polpc|               police per capita
-9   density|             people per sq. mile
-10    taxpc|          tax revenue per capita
-11     west|           =1 if in western N.C.
-12  central|           =1 if in central N.C.
-13    urban|                   =1 if in SMSA
-14 pctmin80|            perc. minority, 1980
-15     wcon|       weekly wage, construction
-16     wtuc|    wkly wge, trns, util, commun
-17     wtrd| wkly wge, whlesle, retail trade
-18     wfir|    wkly wge, fin, ins, real est
-19     wser|      wkly wge, service industry
-20     wmfg|         wkly wge, manufacturing
-21     wfed|         wkly wge, fed employees
-22     wsta|       wkly wge, state employees
-23     wloc|        wkly wge, local gov emps
-24      mix| offense mix: face-to-face/other
-25  pctymle|              percent young male
-
-```{r pressure, echo=FALSE}
-library(tidyverse)
-library(effsize)
-library(plyr)
-library(reshape2)
-library(ggiraphExtra)
-
-setwd("C:\\Users\\winbase\\MIDS\\w203\\lab_3-master")
-crime_data = read.csv("crime_v2.csv")
-
-#clean data, dropping all NA rows
-crime_data = crime_data[which(crime_data$county != 'NA'),]
-
-#very initial looking for correlations
-cor(crime_data$crmrte, crime_data$taxpc) #0.45, pretty strongly correlated
-cor(crime_data$crmrte, crime_data$wmfg) #0.35, also pretty strongly correlated
-cor(crime_data$crmrte, crime_data$prbarr) #-0.39, pretty neg strong
-
-# what is wrong with prbconv?
-class(crime_data$prbconv[1][1]) #r thinks it's a factor?
-
-```
-
-We seem to have some encoding errors in the provided data set so we need to remedy that by making sure that all of the data is numeric.
-
-```{r}
-
-# let's clean these up
-crime_data$prbconv = as.numeric(levels(crime_data$prbconv)[as.integer(crime_data$prbconv)])
+Identify what you think are the 5-10 most important omitted variables that bias results you care about. For each variable, you should estimate what direction the bias is in. If you can argue whether the bias is large or small, that is even better. State whether you have any variables available that may proxy (even imperfectly) for the omitted variable. Pay particular attention to whether each omitted variable bias is towards zero or away from zero. You will use this information to judge whether the effects you find are likely to be real, or whether they might be entirely an artifact of omitted variable bias.
 
 
-```
+We've identified several key omitted variables that we feel most influence the crime rate but are not represented in the data here.
 
-We probably need to start removing outliers so that we have a better insight into the trends and relations:
+1. Inflation Rate
+2. Unemployment Rate
+3. Consumer Price Index
+4. Childhood Blood Lead Levels (with 18 year time lag)
+5. Gini Coefficient
+6. Youth unemployent
 
-```{r}
-
-remove_outliers_sd = function(d, field, numDevs) {
-  s = numDevs * sd(d[[field]])
-  m = mean(d[[field]])
-  return( d[ which( d[[field]] > (m-s) & d[[field]] < (m+s)),])
-}
-
-#predict crmrte with tax income
-outliers_removed_tax = remove_outliers_sd(crime_data, 'taxpc', 2.0)
-crime_tax = lm(outliers_removed_tax$crmrte ~ outliers_removed_tax$taxpc)
-plot( jitter(outliers_removed_tax$crmrte), jitter(outliers_removed_tax$taxpc), ylab = "Crime Rate", xlab = "Tax receipts")
-abline(crime_tax)
-#summary(crime_tax)
-
-#predict crmrte with conviction rate
-outliers_removed_convictions = remove_outliers_sd(crime_data, 'prbconv', 2.0)
-crime_conviction = lm(outliers_removed_convictions$crmrte ~ outliers_removed_convictions$prbconv)
-plot(jitter(outliers_removed_convictions$prbconv), jitter(outliers_removed_convictions$crmrte), xlab = "Crime Rate", ylab = "Probability of conviction")
-abline(crime_conviction) #doesn/t seem to show much
-
-#predict crmrte with police presence
-outliers_removed_prbarr = remove_outliers_sd(crime_data, 'prbarr', 2.0)
-crime_arrest = lm(outliers_removed_prbarr$crmrte ~ outliers_removed_prbarr$prbarr)
-plot(jitter(outliers_removed_prbarr$prbarr), jitter(outliers_removed_prbarr$crmrte), ylab = "Crime Rate", xlab = "Probability of Arrest")
-abline(crime_arrest)
-
-#predict crmrte with prison sentence
-outliers_removed_prison = remove_outliers_sd(crime_data, 'prbpris', 2.0)
-crime_prison = lm(outliers_removed_prison$crmrte ~ outliers_removed_prison$prbpris)
-plot(jitter(outliers_removed_prison$prbpris), jitter(outliers_removed_prison$crmrte), ylab = "Crime Rate", xlab = "Probability of Prison")
-abline(crime_prison)
-
-#maybe remove the outliers for polpc?
-crime_police = lm(outliers_removed_polpc$crmrte ~ outliers_removed_polpc$polpc, data = outliers_removed_polpc)
-plot(jitter(outliers_removed_polpc$polpc), jitter(outliers_removed_polpc$crmrte), ylab = "Crime Rate", xlab = "Police Presence")
-abline(crime_police)
-
-#
-crime_ym = lm(crime_data$crmrte ~ crime_data$pctymle, data = crime_data)
-plot(jitter(crime_data$pctymle), jitter(crime_data$crmrte), ylab = "Crime Rate", xlab = "Young Men")
-abline(crime_ym)
-
-#
-crime_dens = lm(crime_data$crmrte ~ crime_data$density, data = crime_data)
-plot(jitter(crime_data$density), jitter(crime_data$crmrte), ylab = "Crime Rate", xlab = "Pop Dens")
-abline(crime_dens)
-
-```
-
-We can see a as police presence increases, so does our crime rate. Police presence could be required by an increased crime rate of course, but we can also see some evidence that it does not seem to reduce the crime rate significantly. There is evidence that probability of arrest seems to correspond to a lower crime rate. 
-
-```{r}
-
-
-
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevThisent printing of the R code that generated the plot.
-
-```Test code from Ryan```
-
-Let's look at a few variables together:
-
-```{r}
-
-arr_and_conv = lm(crime_data$crmrte ~ crime_data$prbconv + crime_data$prbarr, data = crime_data)
-ggplot(crime_data,aes(y=prbarr,x=prbconv,color=crmrte)) + 
-  geom_point(size=2) +
-  stat_smooth(method="lm",se=FALSE) +
-  scale_color_gradient(low = "green", high = "red", space = "Lab" )
-
-arr_conv_prbpris = lm(crime_data$crmrte ~ crime_data$prbconv + crime_data$prbarr + crime_data$prbpris, data = crime_data)
-summary(arr_conv_prbpris)
-
-dens_ym_taxpc = lm(crime_data$crmrte ~ crime_data$pctymle + crime_data$density + crime_data$taxpc, data = crime_data)
-summary(dens_ym_taxpc)
-
-
-```
+Make a change
