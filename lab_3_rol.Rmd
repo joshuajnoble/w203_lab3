@@ -451,8 +451,8 @@ balanced_model_top_3 <- lm(log_crmrte ~ mix + density
                            + prbarr + prbconv,
                              data = data_crmrte)
 se.balanced_model_top_3 = sqrt(diag(vcovHC(balanced_model_top_3)))
-coeftest(balanced_model_top_2, vcov = vcovHC)
-AIC(balanced_model_top_2, k=2)
+coeftest(balanced_model_top_3, vcov = vcovHC)
+AIC(balanced_model_top_3, k=2)
 stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1, balanced_model_top_3,
           type = "text", omit.stat = "f",
           se = list(se.simple_regression_model, se.all_in_model_log_level, 
