@@ -12,7 +12,7 @@ output:
   html_document: default
 ---
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 library(car)
 library(lmtest)
 library(sandwich)
@@ -25,9 +25,10 @@ library(reshape2)
 
 ```
 
-```{r}
+```{r echo=FALSE}
 #read in the data
-data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv')
+data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv")
+#data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv')
 ```
 
 __2. A Model Building Process__
