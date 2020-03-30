@@ -30,6 +30,7 @@
 library(tidyverse)
 library(effsize)
 library(plyr)
+library(plyr)
 library(reshape2)
 
 setwd("C:\\Users\\winbase\\MIDS\\w203\\w203_lab3")
@@ -37,12 +38,15 @@ crime_data = read.csv("crime_v2.csv")
 
 #clean data, dropping all NA rows
 crime_data = crime_data[which(crime_data$county != 'NA'),]
-
 # what is wrong with prbconv?
 class(crime_data$prbconv[1][1]) #r thinks it's a factor?
 
 # let's clean these up
 crime_data$prbconv = as.numeric(levels(crime_data$prbconv)[as.integer(crime_data$prbconv)])
+
+
+crime_data = distinct(crime_data)
+
 
 ###########################################################################################
 # removing outliers?
@@ -234,7 +238,7 @@ summary(terse_model)
 
 library(lmtest)
 
-mixed_model_3 = lm(crmrte ~ pctymle + density + pctmin80 + prbarr + prbconv + polpc + , data = crime_data)
+mixed_model_3 = lm(crmrte ~ pctymle + density + pctmin80 + prbarr + prbconv + polpc, data = crime_data)
 summary(mixed_model_3)
 
 plot(mixed_model_3, 1)
