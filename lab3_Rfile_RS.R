@@ -223,3 +223,5 @@ A_plus_B = var_A + var_B
 # the difference between the effects of A and B.
 model_test = lm(log(crime_data$crmrte)~ var_A + A_plus_B, data = crime_data)
 coeftest(model_test, vcov = vcovHC)
+
+TEST
