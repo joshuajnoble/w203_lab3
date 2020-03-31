@@ -7,6 +7,7 @@ author:
 - Praveen Joseph
 subtitle: '__LAB 3: Reducing Crime__'
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -46,7 +47,7 @@ library(reshape2)
 #read in the data
 data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
 #data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
-data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
+#data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
 ```
 ###########################################################################################
 #
