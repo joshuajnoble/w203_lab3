@@ -170,7 +170,7 @@ The scatter plot looks much more normal, and the Q-Q plot is much closer to norm
 __Groupings__\
 In order to digest the data in the data set we decided to group the variables into five groups: deterrent, wages, demographic, region, and urban. We performed exploratory data analysis on all of these variables.\
 
-The group is deterrent data. As cited in the original paper, these variables were hypothesized to reduce crime rate through disincentivizing crime. Essentially, as the probability of getting caught increases, criminals' desire to commit crimes decreases.\
+The first group is deterrent data. As cited in the original paper, these variables were hypothesized to reduce crime rate through disincentivizing crime. Essentially, as the probability of getting caught increases, criminals' desire to commit crimes decreases.\
 
 __Deterrent Data__\
 ```{r}
@@ -274,7 +274,7 @@ ggplot(gather(demographic_data), aes(value)) +
 ```
 Once again we see a lot of right skewed distributions in the historgams and in the box plots.\
 
-After exploring all of the variables we decided to tranform the other variables that are potentially under a politican's control - the deterrent variables. This gives us our final data set andso we can start running regressions.\
+After exploring all of the variables we decided to tranform the other variables that are potentially under a politican's control - the deterrent variables. This gives us our final data set and so we can start running regressions.\
 
 ```{r}
 data_crmrte$prbconv <- as.numeric(as.character(data_crmrte$prbconv))
@@ -350,50 +350,7 @@ stargazer(all_in_model, all_in_model_log_level,
 
 
 ```
-```{r}
-# #r-squared comparison of final two models
-# yhat_level_level <- predict(all_in_model)
-# 
-# #get the coefficients
-# for (b in coef(all_in_model_log_level))
-# {
-#   beta_log_level <- c(beta_log_level, b)
-# }
-# #calculate the predictions
-# for (b in coef(all_in_model_log_level))
-# {
-#   beta_log_level <- c(beta_log_level, b)
-# }
-# 
-# data_crmrte$log_level_yhat <- exp(--3.36882669
-#                                   -0.5214362*data_crmrte$log_prbarr
-#                                   -0.33101341*data_crmrte$log_prbconv
-#                                   -0.06569465*data_crmrte$log_prbpris
-#                                   -0.19652151*data_crmrte$log_avgsen
-#                                   +0.29132794*data_crmrte$log_polpc
-#                                   +0.12320127*data_crmrte$density
-#                                   +0.06158051*data_crmrte$log_taxpc
-#                                   -0.18453792*data_crmrte$west
-#                                   -0.10789292*data_crmrte$central
-#                                   -0.14767055*data_crmrte$urban
-#                                   +0.00956927*data_crmrte$pctmin80
-#                                   +0.00078953*data_crmrte$wcon
-#                                   +0.00010106*data_crmrte$wtuc
-#                                   +0.00029022*data_crmrte$wtrd
-#                                   -0.0010823*data_crmrte$wfir
-#                                   -0.00042887*data_crmrte$wser
-#                                   -0.00014147*data_crmrte$wmfg
-#                                   +0.00224918*data_crmrte$wfed
-#                                   -0.00102039*data_crmrte$wsta
-#                                   +0.00017815*data_crmrte$wloc
-#                                   -0.44834658*data_crmrte$mix
-#                                   +2.00755501*data_crmrte$pctymle
-#                                   )
-# r_squared_level_level <- cor(data_crmrte$crmrte, yhat_level_level)
-# r_squared_log_level <- cor(data_crmrte$crmrte, data_crmrte$log_level_yhat)
-# (r_squared_level_level)
-# (r_squared_log_level)
-```
+
 
 
 
@@ -494,7 +451,7 @@ linearHypothesis(all_in_model_log_level,
 
 ```
 
-/
+
 The hypothesis tests below show that of the five groups the only groups that are jointly significant are the deterrent data and the demographic data. These tests measure whether removing all the variables within a group reduces the r-squared by s attsitically signficant amount. We will re-run the models and compare. 
 ```{r}
 balanced_model_top_1 <- lm(log_crmrte ~ prbarr + prbconv + prbpris 
@@ -636,9 +593,9 @@ plot(balanced_model_top_3)
 __CLM assumptions analysis from plots__
 
 - Plot 1. The residuals vs. fitted plot indicates that the zero conditional mean assumpotion is NOT perfectly satisfied but the red line is close enough to zero, a big improvement compared to some of the other models we tested. The non-uniform thickness of the residuals indicates possible hetroskedasticity. 
-- Plot 2. The Q-Q plot shows that the residuals are not perfectly normally distributed, but the log transform of the crime rate improved the +ve skew in the data but has introduced some negative skew
-- Plot 3. The scale location plot indicated the presence of hetroskedasticity especially in the middle where the thickness of the band varies and outliers such as '50' and '24' are generating large standardized residuals
-- Plot 4. The residuals vs leverage plot shows some of the outliers we had discussed earlier ( 51, 25, 84) but the most significantly outlier is 51 ( having high leverage and Cook's distance >1). This outlier 51 significantly affects our model estimte and might be worth removing form the data to improve model accuracy.
+- Plot 2. The Q-Q plot shows that the residuals are not perfectly normally distributed, but the log transform of the crime rate improved the positive skew in the data but has introduced some negative skew
+- Plot 3. The scale location plot indicated the presence of heteroskedasticity especially in the middle where the thickness of the band varies and outliers such as '50' and '24' are generating large standardized residuals
+- Plot 4. The residuals vs leverage plot shows some of the outliers we had discussed earlier ( 51, 25, 84) but the most significantly outlier is 51 ( having high leverage and Cook's distance >1). This outlier 51 significantly affects our model estimte and might be worth removing from the data to improve model accuracy.
 
 ```{r}
 round(cor(balanced_model_top_3$residuals, balanced_model_data)*100,5)
@@ -652,7 +609,7 @@ Finally we check the correlation between the X's and the errors in the model to 
 
 ### MLR.5: Homoskedasticity
 
-Homoscedasticity describes a situation in which the error term has the same variance across all values of the independent variables.
+Homoskedasticity describes a situation in which the error term has the same variance across all values of the independent variables.
 
 The regression plots indicate the presence of some hetreskedasticity in the erros let's test if they are statistically significant using the Breusch-Pagan test.
 
@@ -693,8 +650,8 @@ There is some negative skew from outlier 51 in the transformed variable but Howe
 
 __The results were displayed in stargazer using HC standard errors as part of model selction__
 
-- This sections has been fully covered under section 2 of the report
-- We hav include statistical F-tests besides the standard t-tests for regression coefficients to check model validity.
+- This section has been fully covered under section 2 of the report
+- We have include statistical F-tests besides the standard t-tests for regression coefficients to check model validity.
 - Additionally the practical significance of the model variable chosen have also been discussed in detail
 - Below is the summary of the regression models and the AIC & BIC scores which provides a parsimony adjusted measure of fit
 
@@ -712,7 +669,7 @@ stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1,
 ```
 __Parismony adjusted model performance__
 
-Though AIC and BIC are both Maximum Likelihood estimate driven and penalize free parameters in an effort to combat overfitting, they do so in ways that result in significantly different behavior. Lets look at one commonly presented version of the methods (which results form stipulating normally distributed errors and other well behaving assumptions):
+Though AIC and BIC are both Maximum Likelihood estimate driven and penalize free parameters in an effort to combat overfitting, they do so in ways that result in significantly different behavior. Lets look at one commonly presented version of the methods (which results from stipulating normally distributed errors and other well behaving assumptions):
 
 AIC = -2*ln(likelihood) + 2*k,
 and
