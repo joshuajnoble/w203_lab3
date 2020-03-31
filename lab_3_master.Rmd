@@ -27,7 +27,11 @@ library(reshape2)
 
 ```{r}
 #read in the data
-data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv')
+#data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv')
+
+data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
+
+
 ```
 
 __2. A Model Building Process__
