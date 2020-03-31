@@ -17,7 +17,8 @@ library(knitr)
 library(dplyr)
 library(reshape2)
 
-opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+ opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+
 ```
 
 ```{r}
@@ -29,13 +30,24 @@ data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
 
 
 ```
+###########################################################################################
+#
+## Ryan's section
+# 
+###########################################################################################
 
 
 # 1. Introduction
 
+
+Your introduction should present a research question and explain the concept that you're attempting to measure and how it will be operationalized. This section should pave the way for the body of the report, preparing the reader to understand why the models are constructed the way that they are. It is not enough to simply say "We are looking for determinants of crime." Your introduction must do work for you, focusing the reader on a specific measurement goal, making them care about it, and propeling the narrative forward. This is also good time to put your work into context, discuss cross-cutting issues, and assess the overall appropriateness of the data.
+
+
+
+
 ###########################################################################################
 #
-## Ryan's section
+## Robert's section
 # 
 ###########################################################################################
 
@@ -75,8 +87,7 @@ data_crmrte <- data[!is.na(data$crmrte),]
 #remove duplicates (1 duplicate record was found)
 data_crmrte <- data_crmrte %>% distinct()
 
-#prbconv was defined as factor data type , we convert it to numeric
-class(data_crmrte$prbconv)
+#prbconv was defined as factor , we will convert it to numeric
 data_crmrte$prbconv <- as.numeric(as.character(data_crmrte$prbconv))
 class(data_crmrte$prbconv)
 ```
@@ -96,13 +107,13 @@ __Outlier Analysis__
 There are several outliers in the variable crmrte and the distribution is right skewed. We have ninety observations so non-normality is not a top concern but this distribution is not perfectly normal. we analyse outliers for crime rate that are > 1.96*Std-dev from the mean crime rate (~0.07)
 
 The largest outliers (6 counties) on the right side of the distribution are examined. There are some insights:
-1. 4 of out of the 6 outliers are in Urban areas
-2. The average of density for the outlier is 3X the average density for the sample
-3. Esp data ppt 53 which has the highest crime rate and is Urban
+- 1. 4 of out of the 6 outliers are in urban areas
+- 2. The average demographic density for the outlier set is  greater than 3 times the average density for the sample
+- 3. We also observe that data ppt 53 which has the highest crime rate, also has the highest density amongst the outliers and is a urban area
 
 This is not very surprising as we expect urban areas with high density of population to have more crimes.
 
-we will conisder the treatment of these outlier in later part of the report.
+we will continue to monitor the impact of the outliers and conisder the treatment of these outlier in later part of the report.
 ```{r}
 data_crmrte[data_crmrte$crmrte > 0.07,] 
 ```
@@ -120,6 +131,7 @@ hist(data_crmrte$log_crmrte,breaks=20)
 boxplot(data_crmrte$log_crmrte, main="Boxplot of log of crmrte")
 plot(data_crmrte$log_crmrte)
 qqnorm(data_crmrte$log_crmrte)
+shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms persistance of non-normality
 
 ```
 The histogram of the transformed crime rate is much more symmetrical and shows much less right skew. The box plot shows all of the outliers on the high end have been removed, though outlier 51 ( countty 115) on the low end has been become more prominent. 
@@ -147,8 +159,8 @@ my_vars2 <- c("polpc")
 deterrent_data3 <- deterrent_data[my_vars2]
 
 boxplot(deterrent_data2, main="Boxplot of prbarr, prbconv, prbpris")
-boxplot(deterrent_data3, main="Boxplot of polpc")
-boxplot(deterrent_data$avgsen, main="Boxplot of avgsen")
+#boxplot(deterrent_data3, main="Boxplot of polpc")
+#boxplot(deterrent_data$avgsen, main="Boxplot of avgsen")
 ```
 \
 The first four histograms show right skew while prbpris shows left skew. The biggest outlier is observation 51. This observation has the lowest crime rate in the data set, obviously the highest polpc (police per capita), the highest avg sentence, the third highest prbconv, and the lowest pctmin80. This observation is likely to affect many of the regressions so it will need to be examined further. These variables are candidates to be transformed.\
@@ -222,15 +234,15 @@ ggplot(gather(demographic_data), aes(value)) +
   facet_wrap(~key, scales = 'free_x')
 
 #Lots of skewed distributions above, particularly in pctymle and taxpc
-#generate boxplots of just the demographic variables
-demographic_data2 <- demographic_data[c("taxpc", "pctmin80")]
-boxplot(demographic_data2)
-demographic_data3 <- demographic_data[c("pctymle")]
-boxplot(demographic_data3)
-demographic_data4 <- demographic_data[c("density")]
-boxplot(demographic_data4)
-demographic_data5 <- demographic_data[c("mix")]
-boxplot(demographic_data5)
+# #generate boxplots of just the demographic variables
+# demographic_data2 <- demographic_data[c("taxpc", "pctmin80")]
+# boxplot(demographic_data2)
+# demographic_data3 <- demographic_data[c("pctymle")]
+# boxplot(demographic_data3)
+# demographic_data4 <- demographic_data[c("density")]
+# boxplot(demographic_data4)
+# demographic_data5 <- demographic_data[c("mix")]
+# boxplot(demographic_data5)
 ```
 Once again we see a lot of right skewed distributions in the historgams and in the box plots.\
 
@@ -272,7 +284,6 @@ all_in_model <- lm(crmrte ~ prbarr + prbconv + prbpris
 se.all_in_model = sqrt(diag(vcovHC(all_in_model)))
 coeftest(all_in_model, vcov = vcovHC)
 AIC(all_in_model)
-BIC(all_in_model)
 
 all_in_model_log_level <- lm(log_crmrte ~ prbarr + prbconv + prbpris 
                              + avgsen + polpc + density
@@ -285,7 +296,7 @@ all_in_model_log_level <- lm(log_crmrte ~ prbarr + prbconv + prbpris
 se.all_in_model_log_level = sqrt(diag(vcovHC(all_in_model_log_level)))
 coeftest(all_in_model_log_level, vcov = vcovHC)
 AIC(all_in_model_log_level)
-BIC(all_in_model_log_level)
+
 
 all_in_model_log_log <- lm(log_crmrte ~ log_prbarr + log_prbconv 
                              + log_prbpris + log_avgsen + log_polpc
@@ -365,23 +376,22 @@ In order to create a simple model we decided to build using a bottom up approach
 ## Anyone know how to print this better?
 
 ```{r}
-cor(data_crmrte$log_crmrte,data_crmrte)
+round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
 ```
 
-/
+
 In the above correlation matrix, focusing on the correlations between the log_crmrte and all other variables, denisty has the highest correlation. This variable makes intuitive sense. As a single variable it might encompass a lot of other factors. Lower income people with more incentive to commit crimes tend to live in more highly populated areas. Below is the simple regression.
 ```{r}
 simple_regression_model <- lm(log_crmrte ~ density, data = data_crmrte)
 se.simple_regression_model = sqrt(diag(vcovHC(simple_regression_model)))
 coeftest(simple_regression_model, vcov = vcovHC)
 AIC(simple_regression_model)
-BIC(simple_regression_model)
 
 stargazer(simple_regression_model,
           type = "text", omit.stat = "f",
           se = list(se.simple_regression_model),
           star.cutoffs = c(0.05, 0.01, 0.001))
-plot(simple_regression_model)
+#plot(simple_regression_model)
 ```
 
 The variable density explains 40.1% of the variation in the log of crime rate. As density increases by 1 unit (as the county population divided by the county land area increases by 1%) crime increases by 22%. 
@@ -401,10 +411,10 @@ all_in_model_log_level <- lm(log_crmrte ~ prbarr + prbconv + prbpris
                              + wfed + wsta + wloc
                              + mix + pctymle,
                              data = data_crmrte)
-se.all_in_model_log_level = sqrt(diag(vcovHC(all_in_model_log_level)))
-coeftest(all_in_model_log_level, vcov = vcovHC)
+se.all_in_model_log_level = sqrt(diag(vcovHC(all_in_model_log_level))) #HC White SE
+coeftest(all_in_model_log_level, vcov = vcovHC) 
 AIC(all_in_model_log_level)
-BIC(all_in_model_log_level)
+
 
 stargazer(simple_regression_model, all_in_model_log_level, 
           type = "text", omit.stat = "f",
@@ -420,7 +430,9 @@ We took two approaches to building the balanced model. We used a bottom up appro
 ```{r}
 base_forward = lm(log_crmrte ~ density,
                              data = data_crmrte)
-forward_step = step(base_forward, scope = formula(all_in_model_log_level), direction = "forward")
+# forward_step = step(base_forward, scope = formula(all_in_model_log_level), direction = "forward")
+
+
 ```
 
 With the top down approach, we started with model 3 and looked to exclude variables that weren't as predictive. We ran hypothesis testing on all five groups, one group at a time.
@@ -464,13 +476,11 @@ balanced_model_top_1 <- lm(log_crmrte ~ prbarr + prbconv + prbpris
 se.balanced_model_top_1 = sqrt(diag(vcovHC(balanced_model_top_1)))
 coeftest(balanced_model_top_1, vcov = vcovHC)
 AIC(balanced_model_top_1)
-BIC(balanced_model_top_1)
-summary(balanced_model_top_1)
 
-stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1,
-          type = "text", omit.stat = "f",
-          se = list(se.simple_regression_model, se.all_in_model_log_level, se.balanced_model_top_1),
-          star.cutoffs = c(0.05, 0.01, 0.001))
+#stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1,
+#          type = "text", omit.stat = "f",
+#          se = list(se.simple_regression_model, se.all_in_model_log_level, #se.balanced_model_top_1),
+#          star.cutoffs = c(0.05, 0.01, 0.001))
 ```
 Our adjusted r-squared has only fallen from 80.6% to 77.6% but we have dropped 12 variables. This is a much more parisimous model. In order to double check wages, we decided to try to one more model that included just the median wage from all industries. The fundamental concept behind this is that the median could capture all opportunity for potential criminals, and it has the benefit of not being affected by the outlier in wser. 
 
@@ -484,13 +494,12 @@ balanced_model_top_2 <- lm(log_crmrte ~ prbarr + prbconv + prbpris
 se.balanced_model_top_2 = sqrt(diag(vcovHC(balanced_model_top_2)))
 coeftest(balanced_model_top_2, vcov = vcovHC)
 AIC(balanced_model_top_2)
-BIC(balanced_model_top_2)
 
-stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1, balanced_model_top_2,
-          type = "text", omit.stat = "f",
-          se = list(se.simple_regression_model, se.all_in_model_log_level, 
-                    se.balanced_model_top_1, se.balanced_model_top_2),
-          star.cutoffs = c(0.05, 0.01, 0.001))
+# stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1, balanced_model_top_2,
+#           type = "text", omit.stat = "f",
+#           se = list(se.simple_regression_model, se.all_in_model_log_level, 
+#                     se.balanced_model_top_1, se.balanced_model_top_2),
+#           star.cutoffs = c(0.05, 0.01, 0.001))
 
 ```
 
@@ -502,7 +511,8 @@ base_backward = lm(log_crmrte ~ prbarr + prbconv + prbpris
                              + avgsen + polpc + density
                              + taxpc + pctmin80 + mix + pctymle,
                              data = data_crmrte)
-backward_step = step(base_backward, scope = formula(base_backward), direction = "backward")
+# backward_step = step(base_backward, scope = formula(base_backward), direction = "backward")
+
 ```
 ```{r}
 balanced_model_top_3 <- lm(log_crmrte ~ mix + density
@@ -512,11 +522,11 @@ balanced_model_top_3 <- lm(log_crmrte ~ mix + density
 se.balanced_model_top_3 = sqrt(diag(vcovHC(balanced_model_top_3)))
 coeftest(balanced_model_top_2, vcov = vcovHC)
 AIC(balanced_model_top_3, k=2)
-stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1, balanced_model_top_3,
-          type = "text", omit.stat = "f",
-          se = list(se.simple_regression_model, se.all_in_model_log_level, 
-                    se.balanced_model_top_1, se.balanced_model_top_3),
-          star.cutoffs = c(0.05, 0.01, 0.001))
+# stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1, balanced_model_top_3,
+#           type = "text", omit.stat = "f",
+#           se = list(se.simple_regression_model, se.all_in_model_log_level, 
+#                     se.balanced_model_top_1, se.balanced_model_top_3),
+#           star.cutoffs = c(0.05, 0.01, 0.001))
 
 
 ```
@@ -540,6 +550,8 @@ We choose our balanced model for the complete assessment of all 6 classical line
 ![MLR 1-4'](CLM Assumptions1.png)
 
 ### MLR.1: The model is linear in parameters ( and the error term)
+
+we haven't constrained the error term, so the model can be any joint distribution. Therefore the linear model assumption is not violated
 
 
 ```{r}
@@ -636,11 +648,12 @@ We can check the normality using the Q-Q plot to vizualize the distribution of r
 We saw in the earlier section that the crime rate has some positive skew, but we were able to reduce the skew by applying log transform to the crime rate.
 
 We can also run a Shapiro - wilk test for normality
+$H_0: Errors are normal$ 
 
 ```{r}
 shapiro.test(balanced_model_top_3$residuals)
 ```
-The p-value is significant, therefore we reject H_0: Errors are normal 
+The p-value is significant, therefore we reject $H_0: Errors are normal$ 
 
 The non-normality of the residuals is statisitically significant for this model.
 
@@ -708,4 +721,39 @@ BIC(balanced_model_top_3)
 
 ```
 
+
+###########################################################################################
+#
+## Josh's section
+# 
+###########################################################################################
+
+
+# 5. A Discussion of Omitted Variables
+
+We've identified several key omitted variables that we feel most influence the crime rate but are not represented in the data here.
+
+
+1. Unemployment Rate - Unemployment is a key indicator for crime rate.  We may be able to infer some indication of the frequency of seasonal or part-time work in the construction or service industries from the `wcon` or `wser` variables as they shows an average weekly wage which mght indicate how often workers are employed. However, this estimate is likely not accurate enough to be considered meaningful. The unemployment rate among youth 18-30 would also be meaningful as criminal activity among young adults is higher than that of older adults.
+
+2. Inflation Rate (Consumer Price Index) - Inflation and crime rates are correlated with a positive relationship and the causal link is from inflation and unemployment to crime. [Link](https://www.researchgate.net/publication/236736987_Will_Inflation_Increase_Crime_Rate_New_Evidence_from_Bounds_and_Modified_Wald_Tests). Inﬂation causes the purchasing power to reduce and cost of living to increase, consequently crime rates rise as the inflation rate rises. Because of the lag between price and wage adjustments, inflation lowers the real income of low-skilled labor, but rewards property criminals due to the rising demand and subsequent high profits in the illegal market. Inflation in the year represented, 1987, would not be sufficient though as the reduction in purchasing power does not happen immediately, it takes time for inﬂation to gradually reduce purchasing power. None of the data provided in the study gives us an indication of the inflation rate in a time period before the study. We would expect that this variable would show a positive bias towards crime rate and that it would likely be a large bias.
+
+3. Childhood Blood Lead Levels (with 18 year offset) - The lead–crime hypothesis is the proposed link between elevated blood lead levels in children and increased rates of crime, delinquency, and recidivism later in life. Studies linking blood lead levels (BLL) in children to crime rate typically seek to quantify the BLL 17-18 years before the examined crime rate. One such study used a unique dataset linking preschool blood lead levels (BLLs), birth, school, and detention data for 120,000 children born 1990-2004 in Rhode Island, to estimate the impact of lead on behavior [Link](https://www.nber.org/papers/w23392.pdf). We expect that this variable would show a positive bias and that it would likely be a small bias but still significant for any given year as there may be other underlying phenomena driving crime rate in a particular county. There are no variables in the provided data set that would give any insight into this.
+
+4. Abortion Rates (with 18 year time lag) - Multiple studies have shown a correlation between legalized abortion rates and crime. One study by Donohoe and Leavitt estimated that crime fell roughly 20% between 1997 and 2014 due to legalized abortion.
+ [Link](https://bfi.uchicago.edu/wp-content/uploads/BFI_WP_201975.pdf) While it may be difficult to ascertain which counties residents accessing abortion services lived in, we expect that measures of employment and poverty could be correlated to show how a negative bias of abortion rates potentially offset other variables with a positive bias. We estimate that the bias may be small as it could present difficulties in localizing it effectively, but we still believe that it would be significant. There are no variables in the provided data set that would give any insight into this. 
+
+5. Income Inequality metrics: There are several measures of income inequaity that could be included in the data: [Mean Log Deviation](https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/mld.html) or [Theil Index](https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/theil-index.html) or [Gini Index](https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/gini-index.html) for each of the counties. Income inequality has been shown to have a significant effect on violent crime in particular. One World Bank report states that inequality predicts about half of the variance in murder rates between American states and between countries around the world. [Link](https://siteresources.worldbank.org/DEC/Resources/Crime%26Inequality.pdf) Income inequality measures are often measured as 0 (perfectly equal income distribution) to 1 (perfectly unequal income distribution, or 1 household has all the income). We would thus expect these to have a positive bias, in that an increase in income inequality would lead to an increase in violent crime. We expect that the bias would be somewhat smaller as income inequality is correlated specifically with violent crime less than property crime. There are no variables in the provided data set that would give any insight into this.
+
+
+
+###########################################################################################
+#
+## Ryan's section
+# 
+###########################################################################################
+
+# 6. Conclusion
+
+### Make sure that you end your report with a discussion that relates your results to concerns of the political campaign.
 
