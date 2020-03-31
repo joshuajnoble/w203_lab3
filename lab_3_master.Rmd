@@ -12,10 +12,7 @@ output:
     df_print: paged
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
----
+
 output:
   pdf_document: default
   html_document: default
@@ -45,9 +42,9 @@ library(reshape2)
 
 ```{r echo=FALSE}
 #read in the data
-data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
+#data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
 #data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
-#data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
+data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
 ```
 ###########################################################################################
 #
@@ -83,7 +80,7 @@ While this 1987 dataset provides observational variables that impact crime, the 
 
 __Exploratory Data Analaysis__
 
-We started by conducting exploratory data analysis. First, we read the original paper to get a better understanding of each variable. We defined the variables in the table below and grouped them into five groups in order to get a better handle on them. 
+We started by conducting exploratory data analysis. First, we read the original paper [CORNWELL – TRUMBULL (1994)] to get a better understanding of each variable. We defined the variables in the table below and grouped them into five groups in order to get a better handle on them. 
 
 ```{r}
 crime_count <- c(1:25)
@@ -130,12 +127,12 @@ shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms non-normality
 ```
 __Outlier Analysis__
 \
-There are several outliers in the variable crmrte and the distribution is right skewed. We have ninety observations so non-normality is not a top concern but this distribution is not perfectly normal. we analyse outliers for crime rate that are > 1.96*Std-dev from the mean crime rate (~0.07)
+There are several outliers in the variable crmrte and the distribution is right skewed. We have ninety observations so non-normality is not a top concern but this distribution is not perfectly normal. we analyse outliers for crime rate that are > 2*Std-dev from the mean crime rate (i.e data pts with crime rate > 0.07)
 
-The largest outliers (6 counties) on the right side of the distribution are examined. There are some insights:
-- 1. 4 of out of the 6 outliers are in urban areas
-- 2. The average demographic density for the outlier set is  greater than 3 times the average density for the sample
-- 3. We also observe that data ppt 53 which has the highest crime rate, also has the highest density amongst the outliers and is a urban area
+The postiviely skewed outliers (6 counties) on the right side of the distribution are examined to gather some insights:
+* 1. 4 of out of the 6 outliers are in urban areas
+* 2. The average demographic density for the outlier set is  greater than 3 times the average density for the overall sample
+* 3. We also observe that data ppt 53 which has the highest crime rate, also has the highest density amongst the outliers and is a urban area
 
 This is not very surprising as we expect urban areas with high density of population to have more crimes.
 
@@ -150,14 +147,16 @@ data_crmrte[data_crmrte$crmrte < 0.01,]
 
 ```
 
-For campaign purposes, we want to predict crime. We want our candidate to be able to say that he or she can reduce crime in order to win votes. What is the most effective way to convey that? Using crime rate as it appears in the data set is using the level of crime rate and would suggest the following statement as a campaign slogan - "I can reduce crime to this rate by doing x, y, and z". Transforming crime rate into the log of crime rate allows for the statement "I can reduce crime by n% by doing x, y, and z." We find the latter more powerful and meaningful to voters since voters have no idea about the level of crime rates. In addition, we will show that the transformation of crime rate imrpoves the normaility and distribution of the variable, which will often reduce skew in the errors as well.\
+For campaign purposes, we want to predict crime. We want our candidate to be able to say that he or she can reduce crime in order to win votes. What is the most effective way to convey that? Using crime rate as it appears in the data set is using the level of crime rate and would suggest the following statement as a campaign slogan - "I can reduce crime to this rate by doing x, y, and z". 
+
+Transforming crime rate into the log of crime rate allows for the statement "I can reduce crime by n% by doing x, y, and z." We find the latter more powerful and meaningful to voters since voters have no idea about the level of crime rates. In addition, we will show that the transformation of crime rate imrpoves the normaility and distribution of the variable, which will often reduce skew in the errors as well.\
 ```{r}
 data_crmrte$log_crmrte <- log(data_crmrte$crmrte)
 hist(data_crmrte$log_crmrte,breaks=20)
 boxplot(data_crmrte$log_crmrte, main="Boxplot of log of crmrte")
 plot(data_crmrte$log_crmrte)
 qqnorm(data_crmrte$log_crmrte)
-shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms persistance of non-normality
+shapiro.test(data_crmrte$log_crmrte) # Shapiro-wilk test confirms the log transformation was able to eradicate the non-normality in the
 
 ```
 The histogram of the transformed crime rate is much more symmetrical and shows much less right skew. The box plot shows all of the outliers on the high end have been removed, though outlier 51 ( countty 115) on the low end has been become more prominent. 
@@ -189,7 +188,7 @@ boxplot(deterrent_data2, main="Boxplot of prbarr, prbconv, prbpris")
 #boxplot(deterrent_data$avgsen, main="Boxplot of avgsen")
 ```
 \
-The first four histograms show right skew while prbpris shows left skew. The biggest outlier is observation 51. This observation has the lowest crime rate in the data set, obviously the highest polpc (police per capita), the highest avg sentence, the third highest prbconv, and the lowest pctmin80. This observation is likely to affect many of the regressions so it will need to be examined further. These variables are candidates to be transformed.\
+The first four histograms show right skew while prbpris shows left skew. The biggest outlier is observation 51. This observation has the lowest crime rate in the data set, the highest polpc (police per capita), the highest avg sentence, the third highest prbconv, and the lowest pctmin80. This observation is likely to affect many of the regressions so it will need to be examined further. These variables are candidates to be transformed.\
 
 __Wages Data__\
 ```{r}
@@ -360,6 +359,8 @@ In order to create a simple model we decided to build using a bottom up approach
 
 ```{r}
 round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
+
+
 ```
 
 
@@ -413,7 +414,7 @@ We took two approaches to building the balanced model. We used a bottom up appro
 ```{r}
 base_forward = lm(log_crmrte ~ density,
                              data = data_crmrte)
-# forward_step = step(base_forward, scope = formula(all_in_model_log_level), direction = "forward")
+forward_step = step(base_forward, scope = formula(all_in_model_log_level), direction = "forward")
 
 
 ```
@@ -556,6 +557,8 @@ CORNWELL – TRUMBULL (1994) specifically state they choose panel data because c
 
 The authors identify  that the time-series component of the panel data is able to identify  specific  characteristics  of  county  heterogeneity, which is correlated with the criminal justice variables.
 
+In exploring the effects of county specific heterogeneity, counties next to each other may exhibit similar behaviour. While that may be valid for prediction model the standard errors may be understated causing violation of random sampling
+
 While the balanced model achieves high level of statistical significance for the co-efficients, it's important to be mindful of the limitations of the dataset.
 
 ```{r}
@@ -613,12 +616,12 @@ The regression plots indicate the presence of some hetreskedasticity in the erro
 
 - The Breusch-Pagan test below allows us to test for hetroskedasticity under the 
 
-$H_0:  There is homeskedasticity$
+$H_0:  Homeskedasticity$
 
 ```{r}
 bptest(balanced_model_top_3)
 ```
-From the BP test, surprisingly we find p-value is not statistically significant, therefore we fail to reject $H_0:  There is homeskedasticity$
+From the BP test, surprisingly we find p-value is not statistically significant, therefore we fail to reject $H_0: Homeskedasticity$.
 
 However, we will still choose to be more conservative and use HC consistent std-errors ( Huber-white Std-errors) using coeftest function from the sandwich package in R. This conservative approach we have taken througout this report in our model selection process in choosing regressors for different models
 
@@ -630,13 +633,13 @@ We can check the normality using the Q-Q plot to vizualize the distribution of r
 
 We saw in the earlier section that the crime rate has some positive skew, but we were able to reduce the skew by applying log transform to the crime rate.
 
-We can also run a Shapiro - wilk test for normality
-$H_0: Errors are normal$ 
+We can also run a Shapiro - wilk test for normality of the residuals
 
+$H_0: Normality$ 
 ```{r}
 shapiro.test(balanced_model_top_3$residuals)
 ```
-The p-value is significant, therefore we reject $H_0: Errors are normal$ 
+The p-value is significant, therefore we reject $H_0: Normality$ 
 
 The non-normality of the residuals is statisitically significant for this model.
 
