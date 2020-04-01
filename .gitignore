@@ -18,7 +18,7 @@
 /*.Rcheck/
 
 .ipynb_checkpoints/*
-
+lab_3_master_files/*
 # RStudio files
 .Rproj.user/
 

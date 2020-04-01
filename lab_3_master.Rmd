@@ -7,22 +7,11 @@ author:
 - Praveen Joseph
 subtitle: '__LAB 3: Reducing Crime__'
 output:
-  pdf_document: default
   html_document:
     df_print: paged
----
-
-
-output:
+    self_contained: no
   pdf_document: default
-  html_document: default
 ---
----
-output:
-  pdf_document: default
-  html_document: default
----
-
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
@@ -36,7 +25,21 @@ library(knitr)
 library(dplyr)
 library(reshape2)
 
- opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=20),tidy=TRUE)
+
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
+
 
 ```
 
@@ -46,11 +49,7 @@ data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv"
 #data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
 #data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
 ```
-###########################################################################################
-#
-## Ryan's section
-# 
-###########################################################################################
+
 __1. An Introduction__
 
 As crime has seen an increase in the 1980’s, citizens of North Carolina have been looking to local government politicians to address this growing problem. In preparation for the upcoming election, our team of political consultants has been tasked with providing insight to drive policy directed at reducing crime levels. Before pushing a political campaign aimed at crime reduction, we must first identify the key determinants of crime and their significance in order to properly focus resources to target these issues.
@@ -68,21 +67,15 @@ Our dependent variable and the key measure we are focused on is crime rate, whic
 
 While this 1987 dataset provides observational variables that impact crime, the dataset does not provide a comprehensive list of all variables. There are a number of factors that our team has identified that could potentially assist in more accurately measuring a causal effect on crime. These factors are discussed in further detail in the omitted variables section of this report. In addition, this dataset only covers a single cross-section of the data from the year 1987. A multi-year panel of data, if provided, could improve the accuracy of our models and address lead-lag effects. Additional data and experimental studies could provide a more accurate casual model, however the statistical results of this report are limited to the information provided in the 1987 dataset. Using these results, our team has prepared recommendations for a political strategy addressing crime in North Carolina. 
 
-###########################################################################################
-#
-## Robert's section
-# 
-###########################################################################################
 
 
+__2. A Model Building Process__
 
-# 2. A Model Building Process
-
-__Exploratory Data Analaysis__
+# Exploratory Data Analaysis
 
 We started by conducting exploratory data analysis. First, we read the original paper [CORNWELL – TRUMBULL (1994)] to get a better understanding of each variable. We defined the variables in the table below and grouped them into five groups in order to get a better handle on them. 
 
-```{r}
+```{r }
 crime_count <- c(1:25)
 data_variables <- c("county","year","crmrte","prbarr","prbconv","prbpris","avgsen","polpc","density","taxpc","west","central","urban","pctmin80","wcon","wtuc","wtrd","wfir","wser","wmfg","wfed","wsta","wloc","mix","pctymle")
 data_description <- c("county identifier","1987","crimes committed per person","'probability' of arrest","'probability' of conviction","'probability' of prison sentence","avg. sentence, days","police per capita","people per sq. mile","tax revenue per capita","=1 if in western N.C.","=1 if in central N.C.","=1 if in SMSA","perc. minority, 1980","weekly wage, construction","wkly wge, trns, util, commun","wkly wge, whlesle, retail trade","wkly wge, fin, ins, real est","wkly wge, service industry","wkly wge, manufacturing","wkly wge, fed employees","wkly wge, state employees","wkly wge, local gov emps","offense mix: face-to-face/other","percent young male")
@@ -97,7 +90,7 @@ kable(data_table, col.names = data_headers, caption = "Descriptions and Groups o
 
 To get a better sense of the data set the summary function was run.
 
-```{r warning=FALSE, message=FALSE}
+```{r results=FALSE}
 summary(data)
 ```
 
@@ -128,7 +121,8 @@ plot(data_crmrte$crmrte)
 qqnorm(data_crmrte$crmrte)
 shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms non-normality
 ```
-__Outlier Analysis__
+# Outlier Analysis
+
 \
 There are several outliers in the variable crmrte and the distribution is right skewed. We have ninety observations so non-normality is not a top concern but this distribution is not perfectly normal. we analyse outliers for crime rate that are > 2*Std-dev from the mean crime rate (i.e data pts with crime rate > 0.07)
 
@@ -139,15 +133,23 @@ The postiviely skewed outliers (6 counties) on the right side of the distributio
 
 This is not very surprising as we expect urban areas with high density of population to have more crimes. we will continue to monitor the impact of the outliers and conisder the treatment of these outlier in a later part of the report.
 
-```{r}
-density_table <- data.frame(data_crmrte[data_crmrte$crmrte > 0.07,]$county, data_crmrte[data_crmrte$crmrte > 0.07,]$crmrte, data_crmrte[data_crmrte$crmrte > 0.07,]$density)
-kable(density_table, col.names = c("County", "Crime Rate", "Density"), caption = "Density and Outliers")
+```{r tidy=TRUE}
+upper <- data_crmrte[data_crmrte$crmrte > 0.07,]
+density_table <- data.frame(upper$county, upper$crmrte, upper$density)
+kable(density_table, col.names = c("County", "Crime Rate", "Density"), 
+      caption = "Density and Outliers")
 ```
-We also look at the lower range of outliers and find only data pt 51 (county 115) which has crime rate < 0.01. This outlier has some significant outlier effects and will be explored further later in the report.
+
+
+We also look at the lower range of outliers and find only data pt 51 (county 115) which has crime rate < 0.01. This outlier has some significant outlier effects and will be explored further later in the report.\
+
+
 
 ```{r}
-density_table <- data.frame(data_crmrte[data_crmrte$crmrte < 0.01,]$county, data_crmrte[data_crmrte$crmrte < 0.01,]$crmrte, data_crmrte[data_crmrte$crmrte < 0.01,]$density)
-kable(density_table, col.names = c("County", "Crime Rate", "Density"), caption = "Density and Outliers")
+lower <- data_crmrte[data_crmrte$crmrte < 0.01,]
+density_table <- data.frame(lower$county, lower$crmrte, lower$density)
+kable(density_table, col.names = c("County", "Crime Rate", "Density"), 
+      caption = "Density and Outliers")
 
 ```
 
@@ -168,12 +170,13 @@ The histogram of the transformed crime rate is much more symmetrical and shows m
 The scatter plot looks much more normal, and the Q-Q plot is much closer to normal with the data points hugging the 45 degree line much more closely. Given the stronger argument for the political campaign and the benefits to normality we have chosen to model the tranformation of crime rate as opposed to crime rate.
 \
 
-__Groupings__\
+# Groupings
+
 In order to digest the data in the data set we decided to group the variables into five groups: deterrent, wages, demographic, region, and urban. We performed exploratory data analysis on all of these variables.\
 
 The first group is deterrent data. As cited in the original paper, these variables were hypothesized to reduce crime rate through disincentivizing crime. Essentially, as the probability of getting caught increases, criminals' desire to commit crimes decreases.\
 
-__Deterrent Data__\
+# Deterrent Data
 ```{r}
 deterrent_data <- data_crmrte[,c('prbarr','prbconv','prbpris','crmrte',
                           'avgsen','polpc')]
@@ -188,13 +191,12 @@ my_vars2 <- c("polpc")
 deterrent_data3 <- deterrent_data[my_vars2]
 
 boxplot(deterrent_data2, main="Boxplot of prbarr, prbconv, prbpris")
-#boxplot(deterrent_data3, main="Boxplot of polpc")
-#boxplot(deterrent_data$avgsen, main="Boxplot of avgsen")
 ```
 \
 The first four histograms show right skew while prbpris shows left skew. The biggest outlier is observation 51. This observation has the lowest crime rate in the data set, the highest polpc (police per capita), the highest avg sentence, the third highest prbconv, and the lowest pctmin80. This observation is likely to affect many of the regressions so it will need to be examined further. These variables are candidates to be transformed.\
 
-__Wages Data__\
+# Wages Data
+
 ```{r }
 #create a dataframe of just the wage variables
 wages_data <- data_crmrte[,c('wcon','wtuc','wtrd','wfir', 'wser',
@@ -204,10 +206,11 @@ wages_data <- data_crmrte[,c('wcon','wtuc','wtrd','wfir', 'wser',
 ggplot(gather(wages_data), aes(value)) + 
   geom_histogram(bins = 10) + 
   facet_wrap(~key, scales = 'free_x')
+```
 
+```{r fig.height=4}
 #generate boxplots of just the wage variables
-boxplot(wages_data)
-
+boxplot(log(wages_data), ylab="log(wage)", xlab="variable")
 
 ```
 \
@@ -224,7 +227,7 @@ data_crmrte$median_wage <- apply(data_crmrte[c("wcon", "wtuc", "wtrd",
 ```
 
 
-Region Data__\
+# Region Data
 ```{r}
 #create a dataframe of just the wage variables
 dummies_data <- data_crmrte[,c('west','central')]
@@ -242,7 +245,7 @@ summary(region_check)
 The regions are broken up into central, west, and east. East is left out of the data set and it's effect as the final level of the indicator variable will move to the intercept.\
 
 
-__Urban Data__\
+# Urban Data
 ```{r}
 #plot histograms of just the wage variables
 sum(data_crmrte$urban) # There are only 8 Urban areas out of 90 counties
@@ -251,7 +254,7 @@ hist(data_crmrte$urban)
 ```
 Urban did not fit into a great grouping so we left this variable on its own. A histogram shows that the state has relatively few urban counties, something to keep in mind when analyzing other variables such as density.\
 
-__Demographic Data__\
+# Demographic Data
 ```{r}
 #create a dataframe of just the demographic variables
 demographic_data <- data_crmrte[,c('density', 'taxpc', 'pctmin80',
@@ -285,7 +288,7 @@ ggplot(gather(data_crmrte[,c('log_prbarr', 'log_prbconv', 'log_prbpris', 'log_av
 \
 Though the distribution of the variables still exhibits skew, the skew does seem to be reduced.
 
-__Log Tranformed Dependent Variable Comparison__
+# Log Tranformed Dependent Variable Comparison
 
 \
 In order to settle on the final data set we compare an all-in log-log model with an all-in log-linear to see which dependent variables are more suitable.\
@@ -344,7 +347,7 @@ stargazer(all_in_model, all_in_model_log_level,
 
 
 
-__Model 1: Simple Model__\
+# Model 1: Simple Model
 
 In order to create a simple model we decided to build using a bottom up approach. We looked at a correlation matrix 
 
@@ -352,7 +355,6 @@ In order to create a simple model we decided to build using a bottom up approach
 cm = round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
 cm = cm[, -1]
 print(cm)
-
 ```
 
 
@@ -367,13 +369,13 @@ stargazer(simple_regression_model,
           type = "text", omit.stat = "f",
           se = list(se.simple_regression_model),
           star.cutoffs = c(0.05, 0.01, 0.001))
-#plot(simple_regression_model)
+
 ```
 
 The variable density explains 40.1% of the variation in the log of crime rate. As density increases by 1 unit (as the county population divided by the county land area increases by 1%) crime increases by 22%. 
 
 
-__Model 2: Kitchen Sink Model__\
+# Model 2: Kitchen Sink Model
 Still, we can do better in predicting the log crime rate than simply using one variable. We know examine a "kitchen sink" model. This model includes all of the variables in the data set except county (which has too many values to be a useful indicator variable) and year, which is a constant (1987). Below are the results.
 
 
@@ -400,10 +402,10 @@ stargazer(simple_regression_model, all_in_model_log_level,
 
 Unsuprisingly, the r-squared of the "kitchen sink" model is substantially higher (85.4% vs. 40.1%). More importantly, the adjusted r-squared which accounts for the number of variables in the models, is also higher (80.6% vs 39.4%). Interestingly, density is no longer the variable with the highest statistical significance. The coefficients show the effect after all the other variables have been controlled for (partialled out). In the "kitchen sink" model prbarr and prbconv both have the lowest p-values.\
 
-__Model 3: Balanced Model__\
+# Model 3: Balanced Model
 We took two approaches to building the balanced model. We used a bottom up approach that relied on both the correlation matrix and stepwide regression. We also used a top down approach that started with the "kitchen sink" model and excluded variables. Both methods are discussed below. Both approaches relied on our categories of variables to simplify the process.\
 
-```{r}
+```{r results=FALSE}
 base_forward = lm(log_crmrte ~ density,
                              data = data_crmrte)
 forward_step = step(base_forward, scope = formula(all_in_model_log_level), direction = "forward")
@@ -453,10 +455,6 @@ se.balanced_model_top_1 = sqrt(diag(vcovHC(balanced_model_top_1)))
 coeftest(balanced_model_top_1, vcov = vcovHC)
 AIC(balanced_model_top_1)
 
-#stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1,
-#          type = "text", omit.stat = "f",
-#          se = list(se.simple_regression_model, se.all_in_model_log_level, #se.balanced_model_top_1),
-#          star.cutoffs = c(0.05, 0.01, 0.001))
 ```
 Our adjusted r-squared has only fallen from 80.6% to 77.6% but we have dropped 12 variables. This is a much more parisimous model. In order to double check wages, we decided to try to one more model that included just the median wage from all industries. The fundamental concept behind this is that the median could capture all opportunity for potential criminals, and it has the benefit of not being affected by the outlier in wser. 
 
@@ -471,11 +469,6 @@ se.balanced_model_top_2 = sqrt(diag(vcovHC(balanced_model_top_2)))
 coeftest(balanced_model_top_2, vcov = vcovHC)
 AIC(balanced_model_top_2)
 
-# stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1, balanced_model_top_2,
-#           type = "text", omit.stat = "f",
-#           se = list(se.simple_regression_model, se.all_in_model_log_level, 
-#                     se.balanced_model_top_1, se.balanced_model_top_2),
-#           star.cutoffs = c(0.05, 0.01, 0.001))
 
 ```
 
@@ -487,8 +480,6 @@ base_backward = lm(log_crmrte ~ prbarr + prbconv + prbpris
                              + avgsen + polpc + density
                              + taxpc + pctmin80 + mix + pctymle,
                              data = data_crmrte)
-# backward_step = step(base_backward, scope = formula(base_backward), direction = "backward")
-
 ```
 ```{r}
 balanced_model_top_3 <- lm(log_crmrte ~ mix + density
@@ -498,11 +489,6 @@ balanced_model_top_3 <- lm(log_crmrte ~ mix + density
 se.balanced_model_top_3 = sqrt(diag(vcovHC(balanced_model_top_3)))
 coeftest(balanced_model_top_2, vcov = vcovHC)
 AIC(balanced_model_top_3, k=2)
-# stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1, balanced_model_top_3,
-#           type = "text", omit.stat = "f",
-#           se = list(se.simple_regression_model, se.all_in_model_log_level, 
-#                     se.balanced_model_top_1, se.balanced_model_top_3),
-#           star.cutoffs = c(0.05, 0.01, 0.001))
 
 
 ```
@@ -511,14 +497,8 @@ The difference between the backward and forward model is that the backward model
 
 The backward stepwise regression yielded a more reasonable model so that is the model we are choosing for our balanced model. This model strikes a nice balance between parsimony and explanatory power. The variables included are prbarr, prbconv, polpc, density, pctmin80, and mix. Six out of the original 24 independent variables are included. The adjust r-squared is only 3% lower (77.6% vs. 80.6%). It includes a blend of actionable items for the campaign in the deterrent data as well as demographic variables that perhaps can focus the campaign's efforts.
 
-###########################################################################################
-#
-## Praveen's section
-# 
-###########################################################################################
 
-
-# 3. An Assessment of the CLM Assumptions
+__3. An Assessment of the CLM Assumptions__
 
 We choose our balanced model for the complete assessment of all 6 classical linear model assumptions.
 
@@ -577,7 +557,7 @@ round(cor(balanced_model_data)*100,2) # correlations displayed as % for convenie
 
 ZCM is best analysed by studying the regression plots of the residuals. Let's start by looking at the regression plots of the balanced model
 
-```{r}
+```{r out.width='.49\\linewidth', fig.width=4, fig.height=4,fig.show='hold',fig.align='center'}
 plot(balanced_model_top_3)
 
 ```
@@ -699,15 +679,7 @@ BIC(balanced_model_top_3)
 
 ```
 
-
-###########################################################################################
-#
-## Josh's section
-# 
-###########################################################################################
-
-
-# 5. A Discussion of Omitted Variables
+__5. Omitted Variables__
 
 We've identified several key omitted variables that we feel most influence the crime rate but are not represented in the data here.
 
@@ -724,12 +696,6 @@ We've identified several key omitted variables that we feel most influence the c
 5. Income Inequality metrics: There are several measures of income inequaity that could be included in the data: [Mean Log Deviation](https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/mld.html) or [Theil Index](https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/theil-index.html) or [Gini Index](https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/gini-index.html) for each of the counties. Income inequality has been shown to have a significant effect on violent crime in particular. One World Bank report states that inequality predicts about half of the variance in murder rates between American states and between countries around the world. [Link](https://siteresources.worldbank.org/DEC/Resources/Crime%26Inequality.pdf) Income inequality measures are often measured as 0 (perfectly equal income distribution) to 1 (perfectly unequal income distribution, or 1 household has all the income). We would thus expect these to have a positive bias, in that an increase in income inequality would lead to an increase in violent crime. We expect that the bias would be somewhat smaller as income inequality is correlated specifically with violent crime less than property crime. There are no variables in the provided data set that would give any insight into this.
 
 
-
-###########################################################################################
-#
-## Ryan's section
-# 
-###########################################################################################
 
 __6. A Conclusion__
 
