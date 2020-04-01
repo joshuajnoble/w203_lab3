@@ -451,7 +451,7 @@ linearHypothesis(all_in_model_log_level,
 ```
 
 
-The hypothesis tests below show that of the five groups the only groups that are jointly significant are the deterrent data and the demographic data. These tests measure whether removing all the variables within a group reduces the r-squared by s attsitically signficant amount. We will re-run the models and compare. 
+The hypothesis tests below show that of the five groups the only groups that are jointly significant are the deterrent data and the demographic data. These tests measure whether removing all the variables within a group reduces the r-squared by statistically signficant amount. We will re-run the models and compare. 
 ```{r}
 balanced_model_top_1 <- lm(log_crmrte ~ prbarr + prbconv + prbpris 
                              + avgsen + polpc + density
@@ -551,7 +551,7 @@ balanced_model_top_3 <- lm(log_crmrte ~ mix + density
 
 First thing to note is that we are dealing with a single cross-section (1987) of a multi-year panel data.
 
-Secondly this is observational data and not experiemental so perfect random sampling is hard to achieve.
+Secondly this is observational data and not experimental so perfect random sampling is hard to achieve.
 
 CORNWELL – TRUMBULL (1994) specifically state they choose panel data because cross – section data were not able to capture the  real  effect of the  crime  rate  on  several  independent regressors.
 
@@ -574,7 +574,7 @@ Multicollinearity refers to a situation in which two or more explanatory variabl
 
 As seen from the correlation matrix below, there is no perfect multicollinearity in the model but we observe some meaningful correlations between (Prbarr, mix) and (Prbarr,density)
 
-These linear realtionships among the X's don't invlaidate the MLR parameters but they lower precision and increase the std-errors in the mdoel 
+These linear realtionships among the X's don't invalidate the MLR parameters but they lower precision and increase the std-errors in the mdoel 
 ```{r}
 balanced_model <- c( "mix", "density","polpc", "pctmin80","prbarr","prbconv")
 balanced_model_data <- data_crmrte[balanced_model]
@@ -593,7 +593,7 @@ plot(balanced_model_top_3)
 
 __CLM assumptions analysis from plots__
 
-- Plot 1. The residuals vs. fitted plot indicates that the zero conditional mean assumpotion is NOT perfectly satisfied but the red line is close enough to zero, a big improvement compared to some of the other models we tested. The non-uniform thickness of the residuals indicates possible hetroskedasticity. 
+- Plot 1. The residuals vs. fitted plot indicates that the zero conditional mean assumption is NOT perfectly satisfied but the red line is close enough to zero, a big improvement compared to some of the other models we tested. The non-uniform thickness of the residuals indicates possible heteroskedasticity. 
 - Plot 2. The Q-Q plot shows that the residuals are not perfectly normally distributed, but the log transform of the crime rate improved the positive skew in the data but has introduced some negative skew
 - Plot 3. The scale location plot indicated the presence of heteroskedasticity especially in the middle where the thickness of the band varies and outliers such as '50' and '24' are generating large standardized residuals
 - Plot 4. The residuals vs leverage plot shows some of the outliers we had discussed earlier ( 51, 25, 84) but the most significantly outlier is 51 ( having high leverage and Cook's distance >1). This outlier 51 significantly affects our model estimte and might be worth removing from the data to improve model accuracy.
@@ -612,9 +612,9 @@ Finally we check the correlation between the X's and the errors in the model to 
 
 Homoskedasticity describes a situation in which the error term has the same variance across all values of the independent variables.
 
-The regression plots indicate the presence of some hetreskedasticity in the erros let's test if they are statistically significant using the Breusch-Pagan test.
+The regression plots indicate the presence of some heteroskedasticity in the errors let's test if they are statistically significant using the Breusch-Pagan test.
 
-- The Breusch-Pagan test below allows us to test for hetroskedasticity under the 
+- The Breusch-Pagan test below allows us to test for heteroskedasticity under the 
 
 $H_0:  Homeskedasticity$
 
@@ -623,7 +623,7 @@ bptest(balanced_model_top_3)
 ```
 From the BP test, surprisingly we find p-value is not statistically significant, therefore we fail to reject $H_0: Homeskedasticity$.
 
-However, we will still choose to be more conservative and use HC consistent std-errors ( Huber-white Std-errors) using coeftest function from the sandwich package in R. This conservative approach we have taken througout this report in our model selection process in choosing regressors for different models
+However, we will still choose to be more conservative and use HC consistent std-errors ( Huber-white Std-errors) using coeftest function from the sandwich package in R. This conservative approach we have taken throughout this report in our model selection process in choosing regressors for different models
 
 ### MLR.6: Normality of the error term
 
@@ -633,7 +633,7 @@ We can check the normality using the Q-Q plot to vizualize the distribution of r
 
 We saw in the earlier section that the crime rate has some positive skew, but we were able to reduce the skew by applying log transform to the crime rate.
 
-We can also run a Shapiro - wilk test for normality of the residuals
+We can also run a Shapiro - Wilk test for normality of the residuals
 
 $H_0: Normality$ 
 ```{r}
@@ -643,7 +643,7 @@ The p-value is significant, therefore we reject $H_0: Normality$
 
 The non-normality of the residuals is statisitically significant for this model.
 
-There is some negative skew from outlier 51 in the transformed variable but However since we have n>30 under CLT we have OLS estimators are normally distributed.
+There is some negative skew from outlier 51 in the transformed variable, however, since we have n>30 under CLT we have OLS estimators are normally distributed.
 
 
 
