@@ -42,9 +42,9 @@ library(reshape2)
 
 ```{r echo=FALSE}
 #read in the data
-#data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
+data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
 #data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
-data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
+#data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
 ```
 ###########################################################################################
 #
@@ -97,7 +97,7 @@ kable(data_table, col.names = data_headers, caption = "Descriptions and Groups o
 
 To get a better sense of the data set the summary function was run.
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 summary(data)
 ```
 
@@ -117,10 +117,13 @@ class(data_crmrte$prbconv)
 
 With 25 original variables in the data set the natural place to start is with the dependent variable, crmrte. To get a better sense of this variable, the distribution is graphed below.
 
-```{r}
+```{r out.width='.49\\linewidth', fig.width=4, fig.height=4,fig.show='hold',fig.align='center'}
 quantile(data_crmrte$crmrte, c(0, .01, .05, .10, .25, .50,  .75, .90, .95, .99, 1.0))
 hist(data_crmrte$crmrte,breaks=20)
 boxplot(data_crmrte$crmrte, main="Boxplot of crmrte")
+```
+
+```{r out.width='.49\\linewidth', fig.width=4, fig.height=4,fig.show='hold',fig.align='center'}
 plot(data_crmrte$crmrte)
 qqnorm(data_crmrte$crmrte)
 shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms non-normality
@@ -134,23 +137,24 @@ The postiviely skewed outliers (6 counties) on the right side of the distributio
 * 2. The average demographic density for the outlier set is  greater than 3 times the average density for the overall sample
 * 3. We also observe that data ppt 53 which has the highest crime rate, also has the highest density amongst the outliers and is a urban area
 
-This is not very surprising as we expect urban areas with high density of population to have more crimes.
+This is not very surprising as we expect urban areas with high density of population to have more crimes. we will continue to monitor the impact of the outliers and conisder the treatment of these outlier in a later part of the report.
 
-we will continue to monitor the impact of the outliers and conisder the treatment of these outlier in later part of the report.
 ```{r}
-data_crmrte[data_crmrte$crmrte > 0.07,] 
+density_table <- data.frame(data_crmrte[data_crmrte$crmrte > 0.07,]$county, data_crmrte[data_crmrte$crmrte > 0.07,]$crmrte, data_crmrte[data_crmrte$crmrte > 0.07,]$density)
+kable(density_table, col.names = c("County", "Crime Rate", "Density"), caption = "Density and Outliers")
 ```
 We also look at the lower range of outliers and find only data pt 51 (county 115) which has crime rate < 0.01. This outlier has some significant outlier effects and will be explored further later in the report.
 
 ```{r}
-data_crmrte[data_crmrte$crmrte < 0.01,] 
+density_table <- data.frame(data_crmrte[data_crmrte$crmrte < 0.01,]$county, data_crmrte[data_crmrte$crmrte < 0.01,]$crmrte, data_crmrte[data_crmrte$crmrte < 0.01,]$density)
+kable(density_table, col.names = c("County", "Crime Rate", "Density"), caption = "Density and Outliers")
 
 ```
 
 For campaign purposes, we want to predict crime. We want our candidate to be able to say that he or she can reduce crime in order to win votes. What is the most effective way to convey that? Using crime rate as it appears in the data set is using the level of crime rate and would suggest the following statement as a campaign slogan - "I can reduce crime to this rate by doing x, y, and z". 
 
 Transforming crime rate into the log of crime rate allows for the statement "I can reduce crime by n% by doing x, y, and z." We find the latter more powerful and meaningful to voters since voters have no idea about the level of crime rates. In addition, we will show that the transformation of crime rate imrpoves the normaility and distribution of the variable, which will often reduce skew in the errors as well.\
-```{r}
+```{r echo=FALSE, out.width='.49\\linewidth', fig.width=4, fig.height=4,fig.show='hold',fig.align='center'}
 data_crmrte$log_crmrte <- log(data_crmrte$crmrte)
 hist(data_crmrte$log_crmrte,breaks=20)
 boxplot(data_crmrte$log_crmrte, main="Boxplot of log of crmrte")
@@ -191,7 +195,7 @@ boxplot(deterrent_data2, main="Boxplot of prbarr, prbconv, prbpris")
 The first four histograms show right skew while prbpris shows left skew. The biggest outlier is observation 51. This observation has the lowest crime rate in the data set, the highest polpc (police per capita), the highest avg sentence, the third highest prbconv, and the lowest pctmin80. This observation is likely to affect many of the regressions so it will need to be examined further. These variables are candidates to be transformed.\
 
 __Wages Data__\
-```{r}
+```{r }
 #create a dataframe of just the wage variables
 wages_data <- data_crmrte[,c('wcon','wtuc','wtrd','wfir', 'wser',
                       'wmfg','wfed', 'wsta', 'wloc')]
@@ -257,17 +261,6 @@ demographic_data <- data_crmrte[,c('density', 'taxpc', 'pctmin80',
 ggplot(gather(demographic_data), aes(value)) + 
   geom_histogram(bins = 10) + 
   facet_wrap(~key, scales = 'free_x')
-
-#Lots of skewed distributions above, particularly in pctymle and taxpc
-# #generate boxplots of just the demographic variables
-# demographic_data2 <- demographic_data[c("taxpc", "pctmin80")]
-# boxplot(demographic_data2)
-# demographic_data3 <- demographic_data[c("pctymle")]
-# boxplot(demographic_data3)
-# demographic_data4 <- demographic_data[c("density")]
-# boxplot(demographic_data4)
-# demographic_data5 <- demographic_data[c("mix")]
-# boxplot(demographic_data5)
 ```
 Once again we see a lot of right skewed distributions in the historgams and in the box plots.\
 
@@ -355,11 +348,10 @@ __Model 1: Simple Model__\
 
 In order to create a simple model we decided to build using a bottom up approach. We looked at a correlation matrix 
 
-## Anyone know how to print this better?
-
-```{r}
-round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
-
+```{r warning=FALSE}
+cm = round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
+cm = cm[, -1]
+print(cm)
 
 ```
 
@@ -720,11 +712,11 @@ BIC(balanced_model_top_3)
 We've identified several key omitted variables that we feel most influence the crime rate but are not represented in the data here.
 
 
-1. Unemployment Rate - Unemployment is a key indicator for crime rate.  We may be able to infer some indication of the frequency of seasonal or part-time work in the construction or service industries from the `wcon` or `wser` variables as they shows an average weekly wage which mght indicate how often workers are employed. However, this estimate is likely not accurate enough to be considered meaningful. The unemployment rate among youth 18-30 would also be meaningful as criminal activity among young adults is higher than that of older adults.
+1. Unemployment Rate - Unemployment is a key indicator for crime rate.  We may be able to infer some indication of the frequency of seasonal or part-time work in the construction or service industries from the `wcon` or `wser` variables as they shows an average weekly wage which mght indicate how often workers are employed. However, this estimate is likely not accurate enough to be considered meaningful. The unemployment rate among youth 18-30 would also be meaningful as criminal activity among young adults is higher than that of older adults. Unemployment and inflation rate (see below) may be correlated and may have positive bias on one another.
 
-2. Inflation Rate (Consumer Price Index) - Inflation and crime rates are correlated with a positive relationship and the causal link is from inflation and unemployment to crime. [Link](https://www.researchgate.net/publication/236736987_Will_Inflation_Increase_Crime_Rate_New_Evidence_from_Bounds_and_Modified_Wald_Tests). Inﬂation causes the purchasing power to reduce and cost of living to increase, consequently crime rates rise as the inflation rate rises. Because of the lag between price and wage adjustments, inflation lowers the real income of low-skilled labor, but rewards property criminals due to the rising demand and subsequent high profits in the illegal market. Inflation in the year represented, 1987, would not be sufficient though as the reduction in purchasing power does not happen immediately, it takes time for inﬂation to gradually reduce purchasing power. None of the data provided in the study gives us an indication of the inflation rate in a time period before the study. We would expect that this variable would show a positive bias towards crime rate and that it would likely be a large bias.
+2. Inflation Rate (Consumer Price Index) - Inflation and crime rates are correlated with a positive relationship and the causal link is from inflation and unemployment to crime. [Link](https://www.researchgate.net/publication/236736987_Will_Inflation_Increase_Crime_Rate_New_Evidence_from_Bounds_and_Modified_Wald_Tests). Inﬂation causes the purchasing power to reduce and cost of living to increase, consequently crime rates rise as the inflation rate rises. Because of the lag between price and wage adjustments, inflation lowers the real income of low-skilled labor, but rewards property criminals due to the rising demand and subsequent high profits in the illegal market. Inflation in the year represented, 1987, would not be sufficient though as the reduction in purchasing power does not happen immediately, it takes time for inﬂation to gradually reduce purchasing power. None of the data provided in the study gives us an indication of the inflation rate in a time period before the study. We would expect that this variable would show a positive bias towards crime rate and that it would likely be a large bias. Inflation rate and unemployment may be correlated and may have positive bias on one another.
 
-3. Childhood Blood Lead Levels (with 18 year offset) - The lead–crime hypothesis is the proposed link between elevated blood lead levels in children and increased rates of crime, delinquency, and recidivism later in life. Studies linking blood lead levels (BLL) in children to crime rate typically seek to quantify the BLL 17-18 years before the examined crime rate. One such study used a unique dataset linking preschool blood lead levels (BLLs), birth, school, and detention data for 120,000 children born 1990-2004 in Rhode Island, to estimate the impact of lead on behavior [Link](https://www.nber.org/papers/w23392.pdf). We expect that this variable would show a positive bias and that it would likely be a small bias but still significant for any given year as there may be other underlying phenomena driving crime rate in a particular county. There are no variables in the provided data set that would give any insight into this.
+3. Childhood Blood Lead Levels (with 18 year offset) - The lead–crime hypothesis is the proposed link between elevated blood lead levels in children and increased rates of crime, delinquency, and recidivism later in life. Studies linking blood lead levels (BLL) in children to crime rate typically seek to quantify the BLL 17-18 years before the examined crime rate. One such study used a unique dataset linking preschool blood lead levels (BLLs), birth, school, and detention data for 120,000 children born 1990-2004 in Rhode Island, to estimate the impact of lead on behavior [Link](https://www.nber.org/papers/w23392.pdf). We expect that this variable would show a positive bias and that it would likely be a small bias but still significant for any given year as there may be other underlying phenomena driving crime rate in a particular county. There are no variables in the provided data set that would give any insight into this. Denstiy may have a positive correlation with BLL as urban and more industrialized areas typically had greater levels of lead poisoning in groundwater and older housing stock which may contains lead paint. 
 
 4. Abortion Rates (with 18 year time lag) - Multiple studies have shown a correlation between legalized abortion rates and crime. One study by Donohoe and Leavitt estimated that crime fell roughly 20% between 1997 and 2014 due to legalized abortion.
  [Link](https://bfi.uchicago.edu/wp-content/uploads/BFI_WP_201975.pdf) While it may be difficult to ascertain which counties residents accessing abortion services lived in, we expect that measures of employment and poverty could be correlated to show how a negative bias of abortion rates potentially offset other variables with a positive bias. We estimate that the bias may be small as it could present difficulties in localizing it effectively, but we still believe that it would be significant. There are no variables in the provided data set that would give any insight into this. 
