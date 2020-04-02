@@ -9,25 +9,12 @@ subtitle: '__LAB 3: Reducing Crime__'
 output:
   html_document:
     df_print: paged
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
----
-output:
+    self_contained: no
   pdf_document: default
-  html_document: default
----
----
-output:
-  pdf_document: default
-  html_document: default
 ---
 
 
-
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 library(car)
 library(lmtest)
 library(sandwich)
@@ -38,25 +25,32 @@ library(knitr)
 library(dplyr)
 library(reshape2)
 
- opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=20),tidy=TRUE)
+
+library(knitr)
+hook_output = knit_hooks$get('output')
+knit_hooks$set(output = function(x, options) {
+  # this hook is used only when the linewidth option is not NULL
+  if (!is.null(n <- options$linewidth)) {
+    x = knitr:::split_lines(x)
+    # any lines wider than n should be wrapped
+    if (any(nchar(x) > n)) x = strwrap(x, width = n)
+    x = paste(x, collapse = '\n')
+  }
+  hook_output(x, options)
+})
+
 
 ```
 
-```{r}
+```{r echo=FALSE}
 #read in the data
-
-data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
-
+data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
+#data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
 #data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
 
-
-
 ```
-###########################################################################################
-#
-## Ryan's section
-# 
-###########################################################################################
+
 __1. An Introduction__
 
 As crime has seen an increase in the 1980’s, citizens of North Carolina have been looking to local government politicians to address this growing problem. In preparation for the upcoming election, our team of political consultants has been tasked with providing insight to drive policy directed at reducing crime levels. Before pushing a political campaign aimed at crime reduction, we must first identify the key determinants of crime and their significance in order to properly focus resources to target these issues.
@@ -74,21 +68,15 @@ Our dependent variable and the key measure we are focused on is crime rate, whic
 
 While this 1987 dataset provides observational variables that impact crime, the dataset does not provide a comprehensive list of all variables. There are a number of factors that our team has identified that could potentially assist in more accurately measuring a causal effect on crime. These factors are discussed in further detail in the omitted variables section of this report. In addition, this dataset only covers a single cross-section of the data from the year 1987. A multi-year panel of data, if provided, could improve the accuracy of our models and address lead-lag effects. Additional data and experimental studies could provide a more accurate casual model, however the statistical results of this report are limited to the information provided in the 1987 dataset. Using these results, our team has prepared recommendations for a political strategy addressing crime in North Carolina. 
 
-###########################################################################################
-#
-## Robert's section
-# 
-###########################################################################################
 
 
+__2. A Model Building Process__
 
-# 2. A Model Building Process
+# Exploratory Data Analaysis
 
-__Exploratory Data Analaysis__
+We started by conducting exploratory data analysis. First, we read the original paper [CORNWELL – TRUMBULL (1994)] to get a better understanding of each variable. We defined the variables in the table below and grouped them into five groups in order to get a better handle on them. 
 
-We started by conducting exploratory data analysis. First, we read the original paper to get a better understanding of each variable. We defined the variables in the table below and grouped them into five groups in order to get a better handle on them. 
-
-```{r}
+```{r }
 crime_count <- c(1:25)
 data_variables <- c("county","year","crmrte","prbarr","prbconv","prbpris","avgsen","polpc","density","taxpc","west","central","urban","pctmin80","wcon","wtuc","wtrd","wfir","wser","wmfg","wfed","wsta","wloc","mix","pctymle")
 data_description <- c("county identifier","1987","crimes committed per person","'probability' of arrest","'probability' of conviction","'probability' of prison sentence","avg. sentence, days","police per capita","people per sq. mile","tax revenue per capita","=1 if in western N.C.","=1 if in central N.C.","=1 if in SMSA","perc. minority, 1980","weekly wage, construction","wkly wge, trns, util, commun","wkly wge, whlesle, retail trade","wkly wge, fin, ins, real est","wkly wge, service industry","wkly wge, manufacturing","wkly wge, fed employees","wkly wge, state employees","wkly wge, local gov emps","offense mix: face-to-face/other","percent young male")
@@ -103,7 +91,7 @@ kable(data_table, col.names = data_headers, caption = "Descriptions and Groups o
 
 To get a better sense of the data set the summary function was run.
 
-```{r}
+```{r results=FALSE}
 summary(data)
 ```
 
@@ -123,44 +111,59 @@ class(data_crmrte$prbconv)
 
 With 25 original variables in the data set the natural place to start is with the dependent variable, crmrte. To get a better sense of this variable, the distribution is graphed below.
 
-```{r}
+```{r out.width='.49\\linewidth', fig.width=4, fig.height=4,fig.show='hold',fig.align='center'}
 quantile(data_crmrte$crmrte, c(0, .01, .05, .10, .25, .50,  .75, .90, .95, .99, 1.0))
 hist(data_crmrte$crmrte,breaks=20)
 boxplot(data_crmrte$crmrte, main="Boxplot of crmrte")
+```
+
+```{r out.width='.49\\linewidth', fig.width=4, fig.height=4,fig.show='hold',fig.align='center'}
 plot(data_crmrte$crmrte)
 qqnorm(data_crmrte$crmrte)
 shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms non-normality
 ```
-__Outlier Analysis__
+# Outlier Analysis
+
 \
-There are several outliers in the variable crmrte and the distribution is right skewed. We have ninety observations so non-normality is not a top concern but this distribution is not perfectly normal. we analyse outliers for crime rate that are > 1.96*Std-dev from the mean crime rate (~0.07)
+There are several outliers in the variable crmrte and the distribution is right skewed. We have ninety observations so non-normality is not a top concern but this distribution is not perfectly normal. we analyse outliers for crime rate that are > 2*Std-dev from the mean crime rate (i.e data pts with crime rate > 0.07)
 
-The largest outliers (6 counties) on the right side of the distribution are examined. There are some insights:
-- 1. 4 of out of the 6 outliers are in urban areas
-- 2. The average demographic density for the outlier set is  greater than 3 times the average density for the sample
-- 3. We also observe that data ppt 53 which has the highest crime rate, also has the highest density amongst the outliers and is a urban area
+The postiviely skewed outliers (6 counties) on the right side of the distribution are examined to gather some insights:
+* 1. 4 of out of the 6 outliers are in urban areas
+* 2. The average demographic density for the outlier set is  greater than 3 times the average density for the overall sample
+* 3. We also observe that data ppt 53 which has the highest crime rate, also has the highest density amongst the outliers and is a urban area
 
-This is not very surprising as we expect urban areas with high density of population to have more crimes.
+This is not very surprising as we expect urban areas with high density of population to have more crimes. we will continue to monitor the impact of the outliers and conisder the treatment of these outlier in a later part of the report.
 
-we will continue to monitor the impact of the outliers and conisder the treatment of these outlier in later part of the report.
-```{r}
-data_crmrte[data_crmrte$crmrte > 0.07,] 
-```
-We also look at the lower range of outliers and find only data pt 51 (county 115) which has crime rate < 0.01. This outlier has some significant outlier effects and will be explored further later in the report.
-
-```{r}
-data_crmrte[data_crmrte$crmrte < 0.01,] 
-
+```{r tidy=TRUE}
+upper <- data_crmrte[data_crmrte$crmrte > 0.07,]
+density_table <- data.frame(upper$county, upper$crmrte, upper$density)
+kable(density_table, col.names = c("County", "Crime Rate", "Density"), 
+      caption = "Density and Outliers")
 ```
 
-For campaign purposes, we want to predict crime. We want our candidate to be able to say that he or she can reduce crime in order to win votes. What is the most effective way to convey that? Using crime rate as it appears in the data set is using the level of crime rate and would suggest the following statement as a campaign slogan - "I can reduce crime to this rate by doing x, y, and z". Transforming crime rate into the log of crime rate allows for the statement "I can reduce crime by n% by doing x, y, and z." We find the latter more powerful and meaningful to voters since voters have no idea about the level of crime rates. In addition, we will show that the transformation of crime rate imrpoves the normaility and distribution of the variable, which will often reduce skew in the errors as well.\
+
+We also look at the lower range of outliers and find only data pt 51 (county 115) which has crime rate < 0.01. This outlier has some significant outlier effects and will be explored further later in the report.\
+
+
+
 ```{r}
+lower <- data_crmrte[data_crmrte$crmrte < 0.01,]
+density_table <- data.frame(lower$county, lower$crmrte, lower$density)
+kable(density_table, col.names = c("County", "Crime Rate", "Density"), 
+      caption = "Density and Outliers")
+
+```
+
+For campaign purposes, we want to predict crime. We want our candidate to be able to say that he or she can reduce crime in order to win votes. What is the most effective way to convey that? Using crime rate as it appears in the data set is using the level of crime rate and would suggest the following statement as a campaign slogan - "I can reduce crime to this rate by doing x, y, and z". 
+
+Transforming crime rate into the log of crime rate allows for the statement "I can reduce crime by n% by doing x, y, and z." We find the latter more powerful and meaningful to voters since voters have no idea about the level of crime rates. In addition, we will show that the transformation of crime rate imrpoves the normaility and distribution of the variable, which will often reduce skew in the errors as well.\
+```{r echo=FALSE, out.width='.49\\linewidth', fig.width=4, fig.height=4,fig.show='hold',fig.align='center'}
 data_crmrte$log_crmrte <- log(data_crmrte$crmrte)
 hist(data_crmrte$log_crmrte,breaks=20)
 boxplot(data_crmrte$log_crmrte, main="Boxplot of log of crmrte")
 plot(data_crmrte$log_crmrte)
 qqnorm(data_crmrte$log_crmrte)
-shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms persistance of non-normality
+shapiro.test(data_crmrte$log_crmrte) # Shapiro-wilk test confirms the log transformation was able to eradicate the non-normality in the
 
 ```
 The histogram of the transformed crime rate is much more symmetrical and shows much less right skew. The box plot shows all of the outliers on the high end have been removed, though outlier 51 ( countty 115) on the low end has been become more prominent. 
@@ -168,12 +171,13 @@ The histogram of the transformed crime rate is much more symmetrical and shows m
 The scatter plot looks much more normal, and the Q-Q plot is much closer to normal with the data points hugging the 45 degree line much more closely. Given the stronger argument for the political campaign and the benefits to normality we have chosen to model the tranformation of crime rate as opposed to crime rate.
 \
 
-__Groupings__\
+# Groupings
+
 In order to digest the data in the data set we decided to group the variables into five groups: deterrent, wages, demographic, region, and urban. We performed exploratory data analysis on all of these variables.\
 
 The first group is deterrent data. As cited in the original paper, these variables were hypothesized to reduce crime rate through disincentivizing crime. Essentially, as the probability of getting caught increases, criminals' desire to commit crimes decreases.\
 
-__Deterrent Data__\
+# Deterrent Data
 ```{r}
 deterrent_data <- data_crmrte[,c('prbarr','prbconv','prbpris','crmrte',
                           'avgsen','polpc')]
@@ -188,14 +192,13 @@ my_vars2 <- c("polpc")
 deterrent_data3 <- deterrent_data[my_vars2]
 
 boxplot(deterrent_data2, main="Boxplot of prbarr, prbconv, prbpris")
-#boxplot(deterrent_data3, main="Boxplot of polpc")
-#boxplot(deterrent_data$avgsen, main="Boxplot of avgsen")
 ```
 \
-The first four histograms show right skew while prbpris shows left skew. The biggest outlier is observation 51. This observation has the lowest crime rate in the data set, obviously the highest polpc (police per capita), the highest avg sentence, the third highest prbconv, and the lowest pctmin80. This observation is likely to affect many of the regressions so it will need to be examined further. These variables are candidates to be transformed.\
+The first four histograms show right skew while prbpris shows left skew. The biggest outlier is observation 51. This observation has the lowest crime rate in the data set, the highest polpc (police per capita), the highest avg sentence, the third highest prbconv, and the lowest pctmin80. This observation is likely to affect many of the regressions so it will need to be examined further. These variables are candidates to be transformed.\
 
-__Wages Data__\
-```{r}
+# Wages Data
+
+```{r }
 #create a dataframe of just the wage variables
 wages_data <- data_crmrte[,c('wcon','wtuc','wtrd','wfir', 'wser',
                       'wmfg','wfed', 'wsta', 'wloc')]
@@ -204,10 +207,11 @@ wages_data <- data_crmrte[,c('wcon','wtuc','wtrd','wfir', 'wser',
 ggplot(gather(wages_data), aes(value)) + 
   geom_histogram(bins = 10) + 
   facet_wrap(~key, scales = 'free_x')
+```
 
+```{r fig.height=4}
 #generate boxplots of just the wage variables
-boxplot(wages_data)
-
+boxplot(log(wages_data), ylab="log(wage)", xlab="variable")
 
 ```
 \
@@ -224,7 +228,7 @@ data_crmrte$median_wage <- apply(data_crmrte[c("wcon", "wtuc", "wtrd",
 ```
 
 
-Region Data__\
+# Region Data
 ```{r}
 #create a dataframe of just the wage variables
 dummies_data <- data_crmrte[,c('west','central')]
@@ -242,7 +246,7 @@ summary(region_check)
 The regions are broken up into central, west, and east. East is left out of the data set and it's effect as the final level of the indicator variable will move to the intercept.\
 
 
-__Urban Data__\
+# Urban Data
 ```{r}
 #plot histograms of just the wage variables
 sum(data_crmrte$urban) # There are only 8 Urban areas out of 90 counties
@@ -251,7 +255,7 @@ hist(data_crmrte$urban)
 ```
 Urban did not fit into a great grouping so we left this variable on its own. A histogram shows that the state has relatively few urban counties, something to keep in mind when analyzing other variables such as density.\
 
-__Demographic Data__\
+# Demographic Data
 ```{r}
 #create a dataframe of just the demographic variables
 demographic_data <- data_crmrte[,c('density', 'taxpc', 'pctmin80',
@@ -261,17 +265,6 @@ demographic_data <- data_crmrte[,c('density', 'taxpc', 'pctmin80',
 ggplot(gather(demographic_data), aes(value)) + 
   geom_histogram(bins = 10) + 
   facet_wrap(~key, scales = 'free_x')
-
-#Lots of skewed distributions above, particularly in pctymle and taxpc
-# #generate boxplots of just the demographic variables
-# demographic_data2 <- demographic_data[c("taxpc", "pctmin80")]
-# boxplot(demographic_data2)
-# demographic_data3 <- demographic_data[c("pctymle")]
-# boxplot(demographic_data3)
-# demographic_data4 <- demographic_data[c("density")]
-# boxplot(demographic_data4)
-# demographic_data5 <- demographic_data[c("mix")]
-# boxplot(demographic_data5)
 ```
 Once again we see a lot of right skewed distributions in the historgams and in the box plots.\
 
@@ -296,7 +289,7 @@ ggplot(gather(data_crmrte[,c('log_prbarr', 'log_prbconv', 'log_prbpris', 'log_av
 \
 Though the distribution of the variables still exhibits skew, the skew does seem to be reduced.
 
-__Log Tranformed Dependent Variable Comparison__
+# Log Tranformed Dependent Variable Comparison
 
 \
 In order to settle on the final data set we compare an all-in log-log model with an all-in log-linear to see which dependent variables are more suitable.\
@@ -355,14 +348,14 @@ stargazer(all_in_model, all_in_model_log_level,
 
 
 
-__Model 1: Simple Model__\
+# Model 1: Simple Model
 
 In order to create a simple model we decided to build using a bottom up approach. We looked at a correlation matrix 
 
-## Anyone know how to print this better?
-
-```{r}
-round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
+```{r warning=FALSE}
+cm = round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
+cm = cm[, -1]
+print(cm)
 ```
 
 
@@ -377,13 +370,13 @@ stargazer(simple_regression_model,
           type = "text", omit.stat = "f",
           se = list(se.simple_regression_model),
           star.cutoffs = c(0.05, 0.01, 0.001))
-#plot(simple_regression_model)
+
 ```
 
 The variable density explains 40.1% of the variation in the log of crime rate. As density increases by 1 unit (as the county population divided by the county land area increases by 1%) crime increases by 22%. 
 
 
-__Model 2: Kitchen Sink Model__\
+# Model 2: Kitchen Sink Model
 Still, we can do better in predicting the log crime rate than simply using one variable. We know examine a "kitchen sink" model. This model includes all of the variables in the data set except county (which has too many values to be a useful indicator variable) and year, which is a constant (1987). Below are the results.
 
 
@@ -410,13 +403,13 @@ stargazer(simple_regression_model, all_in_model_log_level,
 
 Unsuprisingly, the r-squared of the "kitchen sink" model is substantially higher (85.4% vs. 40.1%). More importantly, the adjusted r-squared which accounts for the number of variables in the models, is also higher (80.6% vs 39.4%). Interestingly, density is no longer the variable with the highest statistical significance. The coefficients show the effect after all the other variables have been controlled for (partialled out). In the "kitchen sink" model prbarr and prbconv both have the lowest p-values.\
 
-__Model 3: Balanced Model__\
+# Model 3: Balanced Model
 We took two approaches to building the balanced model. We used a bottom up approach that relied on both the correlation matrix and stepwide regression. We also used a top down approach that started with the "kitchen sink" model and excluded variables. Both methods are discussed below. Both approaches relied on our categories of variables to simplify the process.\
 
-```{r}
+```{r results=FALSE}
 base_forward = lm(log_crmrte ~ density,
                              data = data_crmrte)
-# forward_step = step(base_forward, scope = formula(all_in_model_log_level), direction = "forward")
+forward_step = step(base_forward, scope = formula(all_in_model_log_level), direction = "forward")
 
 
 ```
@@ -453,7 +446,7 @@ linearHypothesis(all_in_model_log_level,
 ```
 
 
-The hypothesis tests below show that of the five groups the only groups that are jointly significant are the deterrent data and the demographic data. These tests measure whether removing all the variables within a group reduces the r-squared by s attsitically signficant amount. We will re-run the models and compare. 
+The hypothesis tests below show that of the five groups the only groups that are jointly significant are the deterrent data and the demographic data. These tests measure whether removing all the variables within a group reduces the r-squared by statistically signficant amount. We will re-run the models and compare. 
 ```{r}
 balanced_model_top_1 <- lm(log_crmrte ~ prbarr + prbconv + prbpris 
                              + avgsen + polpc + density
@@ -463,10 +456,6 @@ se.balanced_model_top_1 = sqrt(diag(vcovHC(balanced_model_top_1)))
 coeftest(balanced_model_top_1, vcov = vcovHC)
 AIC(balanced_model_top_1)
 
-#stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1,
-#          type = "text", omit.stat = "f",
-#          se = list(se.simple_regression_model, se.all_in_model_log_level, #se.balanced_model_top_1),
-#          star.cutoffs = c(0.05, 0.01, 0.001))
 ```
 Our adjusted r-squared has only fallen from 80.6% to 77.6% but we have dropped 12 variables. This is a much more parisimous model. In order to double check wages, we decided to try to one more model that included just the median wage from all industries. The fundamental concept behind this is that the median could capture all opportunity for potential criminals, and it has the benefit of not being affected by the outlier in wser. 
 
@@ -481,11 +470,6 @@ se.balanced_model_top_2 = sqrt(diag(vcovHC(balanced_model_top_2)))
 coeftest(balanced_model_top_2, vcov = vcovHC)
 AIC(balanced_model_top_2)
 
-# stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1, balanced_model_top_2,
-#           type = "text", omit.stat = "f",
-#           se = list(se.simple_regression_model, se.all_in_model_log_level, 
-#                     se.balanced_model_top_1, se.balanced_model_top_2),
-#           star.cutoffs = c(0.05, 0.01, 0.001))
 
 ```
 
@@ -497,8 +481,6 @@ base_backward = lm(log_crmrte ~ prbarr + prbconv + prbpris
                              + avgsen + polpc + density
                              + taxpc + pctmin80 + mix + pctymle,
                              data = data_crmrte)
-# backward_step = step(base_backward, scope = formula(base_backward), direction = "backward")
-
 ```
 ```{r}
 balanced_model_top_3 <- lm(log_crmrte ~ mix + density
@@ -508,11 +490,6 @@ balanced_model_top_3 <- lm(log_crmrte ~ mix + density
 se.balanced_model_top_3 = sqrt(diag(vcovHC(balanced_model_top_3)))
 coeftest(balanced_model_top_2, vcov = vcovHC)
 AIC(balanced_model_top_3, k=2)
-# stargazer(simple_regression_model, all_in_model_log_level, balanced_model_top_1, balanced_model_top_3,
-#           type = "text", omit.stat = "f",
-#           se = list(se.simple_regression_model, se.all_in_model_log_level, 
-#                     se.balanced_model_top_1, se.balanced_model_top_3),
-#           star.cutoffs = c(0.05, 0.01, 0.001))
 
 
 ```
@@ -521,14 +498,8 @@ The difference between the backward and forward model is that the backward model
 
 The backward stepwise regression yielded a more reasonable model so that is the model we are choosing for our balanced model. This model strikes a nice balance between parsimony and explanatory power. The variables included are prbarr, prbconv, polpc, density, pctmin80, and mix. Six out of the original 24 independent variables are included. The adjust r-squared is only 3% lower (77.6% vs. 80.6%). It includes a blend of actionable items for the campaign in the deterrent data as well as demographic variables that perhaps can focus the campaign's efforts.
 
-###########################################################################################
-#
-## Praveen's section
-# 
-###########################################################################################
 
-
-# 3. An Assessment of the CLM Assumptions
+__3. An Assessment of the CLM Assumptions__
 
 We choose our balanced model for the complete assessment of all 6 classical linear model assumptions.
 
@@ -553,11 +524,13 @@ balanced_model_top_3 <- lm(log_crmrte ~ mix + density
 
 First thing to note is that we are dealing with a single cross-section (1987) of a multi-year panel data.
 
-Secondly this is observational data and not experiemental so perfect random sampling is hard to achieve.
+Secondly this is observational data and not experimental so perfect random sampling is hard to achieve.
 
 CORNWELL – TRUMBULL (1994) specifically state they choose panel data because cross – section data were not able to capture the  real  effect of the  crime  rate  on  several  independent regressors.
 
 The authors identify  that the time-series component of the panel data is able to identify  specific  characteristics  of  county  heterogeneity, which is correlated with the criminal justice variables.
+
+In exploring the effects of county specific heterogeneity, counties next to each other may exhibit similar behaviour. While that may be valid for prediction model the standard errors may be understated causing violation of random sampling
 
 While the balanced model achieves high level of statistical significance for the co-efficients, it's important to be mindful of the limitations of the dataset.
 
@@ -574,7 +547,7 @@ Multicollinearity refers to a situation in which two or more explanatory variabl
 
 As seen from the correlation matrix below, there is no perfect multicollinearity in the model but we observe some meaningful correlations between (Prbarr, mix) and (Prbarr,density)
 
-These linear realtionships among the X's don't invlaidate the MLR parameters but they lower precision and increase the std-errors in the mdoel 
+These linear realtionships among the X's don't invalidate the MLR parameters but they lower precision and increase the std-errors in the mdoel 
 ```{r}
 balanced_model <- c( "mix", "density","polpc", "pctmin80","prbarr","prbconv")
 balanced_model_data <- data_crmrte[balanced_model]
@@ -585,7 +558,7 @@ round(cor(balanced_model_data)*100,2) # correlations displayed as % for convenie
 
 ZCM is best analysed by studying the regression plots of the residuals. Let's start by looking at the regression plots of the balanced model
 
-```{r}
+```{r out.width='.49\\linewidth', fig.width=4, fig.height=4,fig.show='hold',fig.align='center'}
 plot(balanced_model_top_3)
 
 ```
@@ -593,7 +566,7 @@ plot(balanced_model_top_3)
 
 __CLM assumptions analysis from plots__
 
-- Plot 1. The residuals vs. fitted plot indicates that the zero conditional mean assumpotion is NOT perfectly satisfied but the red line is close enough to zero, a big improvement compared to some of the other models we tested. The non-uniform thickness of the residuals indicates possible hetroskedasticity. 
+- Plot 1. The residuals vs. fitted plot indicates that the zero conditional mean assumption is NOT perfectly satisfied but the red line is close enough to zero, a big improvement compared to some of the other models we tested. The non-uniform thickness of the residuals indicates possible heteroskedasticity. 
 - Plot 2. The Q-Q plot shows that the residuals are not perfectly normally distributed, but the log transform of the crime rate improved the positive skew in the data but has introduced some negative skew
 - Plot 3. The scale location plot indicated the presence of heteroskedasticity especially in the middle where the thickness of the band varies and outliers such as '50' and '24' are generating large standardized residuals
 - Plot 4. The residuals vs leverage plot shows some of the outliers we had discussed earlier ( 51, 25, 84) but the most significantly outlier is 51 ( having high leverage and Cook's distance >1). This outlier 51 significantly affects our model estimte and might be worth removing from the data to improve model accuracy.
@@ -612,18 +585,18 @@ Finally we check the correlation between the X's and the errors in the model to 
 
 Homoskedasticity describes a situation in which the error term has the same variance across all values of the independent variables.
 
-The regression plots indicate the presence of some hetreskedasticity in the erros let's test if they are statistically significant using the Breusch-Pagan test.
+The regression plots indicate the presence of some heteroskedasticity in the errors let's test if they are statistically significant using the Breusch-Pagan test.
 
-- The Breusch-Pagan test below allows us to test for hetroskedasticity under the 
+- The Breusch-Pagan test below allows us to test for heteroskedasticity under the 
 
-$H_0:  There is homeskedasticity$
+$H_0:  Homeskedasticity$
 
 ```{r}
 bptest(balanced_model_top_3)
 ```
-From the BP test, surprisingly we find p-value is not statistically significant, therefore we fail to reject $H_0:  There is homeskedasticity$
+From the BP test, surprisingly we find p-value is not statistically significant, therefore we fail to reject $H_0: Homeskedasticity$.
 
-However, we will still choose to be more conservative and use HC consistent std-errors ( Huber-white Std-errors) using coeftest function from the sandwich package in R. This conservative approach we have taken througout this report in our model selection process in choosing regressors for different models
+However, we will still choose to be more conservative and use HC consistent std-errors ( Huber-white Std-errors) using coeftest function from the sandwich package in R. This conservative approach we have taken throughout this report in our model selection process in choosing regressors for different models
 
 ### MLR.6: Normality of the error term
 
@@ -633,17 +606,17 @@ We can check the normality using the Q-Q plot to vizualize the distribution of r
 
 We saw in the earlier section that the crime rate has some positive skew, but we were able to reduce the skew by applying log transform to the crime rate.
 
-We can also run a Shapiro - wilk test for normality
-$H_0: Errors are normal$ 
+We can also run a Shapiro - Wilk test for normality of the residuals
 
+$H_0: Normality$ 
 ```{r}
 shapiro.test(balanced_model_top_3$residuals)
 ```
-The p-value is significant, therefore we reject $H_0: Errors are normal$ 
+The p-value is significant, therefore we reject $H_0: Normality$ 
 
 The non-normality of the residuals is statisitically significant for this model.
 
-There is some negative skew from outlier 51 in the transformed variable but However since we have n>30 under CLT we have OLS estimators are normally distributed.
+There is some negative skew from outlier 51 in the transformed variable, however, since we have n>30 under CLT we have OLS estimators are normally distributed.
 
 
 
@@ -707,24 +680,16 @@ BIC(balanced_model_top_3)
 
 ```
 
-
-###########################################################################################
-#
-## Josh's section
-# 
-###########################################################################################
-
-
-# 5. A Discussion of Omitted Variables
+__5. Omitted Variables__
 
 We've identified several key omitted variables that we feel most influence the crime rate but are not represented in the data here.
 
 
-1. Unemployment Rate - Unemployment is a key indicator for crime rate.  We may be able to infer some indication of the frequency of seasonal or part-time work in the construction or service industries from the `wcon` or `wser` variables as they shows an average weekly wage which mght indicate how often workers are employed. However, this estimate is likely not accurate enough to be considered meaningful. The unemployment rate among youth 18-30 would also be meaningful as criminal activity among young adults is higher than that of older adults.
+1. Unemployment Rate - Unemployment is a key indicator for crime rate.  We may be able to infer some indication of the frequency of seasonal or part-time work in the construction or service industries from the `wcon` or `wser` variables as they shows an average weekly wage which mght indicate how often workers are employed. However, this estimate is likely not accurate enough to be considered meaningful. The unemployment rate among youth 18-30 would also be meaningful as criminal activity among young adults is higher than that of older adults. Unemployment and inflation rate (see below) may be correlated and may have positive bias on one another.
 
-2. Inflation Rate (Consumer Price Index) - Inflation and crime rates are correlated with a positive relationship and the causal link is from inflation and unemployment to crime. [Link](https://www.researchgate.net/publication/236736987_Will_Inflation_Increase_Crime_Rate_New_Evidence_from_Bounds_and_Modified_Wald_Tests). Inﬂation causes the purchasing power to reduce and cost of living to increase, consequently crime rates rise as the inflation rate rises. Because of the lag between price and wage adjustments, inflation lowers the real income of low-skilled labor, but rewards property criminals due to the rising demand and subsequent high profits in the illegal market. Inflation in the year represented, 1987, would not be sufficient though as the reduction in purchasing power does not happen immediately, it takes time for inﬂation to gradually reduce purchasing power. None of the data provided in the study gives us an indication of the inflation rate in a time period before the study. We would expect that this variable would show a positive bias towards crime rate and that it would likely be a large bias.
+2. Inflation Rate (Consumer Price Index) - Inflation and crime rates are correlated with a positive relationship and the causal link is from inflation and unemployment to crime. [Link](https://www.researchgate.net/publication/236736987_Will_Inflation_Increase_Crime_Rate_New_Evidence_from_Bounds_and_Modified_Wald_Tests). Inﬂation causes the purchasing power to reduce and cost of living to increase, consequently crime rates rise as the inflation rate rises. Because of the lag between price and wage adjustments, inflation lowers the real income of low-skilled labor, but rewards property criminals due to the rising demand and subsequent high profits in the illegal market. Inflation in the year represented, 1987, would not be sufficient though as the reduction in purchasing power does not happen immediately, it takes time for inﬂation to gradually reduce purchasing power. None of the data provided in the study gives us an indication of the inflation rate in a time period before the study. We would expect that this variable would show a positive bias towards crime rate and that it would likely be a large bias. Inflation rate and unemployment may be correlated and may have positive bias on one another.
 
-3. Childhood Blood Lead Levels (with 18 year offset) - The lead–crime hypothesis is the proposed link between elevated blood lead levels in children and increased rates of crime, delinquency, and recidivism later in life. Studies linking blood lead levels (BLL) in children to crime rate typically seek to quantify the BLL 17-18 years before the examined crime rate. One such study used a unique dataset linking preschool blood lead levels (BLLs), birth, school, and detention data for 120,000 children born 1990-2004 in Rhode Island, to estimate the impact of lead on behavior [Link](https://www.nber.org/papers/w23392.pdf). We expect that this variable would show a positive bias and that it would likely be a small bias but still significant for any given year as there may be other underlying phenomena driving crime rate in a particular county. There are no variables in the provided data set that would give any insight into this.
+3. Childhood Blood Lead Levels (with 18 year offset) - The lead–crime hypothesis is the proposed link between elevated blood lead levels in children and increased rates of crime, delinquency, and recidivism later in life. Studies linking blood lead levels (BLL) in children to crime rate typically seek to quantify the BLL 17-18 years before the examined crime rate. One such study used a unique dataset linking preschool blood lead levels (BLLs), birth, school, and detention data for 120,000 children born 1990-2004 in Rhode Island, to estimate the impact of lead on behavior [Link](https://www.nber.org/papers/w23392.pdf). We expect that this variable would show a positive bias and that it would likely be a small bias but still significant for any given year as there may be other underlying phenomena driving crime rate in a particular county. There are no variables in the provided data set that would give any insight into this. Denstiy may have a positive correlation with BLL as urban and more industrialized areas typically had greater levels of lead poisoning in groundwater and older housing stock which may contains lead paint. 
 
 4. Abortion Rates (with 18 year time lag) - Multiple studies have shown a correlation between legalized abortion rates and crime. One study by Donohoe and Leavitt estimated that crime fell roughly 20% between 1997 and 2014 due to legalized abortion.
  [Link](https://bfi.uchicago.edu/wp-content/uploads/BFI_WP_201975.pdf) While it may be difficult to ascertain which counties residents accessing abortion services lived in, we expect that measures of employment and poverty could be correlated to show how a negative bias of abortion rates potentially offset other variables with a positive bias. We estimate that the bias may be small as it could present difficulties in localizing it effectively, but we still believe that it would be significant. There are no variables in the provided data set that would give any insight into this. 
@@ -732,12 +697,6 @@ We've identified several key omitted variables that we feel most influence the c
 5. Income Inequality metrics: There are several measures of income inequaity that could be included in the data: [Mean Log Deviation](https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/mld.html) or [Theil Index](https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/theil-index.html) or [Gini Index](https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/gini-index.html) for each of the counties. Income inequality has been shown to have a significant effect on violent crime in particular. One World Bank report states that inequality predicts about half of the variance in murder rates between American states and between countries around the world. [Link](https://siteresources.worldbank.org/DEC/Resources/Crime%26Inequality.pdf) Income inequality measures are often measured as 0 (perfectly equal income distribution) to 1 (perfectly unequal income distribution, or 1 household has all the income). We would thus expect these to have a positive bias, in that an increase in income inequality would lead to an increase in violent crime. We expect that the bias would be somewhat smaller as income inequality is correlated specifically with violent crime less than property crime. There are no variables in the provided data set that would give any insight into this.
 
 
-
-###########################################################################################
-#
-## Ryan's section
-# 
-###########################################################################################
 
 __6. A Conclusion__
 
