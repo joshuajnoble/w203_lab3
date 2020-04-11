@@ -24,6 +24,8 @@ library(tidyr)
 library(knitr)
 library(dplyr)
 library(reshape2)
+library(corrplot)
+
 
 opts_chunk$set(tidy.opts=list(width.cutoff=20),tidy=TRUE)
 
@@ -46,9 +48,9 @@ knit_hooks$set(output = function(x, options) {
 ```{r echo=FALSE}
 #read in the data
 
-#data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
-data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
-#data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
+data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\data\\crime_v2.csv") #josh
+#data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/data/crime_v2.csv') #Robert
+#data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/data/crime_v2.csv') #Praveen
 
 ```
 
@@ -107,7 +109,7 @@ data_crmrte <- data_crmrte %>% distinct()
 
 #prbconv was defined as factor , we will convert it to numeric
 data_crmrte$prbconv <- as.numeric(as.character(data_crmrte$prbconv))
-class(data_crmrte$prbconv)
+#class(data_crmrte$prbconv)
 ```
 
 With 25 original variables in the data set the natural place to start is with the dependent variable, crmrte. To get a better sense of this variable, the distribution is graphed below.
@@ -407,13 +409,28 @@ The three models above are the level-level model, the log-level model, and the l
 In order to create a simple model we decided to build using a bottom up approach. We started with a correlation matrix. 
 
 ```{r warning=FALSE}
-cm = round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
-cm = cm[, -1]
-print(cm)
+#cm = round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
+#cm = cm[, -1]
+
+drops <- c("county","year", "crmrte", "log_crmrte")
+cm = cor(data_crmrte[,!(names(data_crmrte) %in% drops)], data_crmrte$log_crmrte) #Corr Matrix as % for reading clarity
+# ggcorrplot(cm, colors = c("#0000ff", "#ffffff", "#ff0000"), tl.cex = 12, outline.color = "white", legend.title = "Correlation", method = "square", lab = TRUE, ) +
+#   theme(legend.position="top", legend.direction = "horizontal", plot.margin = margin(10,10,10,10,"pt"), legend.text=element_text(size=10), legend.title=element_text(size=10),  axis.ticks.y = element_blank(), axis.text.y = element_blank())
+corrdf = data.frame(cm)
+corrdf = corrdf[order(-corrdf$cm),,drop = FALSE]
+corrdf$pos = (corrdf$cm) + (ifelse(corrdf$cm>0, 0.05, -0.05))
+ggplot(data = corrdf,
+       aes(y = cm, x=reorder(rownames(corrdf), cm), fill = cm > 0, width=0.9)) + 
+       geom_bar(stat = "identity", width=0.9, position = position_dodge(1.4)) + 
+       geom_text(aes(label=round(cm,2), y=pos), position=position_dodge(width=0.9)) + 
+       coord_flip() + 
+       theme(legend.position = "none", panel.grid.minor = element_blank(), panel.grid.major =element_line(size = 1, linetype = 'solid',
+                                colour = "#eeeeee"), panel.background = element_blank()) + ylab("Correlation with log(crmrte)") + xlab("Variable")
+
 ```
 
+In the above correlation matrix, focusing on the correlations between the independent variable log_crmrte and all other variables in the matrix, density has the highest correlation. This variable makes intuitive sense. As a single variable it might encompass a lot of other factors. Lower income people with more incentive to commit crimes tend to live in more highly populated areas. Below is the simple regression.
 
-In the above correlation matrix, focusing on the correlations between the independent variable log_crmrte and all other variables in the matrix, denisty has the highest correlation. This variable makes intuitive sense. As a single variable it might encompass a lot of other factors. Lower income people with more incentive to commit crimes tend to live in more highly populated areas. Below is the simple regression.
 ```{r}
 simple_regression_model <- lm(log_crmrte ~ density, data = data_crmrte)
 se.simple_regression_model = sqrt(diag(vcovHC(simple_regression_model)))
@@ -774,7 +791,7 @@ We've identified several key omitted variables that we feel most influence the c
 
 2. Inflation Rate (Consumer Price Index) - Inflation and crime rates are correlated with a positive relationship and the causal link is from inflation and unemployment to crime. [Link](https://www.researchgate.net/publication/236736987_Will_Inflation_Increase_Crime_Rate_New_Evidence_from_Bounds_and_Modified_Wald_Tests). Inﬂation causes the purchasing power to reduce and cost of living to increase, consequently crime rates rise as the inflation rate rises. Because of the lag between price and wage adjustments, inflation lowers the real income of low-skilled labor, but rewards property criminals due to the rising demand and subsequent high profits in the illegal market. Inflation in the year represented, 1987, would not be sufficient though as the reduction in purchasing power does not happen immediately, it takes time for inﬂation to gradually reduce purchasing power. None of the data provided in the study gives us an indication of the inflation rate in a time period before the study. We would expect that this variable would show a positive bias towards crime rate and that it would likely be a large bias. Inflation rate and unemployment may be correlated and may have positive bias on one another.
 
-3. Childhood Blood Lead Levels (with 18 year offset) - The lead–crime hypothesis is the proposed link between elevated blood lead levels in children and increased rates of crime, delinquency, and recidivism later in life. Studies linking blood lead levels (BLL) in children to crime rate typically seek to quantify the BLL 17-18 years before the examined crime rate. One such study used a unique dataset linking preschool blood lead levels (BLLs), birth, school, and detention data for 120,000 children born 1990-2004 in Rhode Island, to estimate the impact of lead on behavior [Link](https://www.nber.org/papers/w23392.pdf). We expect that this variable would show a positive bias and that it would likely be a small bias but still significant for any given year as there may be other underlying phenomena driving crime rate in a particular county. There are no variables in the provided data set that would give any insight into this. Denstiy may have a positive correlation with BLL as urban and more industrialized areas typically had greater levels of lead poisoning in groundwater and older housing stock which may contains lead paint. 
+3. Childhood Blood Lead Levels (with 18 year offset) - The lead–crime hypothesis is the proposed link between elevated blood lead levels in children and increased rates of crime, delinquency, and recidivism later in life. Studies linking blood lead levels (BLL) in children to crime rate typically seek to quantify the BLL 17-18 years before the examined crime rate. One such study used a unique dataset linking preschool blood lead levels (BLLs), birth, school, and detention data for 120,000 children born 1990-2004 in Rhode Island, to estimate the impact of lead on behavior [Link](https://www.nber.org/papers/w23392.pdf). We expect that this variable would show a positive bias and that it would likely be a small bias but still significant for any given year as there may be other underlying phenomena driving crime rate in a particular county. There are no variables in the provided data set that would give any insight into this. Denstiy may have a positive correlation with BLL as urban and more industrialized areas typically had greater levels of lead poisoning in groundwater and street surfaces due to heavier vehicle traffic and industrial emissions in denser areas.
 
 4. Abortion Rates (with 18 year time lag) - Multiple studies have shown a correlation between legalized abortion rates and crime. One study by Donohoe and Leavitt estimated that crime fell roughly 20% between 1997 and 2014 due to legalized abortion.
  [Link](https://bfi.uchicago.edu/wp-content/uploads/BFI_WP_201975.pdf) While it may be difficult to ascertain which counties residents accessing abortion services lived in, we expect that measures of employment and poverty could be correlated to show how a negative bias of abortion rates potentially offset other variables with a positive bias. We estimate that the bias may be small as it could present difficulties in localizing it effectively, but we still believe that it would be significant. There are no variables in the provided data set that would give any insight into this. 
