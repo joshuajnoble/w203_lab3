@@ -75,7 +75,7 @@ __2. A Model Building Process__
 
 # Exploratory Data Analaysis
 
-We started by conducting exploratory data analysis. First, we read the original paper [CORNWELL – TRUMBULL (1994)] to get a better understanding of each variable. We defined the variables in the table below and grouped them into five groups in order to get a better handle on them. 
+We started by conducting exploratory data analysis. First, we read the original paper [CORNWELL – TRUMBULL (1994)] to get a better understanding of each variable. We defined the variables in the table below and grouped them into five groups (the group construction is discussed in the groupings section below). 
 
 ```{r }
 crime_count <- c(1:25)
@@ -90,7 +90,7 @@ kable(data_table, col.names = data_headers, caption = "Descriptions and Groups o
 
 ```
 
-To get a better sense of the data set the summary function was run.
+To get a broad sense of the data set the summary function was run.
 
 ```{r results=FALSE}
 summary(data)
@@ -110,43 +110,6 @@ data_crmrte$prbconv <- as.numeric(as.character(data_crmrte$prbconv))
 class(data_crmrte$prbconv)
 ```
 
-We also we able to find the original panel data set. While we won't use this for prediction, we will use it for data vetting.
-
-```{r}
-#load the new dataset
-data_panel <- read.table(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime4.txt', sep="", header=FALSE)
-#name the columns of the new dataset
-colnames(data_panel) <- c("county", "year", "crmrte", "prbarr", "prbconv", "prbpris", "avgsen", "polpc",
-                          "density", "taxpc","west", "central", "urban", "pctmin80", "wcon", "wtuc", "wtrd",
-                          "wfir", "wser", "wmfg", "wfed", "wsta","wloc", "mix", "pctymle", "d82", "d83", "d84",
-                          "d85", "d86", "d87", "lcrmrte", "lprbarr", "lprbconv","lprbpris", "lavgsen",
-                          "lpolpc", "ldensity", "ltaxpc", "lwcon", "lwtuc", "lwtrd", "lwfir", "lwser",
-                          "lwmfg","lwfed", "lwsta", "lwloc", "lmix", "lpctymle", "lpctmin", "clcrmrte",
-                          "clprbarr", "clprbcon", "clprbpri","clavgsen", "clpolpc", "cltaxpc", "clmix")
-data_panel$prbconv <- as.numeric(as.character(data_panel$prbconv))
-#get all years besides 1987 for comparison
-data_panel_additional <- data_panel[data_panel$year != 87,]
-#get just the year 1987 for comparison
-data_panel_87 <- data_panel[data_panel$year == 87,c("county", "year", "crmrte", "prbarr", "prbconv", "prbpris",
-                                                    "avgsen", "polpc","density", "taxpc","west", "central",
-                                                    "urban", "pctmin80", "wcon", "wtuc", "wtrd", "wfir",
-                                                    "wser", "wmfg", "wfed","wsta","wloc", "mix", "pctymle")]
-for (col in 1:ncol(data_crmrte)) {
-  for (row in 1:nrow(data_crmrte)) {
-      val_orig <- data_crmrte[row, col]
-      val_new  <- data_panel_87[row, col]
-      if(abs(val_orig-val_new)>.001){
-        print(paste("county=",data_crmrte[row, 1], "year=",data_panel_87[row, 2], 
-                    "column=",colnames(data_crmrte)[col],"original=", data_crmrte[row, col], 
-                    "panel=",data_panel_87[row, col]))
-        
-        }
-      }
-}
-```
-
-
-
 With 25 original variables in the data set the natural place to start is with the dependent variable, crmrte. To get a better sense of this variable, the distribution is graphed below.
 
 ```{r out.width='.49\\linewidth', fig.width=4, fig.height=4,fig.show='hold',fig.align='center'}
@@ -163,7 +126,7 @@ shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms non-normality
 # Outlier Analysis
 
 \
-There are several outliers in the variable crmrte and the distribution is right skewed. We have ninety observations so non-normality is not a top concern but this distribution is not perfectly normal. we analyse outliers for crime rate that are > 2*Std-dev from the mean crime rate (i.e data pts with crime rate > 0.07)
+There are several outliers in the variable crmrte and the distribution is right skewed. With our sample size non-normality is not a top concern but this distribution is not perfectly normal. We analyze outliers for crime rate that are > 2*Std-dev from the mean crime rate (i.e data pts with crime rate > 0.07)
 
 The postiviely skewed outliers (6 counties) on the right side of the distribution are examined to gather some insights:
 * 1. 4 of out of the 6 outliers are in urban areas
@@ -194,7 +157,7 @@ kable(density_table, col.names = c("County", "Crime Rate", "Density"),
 
 For campaign purposes, we want to predict crime. We want our candidate to be able to say that he or she can reduce crime in order to win votes. What is the most effective way to convey that? Using crime rate as it appears in the data set is using the level of crime rate and would suggest the following statement as a campaign slogan - "I can reduce crime to this rate by doing x, y, and z". 
 
-Transforming crime rate into the log of crime rate allows for the statement "I can reduce crime by n% by doing x, y, and z." We find the latter more powerful and meaningful to voters since voters have no idea about the level of crime rates. In addition, we will show that the transformation of crime rate imrpoves the normaility and distribution of the variable, which will often reduce skew in the errors as well.\
+Transforming crime rate into the log of crime rate allows for the statement "I can reduce crime by n% by doing x, y, and z." We find the latter more powerful and meaningful to voters since most voters have no idea about the level of crime rates. In addition, we will show that the transformation of crime rate improves the normality and distribution of the variable, which will often reduce skew in the errors as well.\
 ```{r echo=FALSE, out.width='.49\\linewidth', fig.width=4, fig.height=4,fig.show='hold',fig.align='center'}
 data_crmrte$log_crmrte <- log(data_crmrte$crmrte)
 hist(data_crmrte$log_crmrte,breaks=20)
@@ -204,14 +167,72 @@ qqnorm(data_crmrte$log_crmrte)
 shapiro.test(data_crmrte$log_crmrte) # Shapiro-wilk test confirms the log transformation was able to eradicate the non-normality in the
 
 ```
-The histogram of the transformed crime rate is much more symmetrical and shows much less right skew. The box plot shows all of the outliers on the high end have been removed, though outlier 51 ( countty 115) on the low end has been become more prominent. 
+The histogram of the transformed crime rate is much more symmetrical and shows much less right skew. The box plot shows all of the outliers on the high end have been removed, though an outlier (county 115) on the low end has been become more prominent. 
 
 The scatter plot looks much more normal, and the Q-Q plot is much closer to normal with the data points hugging the 45 degree line much more closely. Given the stronger argument for the political campaign and the benefits to normality we have chosen to model the tranformation of crime rate as opposed to crime rate.
 \
 
+#Panel Data and Further Data Vetting
+We also were able to find the original panel data set. While we won't use this for prediction, we will use it for data vetting. We created three data sets. The first data set is comprised of the entire panel data which includes data from 1981-1987. The second data set is the data from the first 6 years and excludes the data set given in the assignment. Finally, the third data set is just the year 1987 and the columns in our assignment. 
+
+```{r}
+#load the new dataset
+data_panel <- read.table(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime4.txt', sep="", header=FALSE)
+#name the columns of the new dataset
+colnames(data_panel) <- c("county", "year", "crmrte", "prbarr", "prbconv", "prbpris", "avgsen", "polpc",
+                          "density", "taxpc","west", "central", "urban", "pctmin80", "wcon", "wtuc", "wtrd",
+                          "wfir", "wser", "wmfg", "wfed", "wsta","wloc", "mix", "pctymle", "d82", "d83", "d84",
+                          "d85", "d86", "d87", "lcrmrte", "lprbarr", "lprbconv","lprbpris", "lavgsen",
+                          "lpolpc", "ldensity", "ltaxpc", "lwcon", "lwtuc", "lwtrd", "lwfir", "lwser",
+                          "lwmfg","lwfed", "lwsta", "lwloc", "lmix", "lpctymle", "lpctmin", "clcrmrte",
+                          "clprbarr", "clprbcon", "clprbpri","clavgsen", "clpolpc", "cltaxpc", "clmix")
+data_panel$prbconv <- as.numeric(as.character(data_panel$prbconv))
+#get all years besides 1987 for comparison
+data_panel_additional <- data_panel[data_panel$year != 87,]
+#get just the year 1987 for comparison
+data_panel_87 <- data_panel[data_panel$year == 87,c("county", "year", "crmrte", "prbarr", "prbconv", "prbpris",
+                                                    "avgsen", "polpc","density", "taxpc","west", "central",
+                                                    "urban", "pctmin80", "wcon", "wtuc", "wtrd", "wfir",
+                                                    "wser", "wmfg", "wfed","wsta","wloc", "mix", "pctymle")]
+
+
+#compare the assignment data set to the new data set in 1987
+data_check <- data_crmrte[, !(colnames(data_crmrte)=="log_crmrte")]
+for (col in 1:ncol(data_check)) {
+  for (row in 1:nrow(data_check)) {
+      val_orig <- data_check[row, col]
+      val_new  <- data_panel_87[row, col]
+      if(abs(val_orig-val_new)>.001){
+        print(paste("county=",data_check[row, 1], "year=",data_panel_87[row, 2], 
+                    "column=",colnames(data_check)[col],"original=", data_check[row, col], 
+                    "panel=",data_panel_87[row, col]))
+        
+        }
+      }
+}
+
+```
+
+
+The code above compares the data set given to us to the same data extracted from the panel data. These data sets should match exactly. The print statements above identify two differences. For county 173 the panel data has a rounded value for density of .20342 while the given data set has a rounded value of .00002. Looking at the distribution for all years besides 1987, the minimum density for any county is .1977186 so the value in the given data set seems to be an extreme outlier, and it is much more likely that the value from the panel data set is correct. This value will be corrected below, and the quantiles are shown for evidence. In addition, county 71 is labeled as west in the given data set but for all years in the panel data set it has a zero value for west. This will also be corrected. 
+
+```{r}
+#Show the lower quantiles of density
+quantile(data_panel_additional$density, c(0, .01, .02, .03, .04, .05))
+
+#Show west for county 171
+print(data_panel$west[data_panel$county == 71])
+
+#Correct mistakes in original (assigned) data set
+data_crmrte[data_crmrte$county==173, "density"] <- .2034221
+data_crmrte[data_crmrte$county==71, "west"] <- 0
+
+```
+
+
 # Groupings
 
-In order to digest the data in the data set we decided to group the variables into five groups: deterrent, wages, demographic, region, and urban. We performed exploratory data analysis on all of these variables.\
+Having no background on this paper or in criminal justice in general we looked for ways to make this data more digestable. We decided to group the variables into categories to make it more manageable, and in this process we found five groups that seemed natural: deterrent, wages, demographic, region, and urban. We performed exploratory data analysis on all of these variables.\
 
 The first group is deterrent data. As cited in the original paper, these variables were hypothesized to reduce crime rate through disincentivizing crime. Essentially, as the probability of getting caught increases, criminals' desire to commit crimes decreases.\
 
@@ -232,7 +253,7 @@ deterrent_data3 <- deterrent_data[my_vars2]
 boxplot(deterrent_data2, main="Boxplot of prbarr, prbconv, prbpris")
 ```
 \
-The first four histograms show right skew while prbpris shows left skew. The biggest outlier is observation 51. This observation has the lowest crime rate in the data set, the highest polpc (police per capita), the highest avg sentence, the third highest prbconv, and the lowest pctmin80. This observation is likely to affect many of the regressions so it will need to be examined further. These variables are candidates to be transformed.\
+The first four histograms show right skew while prbpris shows left skew. The biggest outlier is observation 51 (county 115). This observation has the lowest crime rate in the data set, the highest polpc (police per capita), the highest avg sentence, the third highest prbconv, and the lowest pctmin80. This observation is likely to affect many of the regressions so it will need to be examined further. Given their distributions, these variables are candidates to be transformed. In addition, these variables are more easily changed by a politican, which lends itself to a percent change argument similar to crime rate.\
 
 # Wages Data
 
@@ -251,18 +272,14 @@ ggplot(gather(wages_data), aes(value)) +
 #generate boxplots of just the wage variables
 boxplot(log(wages_data), ylab="log(wage)", xlab="variable")
 
+#Show outliers for entire 7 years
+boxplot(data_panel$wser)
 ```
 \
-There is an obvious outlier for wser in data pt 84 (County 185) . The mean services wage across all the counties is $275 ( with a std dev of  206) and 84 has wser of 2177 (~9sd from mean), which seems like a measurement or typographical error. The next highest average weekly wage in any sector is 646 versus the value of 2177.It is very possible that this data point might add measurement error and we will revisit this later. 
-
-For now, we create an additional variable that is the median of all wage variables for each observation. If it conveys as much information, it has the benefit of increasing our degress of freedom and removing the effect of the outlier.\
+There is an obvious outlier for wser in data pt 84 (County 185) . The mean services wage across all the counties is $275 ( with a std dev of  206) and 84 has wser of 2177 (~9sd from mean), which seems like a measurement or typographical error. The next highest average weekly wage in any sector is 646 versus the value of 2177. In addition, the above boxplot shows it is an outlier for any type of wage for all counties over the entire panel data set. Therefore, this observation will be corrected. In looking at this county for all years, the average wage appears to be increasing. While it is somewhat of a guess, it appears an extra 7 has been inserted into the value, so it is removed below.
 
 ```{r}
-data_crmrte$median_wage <- apply(data_crmrte[c("wcon", "wtuc", "wtrd",
-                                               "wfir", "wser", "wmfg",
-                                               "wfed", "wsta", "wloc")], 
-                                 1, FUN=median, na.rm=TRUE)
-
+data_crmrte[data_crmrte$county==185, "wser"] <- 217.068
 ```
 
 
@@ -304,7 +321,7 @@ ggplot(gather(demographic_data), aes(value)) +
   geom_histogram(bins = 10) + 
   facet_wrap(~key, scales = 'free_x')
 ```
-Once again we see a lot of right skewed distributions in the historgams and in the box plots.\
+Once again we see a lot of right skewed distributions in the histograms and in the box plots.\
 
 After exploring all of the variables we decided to tranform the other variables that are potentially under a politican's control - the deterrent variables. This gives us our final data set and so we can start running regressions.\
 
@@ -330,7 +347,7 @@ Though the distribution of the variables still exhibits skew, the skew does seem
 # Log Tranformed Dependent Variable Comparison
 
 \
-In order to settle on the final data set we compare an all-in log-log model with an all-in log-linear to see which dependent variables are more suitable.\
+In order to settle on the final data set we compare an all-in log-log model with an all-in log-linear to see which dependent variables are more suitable. This will explicitly test which dependent variables we should use - the log tranformed variables or the original variables. \
 
 ```{r}
 ###### Initial Models #####
@@ -372,7 +389,6 @@ AIC(all_in_model_log_log)
 BIC(all_in_model_log_log)
 
 
-#Not comparing r-squared, just looking at significant variables
 stargazer(all_in_model, all_in_model_log_level, 
           all_in_model_log_log,
           type = "text", omit.stat = "f",
@@ -383,12 +399,12 @@ stargazer(all_in_model, all_in_model_log_level,
 
 ```
 
-
+The three models above are the level-level model, the log-level model, and the log-log model respectivel. The log transformed deterrent variables explain less variation in log_crmrte. The adjusted r-squared is lower (.812 vs .732) and the variables with statistical significance (prbarr/log_prbarr, prbconv/log_prbconv) both have higher t-stats using the untransformed variables. Therefore, we will use the log-level model as a base model moving forward.
 
 
 # Model 1: Simple Model
 
-In order to create a simple model we decided to build using a bottom up approach. We looked at a correlation matrix 
+In order to create a simple model we decided to build using a bottom up approach. We started with a correlation matrix. 
 
 ```{r warning=FALSE}
 cm = round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
@@ -397,7 +413,7 @@ print(cm)
 ```
 
 
-In the above correlation matrix, focusing on the correlations between the log_crmrte and all other variables, denisty has the highest correlation. This variable makes intuitive sense. As a single variable it might encompass a lot of other factors. Lower income people with more incentive to commit crimes tend to live in more highly populated areas. Below is the simple regression.
+In the above correlation matrix, focusing on the correlations between the independent variable log_crmrte and all other variables in the matrix, denisty has the highest correlation. This variable makes intuitive sense. As a single variable it might encompass a lot of other factors. Lower income people with more incentive to commit crimes tend to live in more highly populated areas. Below is the simple regression.
 ```{r}
 simple_regression_model <- lm(log_crmrte ~ density, data = data_crmrte)
 se.simple_regression_model = sqrt(diag(vcovHC(simple_regression_model)))
@@ -411,11 +427,11 @@ stargazer(simple_regression_model,
 
 ```
 
-The variable density explains 40.1% of the variation in the log of crime rate. As density increases by 1 unit (as the county population divided by the county land area increases by 1%) crime increases by 22%. 
+Using r-squared, the variable density explains 39.9% of the variation in the log of crime rate . As density increases by 1 unit (as the county population divided by the county land area increases by 1 unit) crime increases by 0.22%. 
 
 
 # Model 2: Kitchen Sink Model
-Still, we can do better in predicting the log crime rate than simply using one variable. We know examine a "kitchen sink" model. This model includes all of the variables in the data set except county (which has too many values to be a useful indicator variable) and year, which is a constant (1987). Below are the results.
+Still, we can do better in predicting the log crime rate than simply using one variable. We now examine a "kitchen sink" model. This model includes all of the variables in the data set except county (which has too many values to be a useful indicator variable) and year, which is a constant (1987). Below are the results.
 
 
 
@@ -439,10 +455,12 @@ stargazer(simple_regression_model, all_in_model_log_level,
           star.cutoffs = c(0.05, 0.01, 0.001))
 ```
 
-Unsuprisingly, the r-squared of the "kitchen sink" model is substantially higher (85.4% vs. 40.1%). More importantly, the adjusted r-squared which accounts for the number of variables in the models, is also higher (80.6% vs 39.4%). Interestingly, density is no longer the variable with the highest statistical significance. The coefficients show the effect after all the other variables have been controlled for (partialled out). In the "kitchen sink" model prbarr and prbconv both have the lowest p-values.\
+Unsuprisingly, the r-squared of the "kitchen sink" model is substantially higher (85.8% vs. 39.9%). More importantly, the adjusted r-squared which accounts for the number of variables in the models, is also higher (81.2% vs 39.2%). Interestingly, density is no longer the variable with the highest statistical significance. The coefficients show the effect after all the other variables have been controlled for (partialled out). In the "kitchen sink" model prbarr and prbconv both have the lowest p-values and highest statistical significance.\
 
 # Model 3: Balanced Model
-We took two approaches to building the balanced model. We used a bottom up approach that relied on both the correlation matrix and stepwide regression. We also used a top down approach that started with the "kitchen sink" model and excluded variables. Both methods are discussed below. Both approaches relied on our categories of variables to simplify the process.\
+There is a middle ground between running a simple regression and using the "kitchen sink" model. We took two approaches to building this balanced model. We used a bottom up approach that relied on both the correlation matrix and stepwise regression. We also used a top down approach that started with the "kitchen sink" model and excluded variables. Both methods are discussed below. \
+
+For the bottom up approach, we started with the simple regression which used density as its only factor. Recall that decision was largely based on the correlation matrix. Next we used stepwise regression in examining each additional variable. The results are below.
 
 ```{r results=FALSE}
 base_forward = lm(log_crmrte ~ density,
@@ -452,7 +470,7 @@ forward_step = step(base_forward, scope = formula(all_in_model_log_level), direc
 
 ```
 
-With the top down approach, we started with model 3 and looked to exclude variables that weren't as predictive. We ran hypothesis testing on all five groups, one group at a time.
+With the top down approach, we started with model 3 and looked to exclude variables that weren't as predictive. First, we ran hypothesis testing on all five groups, one group at a time.
 
 ```{r}
 #deterrent
@@ -484,7 +502,9 @@ linearHypothesis(all_in_model_log_level,
 ```
 
 
-The hypothesis tests below show that of the five groups the only groups that are jointly significant are the deterrent data and the demographic data. These tests measure whether removing all the variables within a group reduces the r-squared by statistically signficant amount. We will re-run the models and compare. 
+The hypothesis tests below show that of the five groups the only groups that are jointly significant are the deterrent data and the demographic data. These tests measure whether removing all the variables within a group reduces the r-squared by a statistically signficant amount. If it does, then at least one variable, and perhaps all variables, within the group should be retained in the model. 
+
+We will re-run the models with just the deterrent and demographic data added and compare. 
 ```{r}
 balanced_model_top_1 <- lm(log_crmrte ~ prbarr + prbconv + prbpris 
                              + avgsen + polpc + density
@@ -494,22 +514,29 @@ se.balanced_model_top_1 = sqrt(diag(vcovHC(balanced_model_top_1)))
 coeftest(balanced_model_top_1, vcov = vcovHC)
 AIC(balanced_model_top_1)
 
+stargazer(all_in_model_log_level, balanced_model_top_1, 
+          type = "text", omit.stat = "f",
+          se = list(se.all_in_model_log_level, se.balanced_model_top_1),
+          star.cutoffs = c(0.05, 0.01, 0.001))
+
+
 ```
-Our adjusted r-squared has only fallen from 80.6% to 77.6% but we have dropped 12 variables. This is a much more parisimous model. In order to double check wages, we decided to try to one more model that included just the median wage from all industries. The fundamental concept behind this is that the median could capture all opportunity for potential criminals, and it has the benefit of not being affected by the outlier in wser. 
+Our adjusted r-squared has only fallen from 81.2% to 76.9% but we have dropped 12 variables. This is a much more parisimous model. In order to double check wages, we decided to try to one more model that included just the median wage from all industries. The fundamental concept behind this is that the median could capture all opportunity for potential criminals, and it has the benefit of not being affected by the outlier in wser. 
 
 RESULT: Unfortunately, though it was much better, it was still not predictive.
-```{r}
-balanced_model_top_2 <- lm(log_crmrte ~ prbarr + prbconv + prbpris 
-                             + avgsen + polpc + density
-                             + taxpc + pctmin80 + mix + pctymle
-                             + median_wage,
-                             data = data_crmrte)
-se.balanced_model_top_2 = sqrt(diag(vcovHC(balanced_model_top_2)))
-coeftest(balanced_model_top_2, vcov = vcovHC)
-AIC(balanced_model_top_2)
+
+# ```{r}
+# balanced_model_top_2 <- lm(log_crmrte ~ prbarr + prbconv + prbpris 
+#                              + avgsen + polpc + density
+#                              + taxpc + pctmin80 + mix + pctymle
+#                              + median_wage,
+#                              data = data_crmrte)
+# se.balanced_model_top_2 = sqrt(diag(vcovHC(balanced_model_top_2)))
+# coeftest(balanced_model_top_2, vcov = vcovHC)
+# AIC(balanced_model_top_2)
 
 
-```
+#```
 
 \
 Three of the five groups have been eliminated, with only the deterrent and demographic groups remaining. We will use step wise regression to evaluate.\
@@ -519,23 +546,43 @@ base_backward = lm(log_crmrte ~ prbarr + prbconv + prbpris
                              + avgsen + polpc + density
                              + taxpc + pctmin80 + mix + pctymle,
                              data = data_crmrte)
-```
-```{r}
-balanced_model_top_3 <- lm(log_crmrte ~ mix + density
+
+
+balanced_model_top_3 <- lm(log_crmrte ~ density
                            + polpc + pctmin80
                            + prbarr + prbconv,
                              data = data_crmrte)
 se.balanced_model_top_3 = sqrt(diag(vcovHC(balanced_model_top_3)))
-coeftest(balanced_model_top_2, vcov = vcovHC)
+coeftest(balanced_model_top_3, vcov = vcovHC)
 AIC(balanced_model_top_3, k=2)
-
+stargazer(all_in_model_log_level, balanced_model_top_3, 
+          type = "text", omit.stat = "f",
+          se = list(se.all_in_model_log_level, se.balanced_model_top_3),
+          star.cutoffs = c(0.05, 0.01, 0.001))
 
 ```
 
 The difference between the backward and forward model is that the backward model chooses variables for exclusion based on comparing significance while the forward model looks for significance in inclusion. We also used the f-tests (hypothesis tests) to give the backward stepwise regression a head start.\
 
-The backward stepwise regression yielded a more reasonable model so that is the model we are choosing for our balanced model. This model strikes a nice balance between parsimony and explanatory power. The variables included are prbarr, prbconv, polpc, density, pctmin80, and mix. Six out of the original 24 independent variables are included. The adjust r-squared is only 3% lower (77.6% vs. 80.6%). It includes a blend of actionable items for the campaign in the deterrent data as well as demographic variables that perhaps can focus the campaign's efforts.
+The backward stepwise regression yielded a more reasonable model so that is the model we are choosing for our balanced model. This model strikes a nice balance between parsimony and explanatory power. The variables included are prbarr, prbconv, polpc, density, pctmin80, and mix. Five out of the original twenty four independent variables are included. The adjusted r-squared is only 3% lower (76.9% vs. 81.2%). It includes a blend of actionable items for the campaign in the deterrent data as well as demographic variables that perhaps can focus the campaign's efforts.
 
+# Final Model
+
+$$
+log(crmrte) = \beta_0 + \beta_1 \cdot prbarr + \beta_2 \cdot prbconv + \beta_3 \cdot polpc + \beta_4 \cdot density + \beta_5 \cdot pctmin80
+$$
+$$
+\begin{aligned}
+\beta_0 &= -3.26\\
+\beta_1 &= -2.276\\
+\beta_2 &= -0.758\\
+\beta_3 &= 193.390\\
+\beta_4 &= 0.116\\  
+\beta_5 &= 0.012\\  
+\end{aligned}
+$$
+
+The above equation shows the final model and its coefficients.
 
 __3. An Assessment of the CLM Assumptions__
 
