@@ -402,18 +402,17 @@ cm = cor(data_crmrte[,!(names(data_crmrte) %in% drops)], data_crmrte$log_crmrte)
 #   theme(legend.position="top", legend.direction = "horizontal", plot.margin = margin(10,10,10,10,"pt"), legend.text=element_text(size=10), legend.title=element_text(size=10),  axis.ticks.y = element_blank(), axis.text.y = element_blank())
 corrdf = data.frame(cm)
 corrdf = corrdf[order(-corrdf$cm),,drop = FALSE]
-corrdf$pos = (corrdf$cm) + (ifelse(corrdf$cm>0, .05, -.05))
+corrdf$pos = (corrdf$cm) + (ifelse(corrdf$cm>0, 0.05, -0.05))
 ggplot(data = corrdf,
-       aes(y = cm, x=reorder(rownames(corrdf), cm), fill = cm > 0)) + 
-       geom_bar(stat = "identity") + 
+       aes(y = cm, x=reorder(rownames(corrdf), cm), fill = cm > 0, width=0.9)) + 
+       geom_bar(stat = "identity", width=0.9, position = position_dodge(1.4)) + 
        geom_text(aes(label=round(cm,2), y=pos), position=position_dodge(width=0.9)) + 
        coord_flip() + 
-       theme(legend.position = "none") + ylab("Correlation with log(crmrte)") + xlab("Variable")
+       theme(legend.position = "none", panel.grid.minor = element_blank(), panel.grid.major =element_line(size = 1, linetype = 'solid',
+                                colour = "#eeeeee"), panel.background = element_blank()) + ylab("Correlation with log(crmrte)") + xlab("Variable")
 
 
 ```
-
-#TODO josh - make nice correlation graph
 
 In the above correlation matrix, focusing on the correlations between the log_crmrte and all other variables, denisty has the highest correlation. This variable makes intuitive sense. As a single variable it might encompass a lot of other factors. Lower income people with more incentive to commit crimes tend to live in more highly populated areas. Below is the simple regression.
 ```{r}
