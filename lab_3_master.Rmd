@@ -45,9 +45,11 @@ knit_hooks$set(output = function(x, options) {
 
 ```{r echo=FALSE}
 #read in the data
-data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\data\\crime_v2.csv") #josh
-#data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/data/crime_v2.csv') #Robert
-#data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/data/crime_v2.csv') #Praveen
+
+#data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
+data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
+#data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
+
 ```
 
 __1. An Introduction__
@@ -107,6 +109,43 @@ data_crmrte <- data_crmrte %>% distinct()
 data_crmrte$prbconv <- as.numeric(as.character(data_crmrte$prbconv))
 class(data_crmrte$prbconv)
 ```
+
+We also we able to find the original panel data set. While we won't use this for prediction, we will use it for data vetting.
+
+```{r}
+#load the new dataset
+data_panel <- read.table(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime4.txt', sep="", header=FALSE)
+#name the columns of the new dataset
+colnames(data_panel) <- c("county", "year", "crmrte", "prbarr", "prbconv", "prbpris", "avgsen", "polpc",
+                          "density", "taxpc","west", "central", "urban", "pctmin80", "wcon", "wtuc", "wtrd",
+                          "wfir", "wser", "wmfg", "wfed", "wsta","wloc", "mix", "pctymle", "d82", "d83", "d84",
+                          "d85", "d86", "d87", "lcrmrte", "lprbarr", "lprbconv","lprbpris", "lavgsen",
+                          "lpolpc", "ldensity", "ltaxpc", "lwcon", "lwtuc", "lwtrd", "lwfir", "lwser",
+                          "lwmfg","lwfed", "lwsta", "lwloc", "lmix", "lpctymle", "lpctmin", "clcrmrte",
+                          "clprbarr", "clprbcon", "clprbpri","clavgsen", "clpolpc", "cltaxpc", "clmix")
+data_panel$prbconv <- as.numeric(as.character(data_panel$prbconv))
+#get all years besides 1987 for comparison
+data_panel_additional <- data_panel[data_panel$year != 87,]
+#get just the year 1987 for comparison
+data_panel_87 <- data_panel[data_panel$year == 87,c("county", "year", "crmrte", "prbarr", "prbconv", "prbpris",
+                                                    "avgsen", "polpc","density", "taxpc","west", "central",
+                                                    "urban", "pctmin80", "wcon", "wtuc", "wtrd", "wfir",
+                                                    "wser", "wmfg", "wfed","wsta","wloc", "mix", "pctymle")]
+for (col in 1:ncol(data_crmrte)) {
+  for (row in 1:nrow(data_crmrte)) {
+      val_orig <- data_crmrte[row, col]
+      val_new  <- data_panel_87[row, col]
+      if(abs(val_orig-val_new)>.001){
+        print(paste("county=",data_crmrte[row, 1], "year=",data_panel_87[row, 2], 
+                    "column=",colnames(data_crmrte)[col],"original=", data_crmrte[row, col], 
+                    "panel=",data_panel_87[row, col]))
+        
+        }
+      }
+}
+```
+
+
 
 With 25 original variables in the data set the natural place to start is with the dependent variable, crmrte. To get a better sense of this variable, the distribution is graphed below.
 
