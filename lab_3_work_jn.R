@@ -30,11 +30,14 @@
 library(tidyverse)
 library(effsize)
 library(plyr)
-library(plyr)
 library(reshape2)
+library(ggcorrplot)
 
 setwd("C:\\Users\\winbase\\MIDS\\w203\\w203_lab3")
 crime_data = read.csv("crime_v2.csv")
+
+crime_panel_data = read.csv("crime4_corrected.csv")
+
 
 #clean data, dropping all NA rows
 crime_data = crime_data[which(crime_data$county != 'NA'),]
@@ -246,3 +249,26 @@ plot(mixed_model_3, 3)
 plot(mixed_model_3, 5)
 
 linearHypothesis(mixed_model_3, "wcon = 0", vcov = vcovHC)
+
+
+######################
+# correlation work
+######################
+
+correlation.matrix = cor(crime_data %>%
+                           select(-one_of(c("county_loc","west","central","urban","county","year"))))
+cp = ggcorrplot(correlation.matrix, colors = c("#0000ff", "white", "#ff0000"),
+           tl.cex = 8, outline.color = "white", legend.title = "Correlation") +
+  theme(legend.position="top", legend.direction = "horizontal", plot.margin = margin(0,0,0,0,"pt"),
+        legend.text=element_text(size=8), legend.title=element_text(size=8))
+cp
+
+mat_no_wage = cor(crime_data %>%
+                           select(-one_of(c("county_loc","west","central","urban","county","year", "wcon", "wloc", "wfed", "wmfg", "wser", "wfir", "wtrd", "wsta", "wtuc", "wcon"))))
+cp_no_wage = ggcorrplot(mat_no_wage, colors = c("#0000ff", "#ffffff", "#ff0000"),
+                tl.cex = 8, outline.color = "white", legend.title = "Correlation") +
+  theme(legend.position="top", legend.direction = "horizontal", plot.margin = margin(0,0,0,0,"pt"),
+        legend.text=element_text(size=8), legend.title=element_text(size=8))
+
+#cp_no_wage + scale_fill_gradient(limit = c(-1,1), low = "blue", high =  "red", mid = "green", midpoint = 1.0)
+cp_no_wage

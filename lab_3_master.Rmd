@@ -45,6 +45,7 @@ knit_hooks$set(output = function(x, options) {
 
 ```{r echo=FALSE}
 #read in the data
+
 #data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
 data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
 #data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
