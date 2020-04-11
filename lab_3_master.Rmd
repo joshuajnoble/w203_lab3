@@ -24,6 +24,8 @@ library(tidyr)
 library(knitr)
 library(dplyr)
 library(reshape2)
+library(corrplot)
+
 
 opts_chunk$set(tidy.opts=list(width.cutoff=20),tidy=TRUE)
 
@@ -46,8 +48,8 @@ knit_hooks$set(output = function(x, options) {
 ```{r echo=FALSE}
 #read in the data
 
-#data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\data\\crime_v2.csv") #josh
-data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/data/crime_v2.csv') #Robert
+data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\data\\crime_v2.csv") #josh
+#data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/data/crime_v2.csv') #Robert
 #data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/data/crime_v2.csv') #Praveen
 
 ```
@@ -107,7 +109,7 @@ data_crmrte <- data_crmrte %>% distinct()
 
 #prbconv was defined as factor , we will convert it to numeric
 data_crmrte$prbconv <- as.numeric(as.character(data_crmrte$prbconv))
-class(data_crmrte$prbconv)
+#class(data_crmrte$prbconv)
 ```
 
 We also we able to find the original panel data set. While we won't use this for prediction, we will use it for data vetting.
@@ -391,9 +393,24 @@ stargazer(all_in_model, all_in_model_log_level,
 In order to create a simple model we decided to build using a bottom up approach. We looked at a correlation matrix 
 
 ```{r warning=FALSE}
-cm = round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
-cm = cm[, -1]
-print(cm)
+#cm = round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
+#cm = cm[, -1]
+
+drops <- c("county","year", "crmrte", "log_crmrte")
+cm = cor(data_crmrte[,!(names(data_crmrte) %in% drops)], data_crmrte$log_crmrte) #Corr Matrix as % for reading clarity
+# ggcorrplot(cm, colors = c("#0000ff", "#ffffff", "#ff0000"), tl.cex = 12, outline.color = "white", legend.title = "Correlation", method = "square", lab = TRUE, ) +
+#   theme(legend.position="top", legend.direction = "horizontal", plot.margin = margin(10,10,10,10,"pt"), legend.text=element_text(size=10), legend.title=element_text(size=10),  axis.ticks.y = element_blank(), axis.text.y = element_blank())
+corrdf = data.frame(cm)
+corrdf = corrdf[order(-corrdf$cm),,drop = FALSE]
+corrdf$pos = (corrdf$cm) + (ifelse(corrdf$cm>0, .05, -.05))
+ggplot(data = corrdf,
+       aes(y = cm, x=reorder(rownames(corrdf), cm), fill = cm > 0)) + 
+       geom_bar(stat = "identity") + 
+       geom_text(aes(label=round(cm,2), y=pos), position=position_dodge(width=0.9)) + 
+       coord_flip() + 
+       theme(legend.position = "none") + ylab("Correlation with log(crmrte)") + xlab("Variable")
+
+
 ```
 
 #TODO josh - make nice correlation graph

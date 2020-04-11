@@ -264,7 +264,7 @@ cp = ggcorrplot(correlation.matrix, colors = c("#0000ff", "white", "#ff0000"),
 cp
 
 mat_no_wage = cor(crime_data %>%
-                           select(-one_of(c("county_loc","west","central","urban","county","year", "wcon", "wloc", "wfed", "wmfg", "wser", "wfir", "wtrd", "wsta", "wtuc", "wcon"))))
+                           select(-one_of(c("county","west","central","urban","county","year", "wcon", "wloc", "wfed", "wmfg", "wser", "wfir", "wtrd", "wsta", "wtuc", "wcon"))))
 cp_no_wage = ggcorrplot(mat_no_wage, colors = c("#0000ff", "#ffffff", "#ff0000"),
                 tl.cex = 8, outline.color = "white", legend.title = "Correlation") +
   theme(legend.position="top", legend.direction = "horizontal", plot.margin = margin(0,0,0,0,"pt"),
