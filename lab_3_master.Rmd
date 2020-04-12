@@ -7,10 +7,10 @@ author:
 - Praveen Joseph
 subtitle: '__LAB 3: Reducing Crime__'
 output:
+  pdf_document: default
   html_document:
     df_print: paged
     self_contained: no
-  pdf_document: default
 ---
 
 
@@ -62,11 +62,12 @@ As crime has seen an increase in the 1980’s, citizens of North Carolina have b
 Many studies have examined numerous potential determinants of crimes and it remains a complex and evolving issue. Traditionally, criminal activity is often linked to issues of inequality and poverty. In addition, factors revolving around the criminal justice system are often viewed as having a significant impact, both positive and negative, on crime rate. While there is little debate that these variables affect crime, a one size fits all policy on crime does not properly address the unique issues at the state and county levels. This report aims to identify the complex interactions of crime determinants in North Carolina using recently compiled statistics from FBI and government agencies. 
 
 While many studies have been conducted on individual crime factors, this report examines multiple factors holistically. The primary research question this report addresses is: Which demographic, economic and deterrent factors significantly affect crime? To answer this question, our team has been provided a dataset of 1987 statistics from select North Carolina counties. The data has been pulled from multiple credible sources including:\
-* FBI’s Uniform Crime Reports\
-* FBI’s police agency employee counts\
-* North Carolina Department of Correction\
-* North Carolina Employment Security Commission\
-* Census Data\
+
+- FBI’s Uniform Crime Reports\
+- FBI’s police agency employee counts\
+- North Carolina Department of Correction\
+- North Carolina Employment Security Commission\
+- Census Data\
 
 Our dependent variable and the key measure we are focused on is crime rate, which is defined as crimes committed per person. Our independent variables have been grouped into categories of deterrent, demographic, economic, and geographical factors. A comprehensive list of the variables and their respective categories are described in our exploratory data analysis.
 
@@ -119,12 +120,13 @@ With 25 original variables in the data set the natural place to start is with th
 quantile(data_crmrte$crmrte, c(0, .01, .05, .10, .25, .50,  .75, .90, .95, .99, 1.0))
 hist(data_crmrte$crmrte,breaks=20)
 boxplot(data_crmrte$crmrte, main="Boxplot of crmrte")
+# The box plot and histogram show signs of right skew in the crime rate 
 ```
 
 ```{r out.width='.49\\linewidth', fig.width=4, fig.height=4,fig.show='hold',fig.align='center'}
 plot(data_crmrte$crmrte)
-qqnorm(data_crmrte$crmrte)
-shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms non-normality
+qqnorm(data_crmrte$crmrte) # The q-q plot shows sign of non-normality in crime rate
+shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms the non-normality
 ```
 # Outlier Analysis
 
@@ -132,28 +134,29 @@ shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms non-normality
 There are several outliers in the variable crmrte and the distribution is right skewed. With our sample size non-normality is not a top concern but this distribution is not perfectly normal. We analyze outliers for crime rate that are > 2*Std-dev from the mean crime rate (i.e data pts with crime rate > 0.07)
 
 The postiviely skewed outliers (6 counties) on the right side of the distribution are examined to gather some insights:
-* 1. 4 of out of the 6 outliers are in urban areas
-* 2. The average demographic density for the outlier set is  greater than 3 times the average density for the overall sample
-* 3. We also observe that data ppt 53 which has the highest crime rate, also has the highest density amongst the outliers and is a urban area
+
+1. 4 of out of the 6 outliers are in urban areas
+2. The average demographic density for the outlier set is  greater than 3 times the average density for the overall sample
+3. We also observe that data ppt 53 (county 119) which has the highest crime rate, also has the highest density amongst the outliers and is a urban area
 
 This is not very surprising as we expect urban areas with high density of population to have more crimes. we will continue to monitor the impact of the outliers and conisder the treatment of these outlier in a later part of the report.
 
 ```{r tidy=TRUE}
 upper <- data_crmrte[data_crmrte$crmrte > 0.07,]
-density_table <- data.frame(upper$county, upper$crmrte, upper$density)
-kable(density_table, col.names = c("County", "Crime Rate", "Density"), 
+density_table <- data.frame(upper$county, upper$crmrte*100, upper$density)
+kable(round(density_table,2), col.names = c("County", "Crime Rate(%) ", " Density"), 
       caption = "Density and Outliers")
 ```
 
 
-We also look at the lower range of outliers and find only data pt 51 (county 115) which has crime rate < 0.01. This outlier has some significant outlier effects and will be explored further later in the report.\
+We also look at the lower range of outliers and find only data pt 51 (county 115) which has crime rate < 0.01. This outlier data pt ( county 115) has some significant outlier characterestics and will be explored further later in the report.\
 
 
 
 ```{r}
 lower <- data_crmrte[data_crmrte$crmrte < 0.01,]
-density_table <- data.frame(lower$county, lower$crmrte, lower$density)
-kable(density_table, col.names = c("County", "Crime Rate", "Density"), 
+density_table <- data.frame(lower$county, lower$crmrte*100, lower$density)
+kable(round(density_table,2), col.names = c("County", "Crime Rate(%) ", " Density"), 
       caption = "Density and Outliers")
 
 ```
@@ -173,58 +176,61 @@ shapiro.test(data_crmrte$log_crmrte) # Shapiro-wilk test confirms the log transf
 The histogram of the transformed crime rate is much more symmetrical and shows much less right skew. The box plot shows all of the outliers on the high end have been removed, though an outlier (county 115) on the low end has been become more prominent. 
 
 The scatter plot looks much more normal, and the Q-Q plot is much closer to normal with the data points hugging the 45 degree line much more closely. Given the stronger argument for the political campaign and the benefits to normality we have chosen to model the tranformation of crime rate as opposed to crime rate.
+
+The Shapiro-wilk test fails to reject the Null Hypothesis of Normality, thereby confirming that the log transformation was able establish normal distribution of the data.
 \
 
-#Panel Data and Further Data Vetting
+# Panel Data and Further Data Vetting 
+
 We also were able to find the original panel data set. While we won't use this for prediction, we will use it for data vetting. We created three data sets. The first data set is comprised of the entire panel data which includes data from 1981-1987. The second data set is the data from the first 6 years and excludes the data set given in the assignment. Finally, the third data set is just the year 1987 and the columns in our assignment. 
 
-```{r}
-#load the new dataset
-data_panel <- read.table(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime4.txt', sep="", header=FALSE)
-#name the columns of the new dataset
-colnames(data_panel) <- c("county", "year", "crmrte", "prbarr", "prbconv", "prbpris", "avgsen", "polpc",
-                          "density", "taxpc","west", "central", "urban", "pctmin80", "wcon", "wtuc", "wtrd",
-                          "wfir", "wser", "wmfg", "wfed", "wsta","wloc", "mix", "pctymle", "d82", "d83", "d84",
-                          "d85", "d86", "d87", "lcrmrte", "lprbarr", "lprbconv","lprbpris", "lavgsen",
-                          "lpolpc", "ldensity", "ltaxpc", "lwcon", "lwtuc", "lwtrd", "lwfir", "lwser",
-                          "lwmfg","lwfed", "lwsta", "lwloc", "lmix", "lpctymle", "lpctmin", "clcrmrte",
-                          "clprbarr", "clprbcon", "clprbpri","clavgsen", "clpolpc", "cltaxpc", "clmix")
-data_panel$prbconv <- as.numeric(as.character(data_panel$prbconv))
-#get all years besides 1987 for comparison
-data_panel_additional <- data_panel[data_panel$year != 87,]
-#get just the year 1987 for comparison
-data_panel_87 <- data_panel[data_panel$year == 87,c("county", "year", "crmrte", "prbarr", "prbconv", "prbpris",
-                                                    "avgsen", "polpc","density", "taxpc","west", "central",
-                                                    "urban", "pctmin80", "wcon", "wtuc", "wtrd", "wfir",
-                                                    "wser", "wmfg", "wfed","wsta","wloc", "mix", "pctymle")]
+<!-- ```{r} -->
+<!-- #load the new dataset -->
+<!-- data_panel <- read.table(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime4.txt', sep="", header=FALSE) -->
+<!-- #name the columns of the new dataset -->
+<!-- colnames(data_panel) <- c("county", "year", "crmrte", "prbarr", "prbconv", "prbpris", "avgsen", "polpc", -->
+<!--                           "density", "taxpc","west", "central", "urban", "pctmin80", "wcon", "wtuc", "wtrd", -->
+<!--                           "wfir", "wser", "wmfg", "wfed", "wsta","wloc", "mix", "pctymle", "d82", "d83", "d84", -->
+<!--                           "d85", "d86", "d87", "lcrmrte", "lprbarr", "lprbconv","lprbpris", "lavgsen", -->
+<!--                           "lpolpc", "ldensity", "ltaxpc", "lwcon", "lwtuc", "lwtrd", "lwfir", "lwser", -->
+<!--                           "lwmfg","lwfed", "lwsta", "lwloc", "lmix", "lpctymle", "lpctmin", "clcrmrte", -->
+<!--                           "clprbarr", "clprbcon", "clprbpri","clavgsen", "clpolpc", "cltaxpc", "clmix") -->
+<!-- data_panel$prbconv <- as.numeric(as.character(data_panel$prbconv)) -->
+<!-- #get all years besides 1987 for comparison -->
+<!-- data_panel_additional <- data_panel[data_panel$year != 87,] -->
+<!-- #get just the year 1987 for comparison -->
+<!-- data_panel_87 <- data_panel[data_panel$year == 87,c("county", "year", "crmrte", "prbarr", "prbconv", "prbpris", -->
+<!--                                                     "avgsen", "polpc","density", "taxpc","west", "central", -->
+<!--                                                     "urban", "pctmin80", "wcon", "wtuc", "wtrd", "wfir", -->
+<!--                                                     "wser", "wmfg", "wfed","wsta","wloc", "mix", "pctymle")] -->
 
 
-#compare the assignment data set to the new data set in 1987
-data_check <- data_crmrte[, !(colnames(data_crmrte)=="log_crmrte")]
-for (col in 1:ncol(data_check)) {
-  for (row in 1:nrow(data_check)) {
-      val_orig <- data_check[row, col]
-      val_new  <- data_panel_87[row, col]
-      if(abs(val_orig-val_new)>.001){
-        print(paste("county=",data_check[row, 1], "year=",data_panel_87[row, 2], 
-                    "column=",colnames(data_check)[col],"original=", data_check[row, col], 
-                    "panel=",data_panel_87[row, col]))
-        
-        }
-      }
-}
+<!-- #compare the assignment data set to the new data set in 1987 -->
+<!-- data_check <- data_crmrte[, !(colnames(data_crmrte)=="log_crmrte")] -->
+<!-- for (col in 1:ncol(data_check)) { -->
+<!--   for (row in 1:nrow(data_check)) { -->
+<!--       val_orig <- data_check[row, col] -->
+<!--       val_new  <- data_panel_87[row, col] -->
+<!--       if(abs(val_orig-val_new)>.001){ -->
+<!--         print(paste("county=",data_check[row, 1], "year=",data_panel_87[row, 2],  -->
+<!--                     "column=",colnames(data_check)[col],"original=", data_check[row, col],  -->
+<!--                     "panel=",data_panel_87[row, col])) -->
 
-```
+<!--         } -->
+<!--       } -->
+<!-- } -->
+
+<!-- ``` -->
 
 
 The code above compares the data set given to us to the same data extracted from the panel data. These data sets should match exactly. The print statements above identify two differences. For county 173 the panel data has a rounded value for density of .20342 while the given data set has a rounded value of .00002. Looking at the distribution for all years besides 1987, the minimum density for any county is .1977186 so the value in the given data set seems to be an extreme outlier, and it is much more likely that the value from the panel data set is correct. This value will be corrected below, and the quantiles are shown for evidence. In addition, county 71 is labeled as west in the given data set but for all years in the panel data set it has a zero value for west. This will also be corrected. 
 
 ```{r}
-#Show the lower quantiles of density
-quantile(data_panel_additional$density, c(0, .01, .02, .03, .04, .05))
-
-#Show west for county 171
-print(data_panel$west[data_panel$county == 71])
+# #Show the lower quantiles of density
+# quantile(data_panel_additional$density, c(0, .01, .02, .03, .04, .05))
+# 
+# #Show west for county 171
+# print(data_panel$west[data_panel$county == 71])
 
 #Correct mistakes in original (assigned) data set
 data_crmrte[data_crmrte$county==173, "density"] <- .2034221
@@ -271,14 +277,14 @@ ggplot(gather(wages_data), aes(value)) +
   facet_wrap(~key, scales = 'free_x')
 ```
 
-```{r fig.height=4}
-#generate boxplots of just the wage variables
-boxplot(log(wages_data), ylab="log(wage)", xlab="variable")
+<!-- ```{r fig.height=4} -->
+<!-- #generate boxplots of just the wage variables -->
+<!-- boxplot(log(wages_data), ylab="log(wage)", xlab="variable") -->
 
-#Show outliers for entire 7 years
-boxplot(data_panel$wser)
-```
-\
+<!-- #Show outliers for entire 7 years -->
+<!-- boxplot(data_panel$wser) -->
+<!-- ``` -->
+<!-- \ -->
 There is an obvious outlier for wser in data pt 84 (County 185) . The mean services wage across all the counties is $275 ( with a std dev of  206) and 84 has wser of 2177 (~9sd from mean), which seems like a measurement or typographical error. The next highest average weekly wage in any sector is 646 versus the value of 2177. In addition, the above boxplot shows it is an outlier for any type of wage for all counties over the entire panel data set. Therefore, this observation will be corrected. In looking at this county for all years, the average wage appears to be increasing. While it is somewhat of a guess, it appears an extra 7 has been inserted into the value, so it is removed below.
 
 ```{r}
@@ -330,9 +336,9 @@ After exploring all of the variables we decided to tranform the other variables 
 
 ```{r}
 data_crmrte$prbconv <- as.numeric(as.character(data_crmrte$prbconv))
-data_crmrte$log_prbarr <- log(data_crmrte$prbarr)
-data_crmrte$log_prbconv <- log(data_crmrte$prbconv)
-data_crmrte$log_prbpris <- log(data_crmrte$prbpris)
+data_crmrte$log_prbarr <- log(data_crmrte$prbarr*100)
+data_crmrte$log_prbconv <- log(data_crmrte$prbconv*100)
+data_crmrte$log_prbpris <- log(data_crmrte$prbpris*100)
 data_crmrte$log_avgsen <- log(data_crmrte$avgsen)
 data_crmrte$log_polpc <- log(data_crmrte$polpc)
 data_crmrte$log_taxpc <- log(data_crmrte$taxpc)
