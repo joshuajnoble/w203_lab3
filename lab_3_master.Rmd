@@ -48,9 +48,10 @@ knit_hooks$set(output = function(x, options) {
 ```{r echo=FALSE}
 #read in the data
 
-data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\data\\crime_v2.csv") #josh
-#data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/data/crime_v2.csv') #Robert
-#data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/data/crime_v2.csv') #Praveen
+# data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
+#data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
+data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
+
 
 ```
 
@@ -585,6 +586,13 @@ $$
 $$
 
 The above equation shows the final model and its coefficients.
+
+model_check = lm(prbconv ~ taxpc, data = data_crmrte )
+summary(model_check)
+hist(data_crmrte$prbconv)
+
+model_2_log <- lm(crmrte ~ density + pctymle + taxpc, data = data_crmrte)
+summary(model_2_log)
 
 __3. An Assessment of the CLM Assumptions__
 
