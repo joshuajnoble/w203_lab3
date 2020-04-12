@@ -33,7 +33,7 @@ library(plyr)
 library(reshape2)
 library(ggcorrplot)
 
-setwd("C:\\Users\\winbase\\MIDS\\w203\\w203_lab3")
+setwd("C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\data")
 crime_data = read.csv("crime_v2.csv")
 
 crime_panel_data = read.csv("crime4_corrected.csv")
@@ -272,3 +272,28 @@ cp_no_wage = ggcorrplot(mat_no_wage, colors = c("#0000ff", "#ffffff", "#ff0000")
 
 #cp_no_wage + scale_fill_gradient(limit = c(-1,1), low = "blue", high =  "red", mid = "green", midpoint = 1.0)
 cp_no_wage
+
+
+
+######################
+#
+# ftf
+#
+######################
+
+library(car)
+library(sandwich)
+library(lmtest)
+
+scatterplot( log(crime_data$mix), log(crime_data$crmrte), main="mix_log vs. crmrte_log", xlab="mix_log", ylab="crmrte_log")
+
+crime_data$log_crmrte = log(crime_data$crmrte)
+
+balanced_model_top_3 <- lm(log_crmrte ~ log(density)
+                           + polpc + pctmin80
+                           + prbarr + prbconv,
+                           data = crime_data)
+
+plot(crime_data$mix, crime_data$density)
+
+summary(balanced_model_top_3)
