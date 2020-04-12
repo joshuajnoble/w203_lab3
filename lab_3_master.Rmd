@@ -45,9 +45,9 @@ knit_hooks$set(output = function(x, options) {
 
 ```{r echo=FALSE}
 #read in the data
-data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
+# data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
 #data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
-#data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
+data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
 ```
 
 __1. An Introduction__
@@ -497,6 +497,13 @@ The difference between the backward and forward model is that the backward model
 
 The backward stepwise regression yielded a more reasonable model so that is the model we are choosing for our balanced model. This model strikes a nice balance between parsimony and explanatory power. The variables included are prbarr, prbconv, polpc, density, pctmin80, and mix. Six out of the original 24 independent variables are included. The adjust r-squared is only 3% lower (77.6% vs. 80.6%). It includes a blend of actionable items for the campaign in the deterrent data as well as demographic variables that perhaps can focus the campaign's efforts.
 
+
+model_check = lm(prbconv ~ taxpc, data = data_crmrte )
+summary(model_check)
+hist(data_crmrte$prbconv)
+
+model_2_log <- lm(crmrte ~ density + pctymle + taxpc, data = data_crmrte)
+summary(model_2_log)
 
 __3. An Assessment of the CLM Assumptions__
 
