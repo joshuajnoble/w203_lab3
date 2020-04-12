@@ -429,7 +429,7 @@ ggplot(data = corrdf,
 
 ```
 
-In the above correlation matrix, focusing on the correlations between the independent variable log_crmrte and all other variables in the matrix, density has the highest correlation. This variable makes intuitive sense. As a single variable it might encompass a lot of other factors. Lower income people with more incentive to commit crimes tend to live in more highly populated areas. Below is the simple regression.
+In the above correlation matrix, focusing on the correlations between the independent variable log_crmrte and all other variables in the matrix, density has the highest correlation. This variable makes intuitive sense. As a single variable it might encompass a lot of other factors. Density correlates with greater income inequality and a higher cost of living, more opportunity for property crime as well as face-to-face crime, as well as greater density of law enforcement resources so that crimes can be reported. Below is the simple regression.
 
 ```{r}
 simple_regression_model <- lm(log_crmrte ~ density, data = data_crmrte)
@@ -538,22 +538,7 @@ stargazer(all_in_model_log_level, balanced_model_top_1,
 
 
 ```
-Our adjusted r-squared has only fallen from 81.2% to 76.9% but we have dropped 12 variables. This is a much more parisimous model. In order to double check wages, we decided to try to one more model that included just the median wage from all industries. The fundamental concept behind this is that the median could capture all opportunity for potential criminals, and it has the benefit of not being affected by the outlier in wser. 
-
-RESULT: Unfortunately, though it was much better, it was still not predictive.
-
-# ```{r}
-# balanced_model_top_2 <- lm(log_crmrte ~ prbarr + prbconv + prbpris 
-#                              + avgsen + polpc + density
-#                              + taxpc + pctmin80 + mix + pctymle
-#                              + median_wage,
-#                              data = data_crmrte)
-# se.balanced_model_top_2 = sqrt(diag(vcovHC(balanced_model_top_2)))
-# coeftest(balanced_model_top_2, vcov = vcovHC)
-# AIC(balanced_model_top_2)
-
-
-#```
+Our adjusted r-squared has only fallen from 81.2% to 76.9% but we have dropped 12 variables. This is a much more parisimous model. 
 
 \
 Three of the five groups have been eliminated, with only the deterrent and demographic groups remaining. We will use step wise regression to evaluate.\
