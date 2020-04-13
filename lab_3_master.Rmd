@@ -7,6 +7,7 @@ author:
 - Praveen Joseph
 subtitle: '__LAB 3: Reducing Crime__'
 output:
+  word_document: default
   pdf_document: default
   html_document:
     df_print: paged
@@ -55,27 +56,29 @@ data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
 
 ```
 
-__1. An Introduction__
+# 1. An Introduction
 
 As crime has seen an increase in the 1980’s, citizens of North Carolina have been looking to local government politicians to address this growing problem. In preparation for the upcoming election, our team of political consultants has been tasked with providing insight to drive policy directed at reducing crime levels. Before pushing a political campaign aimed at crime reduction, we must first identify the key determinants of crime and their significance in order to properly focus resources to target these issues.
 
 Many studies have examined numerous potential determinants of crimes and it remains a complex and evolving issue. Traditionally, criminal activity is often linked to issues of inequality and poverty. In addition, factors revolving around the criminal justice system are often viewed as having a significant impact, both positive and negative, on crime rate. While there is little debate that these variables affect crime, a one size fits all policy on crime does not properly address the unique issues at the state and county levels. This report aims to identify the complex interactions of crime determinants in North Carolina using recently compiled statistics from FBI and government agencies. 
 
 While many studies have been conducted on individual crime factors, this report examines multiple factors holistically. The primary research question this report addresses is: Which demographic, economic and deterrent factors significantly affect crime? To answer this question, our team has been provided a dataset of 1987 statistics from select North Carolina counties. There are 100 counties in the state, however, 10 counties have been omitted from the dataset. Given that the omitted counties comprise of a small percentage of the total population of the state, the results of this study are not significantly impacted by the omission. The data provided for this study has been pulled from multiple credible sources including:\
-* FBI’s Uniform Crime Reports\
-* FBI’s police agency employee counts\
-* North Carolina Department of Correction\
-* North Carolina Employment Security Commission\
-* Census Data\
+
+- FBI’s Uniform Crime Reports\
+- FBI’s police agency employee counts\
+- North Carolina Department of Correction\
+- North Carolina Employment Security Commission\
+- Census Data\
 
 Our dependent variable and the key measure we are focused on is crime rate, which is defined as crimes committed per person. Our independent variables have been grouped into categories of deterrent, demographic, economic, and geographical factors. A comprehensive list of the variables and their respective categories are described in our exploratory data analysis.
 
 While this 1987 dataset provides observational variables that impact crime, the dataset does not provide a comprehensive list of all variables. There are a number of factors that our team has identified that could potentially assist in more accurately measuring a causal effect on crime. These factors are discussed in further detail in the omitted variables section of this report. In addition, the provided dataset only covers a single cross-section of the data from the year 1987, however, our team has conducted additional data research and supplemented the dataset with a multi-year panel of corresponding crime data to assist in verifying the accuracy of the given dataset. Additional data and experimental studies could provide a more accurate casual model, however the statistical results of this report are limited to the information provided in the 1987 dataset. Using these results, our team has prepared recommendations for a political strategy addressing crime in North Carolina. 
+\pagebreak
 
 
-__2. A Model Building Process__
+# 2. A Model Building Process
 
-# Exploratory Data Analaysis
+## Exploratory Data Analaysis
 
 We started by conducting exploratory data analysis. First, we read the original paper [CORNWELL – TRUMBULL (1994)] to get a better understanding of each variable. We defined the variables in the table below and grouped them into five groups (the group construction is discussed in the groupings section below). 
 
@@ -126,7 +129,7 @@ plot(data_crmrte$crmrte)
 qqnorm(data_crmrte$crmrte) # The q-q plot shows sign of non-normality in crime rate
 shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms the non-normality
 ```
-# Outlier Analysis
+## Outlier Analysis
 
 \
 There are several outliers in the variable crmrte and the distribution is right skewed. With our sample size non-normality is not a top concern but this distribution is not perfectly normal. We analyze outliers for crime rate that are > 2*Std-dev from the mean crime rate (i.e data pts with crime rate > 0.07)
@@ -149,18 +152,18 @@ kable(round(density_table,2), col.names = c("County", "Crime Rate ", " Density")
 
 We also look at the lower range of outliers and find only observation 51 (county 115) which has crime rate < 0.01. This outlier data pt (county 115) has some significant outlier characterestics. County 115  has the lowest crime rate in the data set, extremely low density, the highest polpc (police per capita), the highest avg sentence, the third highest prbconv, and the lowest pctmin80. 
 
-One possible explanation is that county 115 could be a fedreal facility or a intelligence facility with national security concerns which explains the highest polpc and avg sentence for crimes. Which might be a barriacaded complex which also explain why the population density is very low and crime rate is the lowest as well since there are not many civilian residents in the area and very low petty crimes.
+One possible explanation is that county 115 could be a army/marine base or high security government facility (such as FBI field office, NSA or CIA facility)  with national security concerns which explains the highest polpc. This also might explain the very high avgsen ( 20+ yrs) for crimes convicted in this country tend to have a higher severity/penalty. If this were the case, it would stand to reason that there are very civilan inhabitants and also explain why the population density is very low and crime rate is the lowest with probability of arrest and conviction both >1. 
 
-This county is certainly an outlier, but not one that should be removed from the data.
+We can argue that this county is certainly an outlier, but not one that should be removed from the data as it represents a plausible county's observation in the dataset.
 \
 
 
 
 ```{r}
 lower <- data_crmrte[data_crmrte$crmrte < 0.01,]
-density_table <- data.frame(lower$county, lower$crmrte, lower$density)
-kable(round(density_table,2), col.names = c("County", "Crime Rate ", " Density"), 
-      caption = "Density and Outliers")
+density_table <- data.frame(lower$county, lower$crmrte, lower$density, lower$polpc, lower$avgsen, lower$prbarr, lower$prbconv )
+kable(round(density_table,4), col.names = c("County", "Crime Rate ", " Density", "Police", "Avg Sentence", "Prob of Arrest", "Prob of Conv"), 
+      caption = "Special Outliers")
 
 ```
 
@@ -173,7 +176,7 @@ hist(data_crmrte$log_crmrte,breaks=20)
 boxplot(data_crmrte$log_crmrte, main="Boxplot of log of crmrte")
 plot(data_crmrte$log_crmrte)
 qqnorm(data_crmrte$log_crmrte)
-shapiro.test(data_crmrte$log_crmrte) # Shapiro-wilk test confirms the log transformation was able to eradicate the non-normality in the
+shapiro.test(data_crmrte$log_crmrte) # Shapiro-wilk test confirms the log transformation was able to eradicate the non-normality in the dependent variable
 
 ```
 The histogram of the transformed crime rate is much more symmetrical and shows much less right skew. The box plot shows all of the outliers on the high end have been removed, though an outlier (county 115) on the low end has been become more prominent. 
@@ -372,8 +375,15 @@ all_in_model <- lm(crmrte ~ prbarr + prbconv + prbpris
                    + mix + pctymle,
                    data = data_crmrte)
 se.all_in_model = sqrt(diag(vcovHC(all_in_model)))
-coeftest(all_in_model, vcov = vcovHC)
-AIC(all_in_model)
+
+coeftest(all_in_model, vcov = vcovHC) # HC White SE
+
+# Model residuals look normally distributed
+hist(all_in_model$residuals) 
+
+# plot(all_in_model)
+#The residuals vs Fitted plot for this model quickly tell us 
+#that ZCM ( MLR 4) and Random Sampling (MLR2) is violated for this model.
 
 all_in_model_log_level <- lm(log_crmrte ~ prbarr + prbconv + prbpris 
                              + avgsen + polpc + density
@@ -385,7 +395,15 @@ all_in_model_log_level <- lm(log_crmrte ~ prbarr + prbconv + prbpris
                              data = data_crmrte)
 se.all_in_model_log_level = sqrt(diag(vcovHC(all_in_model_log_level)))
 coeftest(all_in_model_log_level, vcov = vcovHC)
-AIC(all_in_model_log_level)
+
+# Model residuals look somwewhat normally distributed
+hist(all_in_model_log_level$residuals) 
+
+# plot(all_in_model_log_level)
+#The residuals vs Fitted plot for this model tell us that 
+#the log transformation has significantly reduced the skew in the residuals 
+#and the clustering and exogenity violations have also been ameliorated.
+
 
 
 all_in_model_log_log <- lm(log_crmrte ~ log_prbarr + log_prbconv 
@@ -398,8 +416,17 @@ all_in_model_log_log <- lm(log_crmrte ~ log_prbarr + log_prbconv
                              data = data_crmrte)
 se.all_in_model_log_log = sqrt(diag(vcovHC(all_in_model_log_log)))
 coeftest(all_in_model_log_log, vcov = vcovHC)
-AIC(all_in_model_log_log)
-BIC(all_in_model_log_log)
+
+# Model residuals look somwewhat normally distributed with some left skew
+hist(all_in_model_log_log$residuals) 
+
+# plot(all_in_model_log_log)
+#The residuals vs Fitted plot for this model tells us that 
+#the log transformation has significantly reduced the skew in the residuals.
+#The clustering and exogenity violations have also been ameliorated 
+#but there are more outliers created from the log transform 
+#of the dependent variables increasing model error and reducing adj R-squared.
+
 
 
 stargazer(all_in_model, all_in_model_log_level, 
@@ -409,10 +436,24 @@ stargazer(all_in_model, all_in_model_log_level,
                     se.all_in_model_log_log),
           star.cutoffs = c(0.05, 0.01, 0.001))
 
+#Looking at the residual plots and checking for OLS assumption violations,
+#we feel the log-level model is the best specified model
+#within our initial class of models. This model also strikes the best balance
+#between explanatory power and understandability of the variable. 
+
+# We will use the log-level class of models for further refining the 
+#specification over the course of the model selection process in this study.
 
 ```
 
-The three models above are the level-level model, the log-level model, and the log-log model respectivel. The log transformed deterrent variables explain less variation in log_crmrte. The adjusted r-squared is lower (.812 vs .732) and the variables with statistical significance (prbarr/log_prbarr, prbconv/log_prbconv) both have higher t-stats using the untransformed variables. Therefore, we will use the log-level model as a base model moving forward.
+The three models above are:\
+1. The level-level model\
+2. The log-level model\
+3. The log-log model\
+
+The log transformed dependent variable shows the best specification and most conformity to OLS assumptions within the 3 models. The log transformed deterrent variables ( log-log model) explain less variation in log_crmrte as compared the log-level model.\
+
+The adjusted r-squared is lower (81.2% vs 73.2%) and the variables with statistical significance (prbarr/log_prbarr, prbconv/log_prbconv) both have higher t-stats using the untransformed variables. Therefore, we will use the log-level model as a base model moving forward.
 
 
 # Model 1: Simple Model
@@ -446,7 +487,10 @@ In the above correlation matrix, focusing on the correlations between the indepe
 simple_regression_model <- lm(log_crmrte ~ density, data = data_crmrte)
 se.simple_regression_model = sqrt(diag(vcovHC(simple_regression_model)))
 coeftest(simple_regression_model, vcov = vcovHC)
+
+ # AIC is higher than expected for a single variable model
 AIC(simple_regression_model)
+#The model residuals look normally distributed
 hist(simple_regression_model$residuals)
 stargazer(simple_regression_model,
           type = "text", omit.stat = "f",
@@ -474,7 +518,9 @@ all_in_model_log_level <- lm(log_crmrte ~ prbarr + prbconv + prbpris
                              data = data_crmrte)
 se.all_in_model_log_level = sqrt(diag(vcovHC(all_in_model_log_level))) #HC White SE
 coeftest(all_in_model_log_level, vcov = vcovHC) 
+# Low value of AIC for this model specification which shows good parsimony adjusted fit
 AIC(all_in_model_log_level)
+
 
 
 stargazer(simple_regression_model, all_in_model_log_level, 
@@ -540,7 +586,17 @@ balanced_model_top_1 <- lm(log_crmrte ~ prbarr + prbconv + prbpris
                              data = data_crmrte)
 se.balanced_model_top_1 = sqrt(diag(vcovHC(balanced_model_top_1)))
 coeftest(balanced_model_top_1, vcov = vcovHC)
+# Residuals seem like they might not be normally distributed
+hist(balanced_model_top_1$residuals) 
+# Shapiro test confirm it by rejecting normality
+shapiro.test(balanced_model_top_1$residuals) 
+#AIC for the model is pretty low
 AIC(balanced_model_top_1)
+
+#The residuals vs Fitted plot for this model shows curvature 
+# hence likely violation of ZCM and Nr error
+# Although the model has high adj R-squares, 
+#it's likely the model specification is incorrect.
 
 stargazer(all_in_model_log_level, balanced_model_top_1, 
           type = "text", omit.stat = "f",
@@ -580,7 +636,12 @@ balanced_model_top_3 <- lm(log_crmrte ~ density
                            + prbarr + prbconv,
                              data = data_crmrte)
 se.balanced_model_top_3 = sqrt(diag(vcovHC(balanced_model_top_3)))
+# Residuals look normally distributed
+hist(balanced_model_top_3$residuals)
+# Shapiro test on residuals confirms normality
+shapiro.test(balanced_model_top_3$residuals) 
 coeftest(balanced_model_top_3, vcov = vcovHC)
+# This model also has low AIC proving good parsimony adjusted fit
 AIC(balanced_model_top_3, k=2)
 stargazer(all_in_model_log_level, balanced_model_top_3, 
           type = "text", omit.stat = "f",
@@ -615,7 +676,9 @@ The above equation shows the final model and its coefficients.
 - The demographic variable density and pctmin80 have +ve impact on crime rate
 - The demographic variable polpc has an unexpected opposite sign
 
-__3. An Assessment of the CLM Assumptions__
+\pagebreak
+
+# 3. An Assessment of the CLM Assumptions
 
 We choose our balanced model for the complete assessment of all 6 classical linear model assumptions.
 
@@ -735,7 +798,7 @@ The non-normality of the residuals is statisitically significant for this model.
 There is some negative skew from outlier 51 in the transformed variable, however, since we have n>30 under CLT we have OLS estimators are normally distributed.
 
 
-
+\pagebreak
 # 4. A Regression Table
 
 __The results were displayed in stargazer using HC standard errors as part of model selction__
@@ -795,8 +858,18 @@ BIC(balanced_model_top_1)
 BIC(balanced_model_top_3)
 
 ```
+\pagebreak
+# 5. Omitted Variables
 
-__5. Omitted Variables__
+We know that two conditions must hold true for omitted-variable bias to exist in linear regression:
+- The omitted variable must be a determinant of the dependent variable (i.e., its true regression coefficient must not be zero); and
+- The omitted variable must be correlated with an independent variable specified in the regression (i.e., cov(z,x) must not equal zero).
+
+In our model the presence of omitted variables leads to the error term being correlated with the regressors.
+- The presence of omitted-variable bias causes the OLS estimator to be biased and inconsistent.
+- The direction of the bias depends on the estimators as well as the covariance between the regressors and the omitted variables.
+- A positive covariance of the omitted variable with both a regressor and the dependent variable will lead the OLS estimate of the included regressor's coefficient to be greater than the true value of that coefficient.
+
 
 We've identified several key omitted variables that we feel most influence the crime rate but are not represented in the data here.
 
@@ -813,8 +886,8 @@ We've identified several key omitted variables that we feel most influence the c
 5. Income Inequality metrics: There are several measures of income inequaity that could be included in the data: [Mean Log Deviation](https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/mld.html) or [Theil Index](https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/theil-index.html) or [Gini Index](https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/gini-index.html) for each of the counties. Income inequality has been shown to have a significant effect on violent crime in particular. One World Bank report states that inequality predicts about half of the variance in murder rates between American states and between countries around the world. [Link](https://siteresources.worldbank.org/DEC/Resources/Crime%26Inequality.pdf) Income inequality measures are often measured as 0 (perfectly equal income distribution) to 1 (perfectly unequal income distribution, or 1 household has all the income). We would thus expect these to have a positive bias, in that an increase in income inequality would lead to an increase in violent crime. We expect that the bias would be somewhat smaller as income inequality is correlated specifically with violent crime less than property crime. There are no variables in the provided data set that would give any insight into this.
 
 
-
-__6. A Conclusion__
+\pagebreak
+# 6. A Conclusion
 
 Using the 1987 dataset, we were able to identify the key demographic and deterrent variables that affect crime. Our final model shows that arrests (prbarr), convictions (prbconv), and police presence (polpc) are deterrents that affect crime rates. As indicated by the negative coefficients, an increase in arrests and convictions predict a decrease in crime rate, suggesting that these variables are key deterrents in reducing crime. While an increase in police presence predicts an increase in crime rates, it should be noted that this does not indicate that additional police cause an increase in crime. The results suggest that with additional police there will be an increase in apprehension of criminals, resulting in an increase in police reports. In addition, the demographic categories of  density, minorities (pctmin80), and offense (mix) are statistically significant variables of crime rate. While the results show a strong statistical relationship with percentage of minorities, this result does not denote a causal effect. This outcome does not indicate that an increase in minorities predicts an increase in crime. Given the complex nature of race relations and criminal justice in the past, the result could also suggest the potential of racial bias within the police force leading to a disproportionate number of minorities being reported and arrested for crimes. 
 
