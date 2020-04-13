@@ -729,14 +729,14 @@ __CLM assumptions analysis from plots__
 - Plot 1. The residuals vs. fitted plot indicates that the zero conditional mean assumption is NOT perfectly satisfied but the red line is close enough to zero, a big improvement compared to some of the other models we tested. The non-uniform thickness of the residuals-especially in the middle- indicates possible heteroskedasticity. 
 - Plot 2. The Q-Q plot shows that the residuals are not perfectly normally distributed, but the log transform of the crime rate improved the positive skew in the data but has introduced some negative skew
 - Plot 3. The scale location plot indicated the presence of heteroskedasticity especially in the middle where the thickness of the band varies and outliers such as '50' and '24' are generating large standardized residuals
-- Plot 4. The residuals vs leverage plot shows some of the outliers we had discussed earlier ( observations 51, 25, 84) but the most significantly outlier is observation 51 or county 115 ( having high leverage and Cook's distance >1). This outlier significantly affects our model estimte and likely increases model error.
+- Plot 4. The residuals vs leverage plot shows some of the outliers we had discussed earlier ( observations 51, 25, 84) but the most significantly outlier is observation 51 or county 115 ( having high leverage and Cook's distance >1). This outlier significantly affects our model estimate and likely increases model error.
 
 ```{r}
 round(cor(balanced_model_top_3$residuals, balanced_model_data)*100,5)
 
 ```
 
-Finally we check the correlation between the X's and the errors in the model to ensure there is no endogeneity in the model. The zero correlation is a necesseary but not sufficient condition for the presence of omitted variable in the regression. There is a more extensive discussion of omitted variable and their implication on model endogeniety in section 5 of the report.
+Finally we check the correlation between the X's and the errors in the model to ensure there is no endogeneity in the model. The zero correlation is a necessary but not sufficient condition for the presence of omitted variable in the regression. There is a more extensive discussion of omitted variable and their implication on model endogeniety in section 5 of the report.
 
 ![MLR 5 & 6'](CLM Assumptions2.png)
 
