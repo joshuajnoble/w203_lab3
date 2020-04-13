@@ -246,7 +246,7 @@ Having no background on this paper or in criminal justice in general we looked f
 The first group is deterrent data. As cited in the original paper, these variables were hypothesized to reduce crime rate through disincentivizing crime. Essentially, as the probability of getting caught increases, criminals' desire to commit crimes decreases.\
 
 # Deterrent Data
-```{r}
+```{r fig.height=4}
 deterrent_data <- data_crmrte[,c('prbarr','prbconv','prbpris','crmrte',
                           'avgsen','polpc')]
 
@@ -260,14 +260,14 @@ my_vars2 <- c("polpc")
 deterrent_data3 <- deterrent_data[my_vars2]
 
 boxplot(deterrent_data2, main="Boxplot of prbarr, prbconv, prbpris")
-sum
+
 ```
 \
 The first four histograms show right skew while prbpris shows left skew. Given their distributions, these variables are candidates to be transformed. In addition, these variables are more easily changed by a politican, which lends itself to a percent change argument similar to crime rate.\
 
 # Wages Data
 
-```{r }
+```{r fig.height=4}
 #create a dataframe of just the wage variables
 wages_data <- data_crmrte[,c('wcon','wtuc','wtrd','wfir', 'wser',
                       'wmfg','wfed', 'wsta', 'wloc')]
@@ -278,15 +278,15 @@ ggplot(gather(wages_data), aes(value)) +
   facet_wrap(~key, scales = 'free_x')
 ```
 
-<!-- ```{r fig.height=4} -->
-<!-- #generate boxplots of just the wage variables -->
-<!-- boxplot(log(wages_data), ylab="log(wage)", xlab="variable") -->
+```{r fig.height=4}
+#generate boxplots of just the wage variables
+boxplot(log(wages_data), ylab="log(wage)", xlab="variable")
 
-<!-- #Show outliers for entire 7 years -->
-<!-- boxplot(data_panel$wser) -->
-<!-- ``` -->
-<!-- \ -->
-There is an obvious outlier for wser in data pt 84 (County 185) . The mean services wage across all the counties is $275 ( with a std dev of  206) and 84 has wser of 2177 (~9sd from mean), which seems like a measurement or typographical error. The next highest average weekly wage in any sector is 646 versus the value of 2177. In addition, the above boxplot shows it is an outlier for any type of wage for all counties over the entire panel data set. Therefore, this observation will be corrected. In looking at this county for all years, the average wage appears to be increasing. While it is somewhat of a guess, it appears an extra 7 has been inserted into the value, so it is removed below.
+#Show outliers for entire 7 years
+boxplot(data_panel$wser)
+```
+
+There is an obvious outlier for wser in data pt 84 (County 185) . The mean services wage across all the counties is $275 ( with a std dev of  206) and 84 has wser of 2177 (~9sd from mean), which seems like a measurement or typographical error. The next highest average weekly wage in any sector is 646 versus the value of 2177. In addition, the above boxplot shows it is an outlier for any wser for all counties over the entire panel data set; indeed it is an outlier for all sectors. Therefore, this observation will be corrected. In looking at this county for all years, the average wage appears to be increasing. While it is somewhat of a guess, it appears an extra 7 has been inserted into the value, so it is removed below.
 
 ```{r}
 data_crmrte[data_crmrte$county==185, "wser"] <- 217.068
@@ -294,7 +294,7 @@ data_crmrte[data_crmrte$county==185, "wser"] <- 217.068
 
 
 # Region Data
-```{r}
+```{r fig.height=4}
 #create a dataframe of just the wage variables
 dummies_data <- data_crmrte[,c('west','central')]
 
@@ -570,7 +570,7 @@ linearHypothesis(all_in_model_log_level,
 ```
 
 
-The hypothesis tests below show that of the five groups the only groups that are jointly significant are the deterrent data and the demographic data. These tests measure whether removing all the variables within a group reduces the r-squared by a statistically signficant amount. If it does, then at least one variable, and perhaps all variables, within the group should be retained in the model. 
+The hypothesis tests show that of the five groups the only groups that are jointly significant are the deterrent data and the demographic data. These tests measure whether removing all the variables within a group reduces the r-squared by a statistically signficant amount. If it does, then at least one variable, and perhaps all variables, within the group should be retained in the model. 
 
 We will re-run the models with just the deterrent and demographic data added and compare. 
 ```{r}
@@ -599,21 +599,7 @@ stargazer(all_in_model_log_level, balanced_model_top_1,
 
 
 ```
-Our adjusted r-squared has only fallen from 81.2% to 76.9% but we have dropped 12 variables. This is a much more parisimous model. In order to double check wages, we decided to try to one more model that included just the median wage from all industries. The fundamental concept behind this is that the median could capture all opportunity for potential criminals, and it has the benefit of not being affected by the outlier in wser. 
-
-RESULT: Although it was much better, the median wage variable was still not predictive.
-
-```{r}
-# balanced_model_top_2 <- lm(log_crmrte ~ prbarr + prbconv + prbpris
-#                              + avgsen + polpc + density
-#                              + taxpc + pctmin80 + mix + pctymle
-#                              + median_wage,
-#                              data = data_crmrte)
-# se.balanced_model_top_2 = sqrt(diag(vcovHC(balanced_model_top_2)))
-# coeftest(balanced_model_top_2, vcov = vcovHC)
-# AIC(balanced_model_top_2)
-
-```
+Our adjusted r-squared has only fallen from 81.2% to 76.9% but we have dropped 12 variables. This is a much more parisimous model. 
 
 \
 Three of the five groups have been eliminated, with only the deterrent and demographic groups remaining. We will use step wise regression to evaluate.\
@@ -653,6 +639,7 @@ The backward stepwise regression yielded a more reasonable model so that is the 
 $$
 log(crmrte) = \beta_0 + \beta_1 \cdot prbarr + \beta_2 \cdot prbconv + \beta_3 \cdot polpc + \beta_4 \cdot density + \beta_5 \cdot pctmin80
 $$
+
 $$
 \begin{aligned}
 \beta_0 &= -3.26\\
