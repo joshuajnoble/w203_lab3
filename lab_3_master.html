@@ -17,7 +17,6 @@
 
 <title>W203: Statistics for Data Science</title>
 
-<script src="lab_3_master_files/header-attrs-2.1/header-attrs.js"></script>
 <script src="lab_3_master_files/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="lab_3_master_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -198,21 +197,17 @@ summary {
 <p>As crime has seen an increase in the 1980’s, citizens of North Carolina have been looking to local government politicians to address this growing problem. In preparation for the upcoming election, our team of political consultants has been tasked with providing insight to drive policy directed at reducing crime levels. Before pushing a political campaign aimed at crime reduction, we must first identify the key determinants of crime and their significance in order to properly focus resources to target these issues.</p>
 <p>Many studies have examined numerous potential determinants of crimes and it remains a complex and evolving issue. Traditionally, criminal activity is often linked to issues of inequality and poverty. In addition, factors revolving around the criminal justice system are often viewed as having a significant impact, both positive and negative, on crime rate. While there is little debate that these variables affect crime, a one size fits all policy on crime does not properly address the unique issues at the state and county levels. This report aims to identify the complex interactions of crime determinants in North Carolina using recently compiled statistics from FBI and government agencies.</p>
 <p>While many studies have been conducted on individual crime factors, this report examines multiple factors holistically. The primary research question this report addresses is: Which demographic, economic and deterrent factors significantly affect crime? To answer this question, our team has been provided a dataset of 1987 statistics from select North Carolina counties. There are 100 counties in the state, however, 10 counties have been omitted from the dataset. Given that the omitted counties comprise of a small percentage of the total population of the state, the results of this study are not significantly impacted by the omission. The data provided for this study has been pulled from multiple credible sources including:<br />
+* FBI’s Uniform Crime Reports<br />
+* FBI’s police agency employee counts<br />
+* North Carolina Department of Correction<br />
+* North Carolina Employment Security Commission<br />
+* Census Data<br />
 </p>
-<ul>
-<li>FBI’s Uniform Crime Reports<br />
-</li>
-<li>FBI’s police agency employee counts<br />
-</li>
-<li>North Carolina Department of Correction<br />
-</li>
-<li>North Carolina Employment Security Commission<br />
-</li>
-<li>Census Data<br />
-</li>
-</ul>
 <p>Our dependent variable and the key measure we are focused on is crime rate, which is defined as crimes committed per person. Our independent variables have been grouped into categories of deterrent, demographic, economic, and geographical factors. A comprehensive list of the variables and their respective categories are described in our exploratory data analysis.</p>
-<p>While this 1987 dataset provides observational variables that impact crime, the dataset does not provide a comprehensive list of all variables. There are a number of factors that our team has identified that could potentially assist in more accurately measuring a causal effect on crime. These factors are discussed in further detail in the omitted variables section of this report. In addition, the provided dataset only covers a single cross-section of the data from the year 1987, however, our team has conducted additional data research and supplemented the dataset with a multi-year panel of corresponding crime data to assist in verifying the accuracy of the given dataset. Additional data and experimental studies could provide a more accurate casual model, however the statistical results of this report are limited to the information provided in the 1987 dataset. Using these results, our team has prepared recommendations for a political strategy addressing crime in North Carolina. </p>
+<p>While this 1987 dataset provides observational variables that impact crime, the dataset does not provide a comprehensive list of all variables. There are a number of factors that our team has identified that could potentially assist in more accurately measuring a causal effect on crime. These factors are discussed in further detail in the omitted variables section of this report.</p>
+<p>The provided dataset only covers a single cross-section of the data from the year 1987. Our team conducted additional outside research to uncover a multi-year panel of corresponding crime data to assist in cross-checking the accuracy of the wage data with the provided dataset. However, the statistical results of this report are limited to the provided 1987 data. A major issue with only using a single cross-section of data is that lag effects cannot be observed. This pertains to the police presence variable, which it is expected that the effects of an increase or decrease in police force may lag for years. In addition, lag effects may also be responsible for the probability of conviction (ratio of convictions to arrests) variable being greater than 1 in a number of counties. It was surmised that a probability greater than 1 was due to convictions potentially occuring years after the arrest. So in a given year, there may be more convictions than arrests.</p>
+<p>Using this 1987 dataset, our team has conducted a study on the determinants of crime and prepared recommendations for a political strategy addressing this issue in North Carolina.<br />
+</p>
 </div>
 <div id="a-model-building-process" class="section level1">
 <h1>2. A Model Building Process</h1>
@@ -409,10 +404,10 @@ data_crmrte$prbconv &lt;- as.numeric(as.character(data_crmrte$prbconv))
 ## 0.00553320 0.01006330 0.01235660 0.01418007 0.02060425 0.03000200 0.04024925 
 ##        90%        95%        99%       100% 
 ## 0.06054659 0.07191830 0.08954881 0.09896590</code></pre>
-<pre class="r"><code>hist(data_crmrte$crmrte,breaks=20)
-boxplot(data_crmrte$crmrte, main=&quot;Boxplot of crmrte&quot;)
+<pre class="r"><code>hist(data_crmrte$crmrte,breaks=20, xlab=&quot;Crime Rate&quot;, main=&quot;Histogram of Crime Rate&quot;)
+boxplot(data_crmrte$crmrte, main=&quot;Boxplot of Crime Rate&quot;)
 # The box plot and histogram show signs of right skew in the crime rate </code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-6-1.png" width=".49\linewidth" style="display: block; margin: auto;" /><img src="lab_3_master_files/figure-html/unnamed-chunk-6-2.png" width=".49\linewidth" style="display: block; margin: auto;" /></p>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-6-1.png" width="50%" /><img src="lab_3_master_files/figure-html/unnamed-chunk-6-2.png" width="50%" /></p>
 <pre class="r"><code>plot(data_crmrte$crmrte)
 qqnorm(data_crmrte$crmrte) # The q-q plot shows sign of non-normality in crime rate
 shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms the non-normality</code></pre>
@@ -421,7 +416,7 @@ shapiro.test(data_crmrte$crmrte) # Shapiro-wilk test confirms the non-normality<
 ## 
 ## data:  data_crmrte$crmrte
 ## W = 0.89162, p-value = 1.741e-06</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-7-1.png" width=".49\linewidth" style="display: block; margin: auto;" /><img src="lab_3_master_files/figure-html/unnamed-chunk-7-2.png" width=".49\linewidth" style="display: block; margin: auto;" /> ## Outlier Analysis</p>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-7-1.png" width="50%" /><img src="lab_3_master_files/figure-html/unnamed-chunk-7-2.png" width="50%" /> ## Outlier Analysis</p>
 <p><br />
 There are several outliers in the variable crmrte and the distribution is right skewed. With our sample size non-normality is not a top concern but this distribution is not perfectly normal. We analyze outliers for crime rate that are &gt; 2*Std-dev from the mean crime rate (i.e data pts with crime rate &gt; 0.07)</p>
 <p>The postiviely skewed outliers (6 counties) on the right side of the distribution are examined to gather some insights:</p>
@@ -513,12 +508,19 @@ kable(round(density_table,4), col.names = c(&quot;County&quot;, &quot;Crime Rate
 <p>For campaign purposes, we want to predict crime. We want our candidate to be able to say that he or she can reduce crime in order to win votes. What is the most effective way to convey that? Using crime rate as it appears in the data set is using the level of crime rate and would suggest the following statement as a campaign slogan - “I can reduce crime to this rate by doing x, y, and z”.</p>
 <p>Transforming crime rate into the log of crime rate allows for the statement “I can reduce crime by n% by doing x, y, and z.” We find the latter more powerful and meaningful to voters since most voters have no idea about the level of crime rates. In addition, we will show that the transformation of crime rate improves the normality and distribution of the variable, which will often reduce skew in the errors as well.<br />
 </p>
+<pre class="r"><code>data_crmrte$log_crmrte &lt;- log(data_crmrte$crmrte)
+hist(data_crmrte$log_crmrte,breaks=20, xlab=&quot;Log Crime Rate&quot;, main=&quot;Histogram of Log Crime Rate&quot;)
+boxplot(data_crmrte$log_crmrte, main=&quot;Boxplot of log of crmrte&quot;)</code></pre>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-10-1.png" width="50%" /><img src="lab_3_master_files/figure-html/unnamed-chunk-10-2.png" width="50%" /></p>
+<pre class="r"><code>plot(data_crmrte$log_crmrte, ylab = &quot;Log Crime Rate&quot;)
+qqnorm(data_crmrte$log_crmrte)
+shapiro.test(data_crmrte$log_crmrte) # Shapiro-wilk test confirms the log transformation was able to eradicate the non-normality in the dependent variable</code></pre>
 <pre><code>## 
 ##  Shapiro-Wilk normality test
 ## 
 ## data:  data_crmrte$log_crmrte
 ## W = 0.98857, p-value = 0.626</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-10-1.png" width=".49\linewidth" style="display: block; margin: auto;" /><img src="lab_3_master_files/figure-html/unnamed-chunk-10-2.png" width=".49\linewidth" style="display: block; margin: auto;" /><img src="lab_3_master_files/figure-html/unnamed-chunk-10-3.png" width=".49\linewidth" style="display: block; margin: auto;" /><img src="lab_3_master_files/figure-html/unnamed-chunk-10-4.png" width=".49\linewidth" style="display: block; margin: auto;" /> The histogram of the transformed crime rate is much more symmetrical and shows much less right skew. The box plot shows all of the outliers on the high end have been removed, though an outlier (county 115) on the low end has been become more prominent.</p>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-11-1.png" width="50%" /><img src="lab_3_master_files/figure-html/unnamed-chunk-11-2.png" width="50%" /> The histogram of the transformed crime rate is much more symmetrical and shows much less right skew. The box plot shows all of the outliers on the high end have been removed, though an outlier (county 115) on the low end has been become more prominent.</p>
 <p>The scatter plot looks much more normal, and the Q-Q plot is much closer to normal with the data points hugging the 45 degree line much more closely. Given the stronger argument for the political campaign and the benefits to normality we have chosen to model the tranformation of crime rate as opposed to crime rate.</p>
 <p>The Shapiro-wilk test fails to reject the Null Hypothesis of Normality, thereby confirming that the log transformation was able establish normal distribution of the data.<br />
 </p>
@@ -527,47 +529,35 @@ kable(round(density_table,4), col.names = c(&quot;County&quot;, &quot;Crime Rate
 <div id="panel-data-and-further-data-vetting" class="section level1">
 <h1>Panel Data and Further Data Vetting</h1>
 <p>We also were able to find the original panel data set. While we won’t use this for prediction, we will use it for data vetting. We created three data sets. The first data set is comprised of the entire panel data which includes data from 1981-1987. The second data set is the data from the first 6 years and excludes the data set given in the assignment. Finally, the third data set is just the year 1987 and the columns in our assignment.</p>
-<!-- ```{r} -->
-<!-- #load the new dataset -->
-<!-- data_panel <- read.table(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime4.txt', sep="", header=FALSE) -->
-<!-- #name the columns of the new dataset -->
-<!-- colnames(data_panel) <- c("county", "year", "crmrte", "prbarr", "prbconv", "prbpris", "avgsen", "polpc", -->
-<!--                           "density", "taxpc","west", "central", "urban", "pctmin80", "wcon", "wtuc", "wtrd", -->
-<!--                           "wfir", "wser", "wmfg", "wfed", "wsta","wloc", "mix", "pctymle", "d82", "d83", "d84", -->
-<!--                           "d85", "d86", "d87", "lcrmrte", "lprbarr", "lprbconv","lprbpris", "lavgsen", -->
-<!--                           "lpolpc", "ldensity", "ltaxpc", "lwcon", "lwtuc", "lwtrd", "lwfir", "lwser", -->
-<!--                           "lwmfg","lwfed", "lwsta", "lwloc", "lmix", "lpctymle", "lpctmin", "clcrmrte", -->
-<!--                           "clprbarr", "clprbcon", "clprbpri","clavgsen", "clpolpc", "cltaxpc", "clmix") -->
-<!-- data_panel$prbconv <- as.numeric(as.character(data_panel$prbconv)) -->
-<!-- #get all years besides 1987 for comparison -->
-<!-- data_panel_additional <- data_panel[data_panel$year != 87,] -->
-<!-- #get just the year 1987 for comparison -->
-<!-- data_panel_87 <- data_panel[data_panel$year == 87,c("county", "year", "crmrte", "prbarr", "prbconv", "prbpris", -->
-<!--                                                     "avgsen", "polpc","density", "taxpc","west", "central", -->
-<!--                                                     "urban", "pctmin80", "wcon", "wtuc", "wtrd", "wfir", -->
-<!--                                                     "wser", "wmfg", "wfed","wsta","wloc", "mix", "pctymle")] -->
-<!-- #compare the assignment data set to the new data set in 1987 -->
-<!-- data_check <- data_crmrte[, !(colnames(data_crmrte)=="log_crmrte")] -->
-<!-- for (col in 1:ncol(data_check)) { -->
-<!--   for (row in 1:nrow(data_check)) { -->
-<!--       val_orig <- data_check[row, col] -->
-<!--       val_new  <- data_panel_87[row, col] -->
-<!--       if(abs(val_orig-val_new)>.001){ -->
-<!--         print(paste("county=",data_check[row, 1], "year=",data_panel_87[row, 2],  -->
-<!--                     "column=",colnames(data_check)[col],"original=", data_check[row, col],  -->
-<!--                     "panel=",data_panel_87[row, col])) -->
-<!--         } -->
-<!--       } -->
-<!-- } -->
-<!-- ``` -->
-<p>The code above compares the data set given to us to the same data extracted from the panel data. These data sets should match exactly. The print statements above identify two differences. For county 173 the panel data has a rounded value for density of .20342 while the given data set has a rounded value of .00002. Looking at the distribution for all years besides 1987, the minimum density for any county is .1977186 so the value in the given data set seems to be an extreme outlier, and it is much more likely that the value from the panel data set is correct. This value will be corrected below, and the quantiles are shown for evidence. In addition, county 71 is labeled as west in the given data set but for all years in the panel data set it has a zero value for west. This will also be corrected.</p>
-<pre class="r"><code># #Show the lower quantiles of density
-# quantile(data_panel_additional$density, c(0, .01, .02, .03, .04, .05))
-# 
-# #Show west for county 171
-# print(data_panel$west[data_panel$county == 71])
+<pre class="r"><code>#load the new dataset
+data_panel &lt;- read.table(file = &#39;C:/Users/winbase/MIDS/w203/w203_lab3/crime4.txt&#39;, sep=&quot;&quot;, header=FALSE)
+#name the columns of the new dataset --&gt;
+colnames(data_panel) &lt;- c(&quot;county&quot;, &quot;year&quot;, &quot;crmrte&quot;, &quot;prbarr&quot;, &quot;prbconv&quot;, &quot;prbpris&quot;, &quot;avgsen&quot;, &quot;polpc&quot;,&quot;density&quot;, &quot;taxpc&quot;,&quot;west&quot;, &quot;central&quot;, &quot;urban&quot;, &quot;pctmin80&quot;, &quot;wcon&quot;, &quot;wtuc&quot;, &quot;wtrd&quot;, &quot;wfir&quot;, &quot;wser&quot;, &quot;wmfg&quot;, &quot;wfed&quot;, &quot;wsta&quot;,&quot;wloc&quot;, &quot;mix&quot;, &quot;pctymle&quot;, &quot;d82&quot;, &quot;d83&quot;, &quot;d84&quot;, &quot;d85&quot;, &quot;d86&quot;, &quot;d87&quot;, &quot;lcrmrte&quot;, &quot;lprbarr&quot;, &quot;lprbconv&quot;,&quot;lprbpris&quot;, &quot;lavgsen&quot;,&quot;lpolpc&quot;, &quot;ldensity&quot;, &quot;ltaxpc&quot;, &quot;lwcon&quot;, &quot;lwtuc&quot;, &quot;lwtrd&quot;, &quot;lwfir&quot;, &quot;lwser&quot;, &quot;lwmfg&quot;,&quot;lwfed&quot;, &quot;lwsta&quot;, &quot;lwloc&quot;, &quot;lmix&quot;, &quot;lpctymle&quot;, &quot;lpctmin&quot;, &quot;clcrmrte&quot;, &quot;clprbarr&quot;, &quot;clprbcon&quot;, &quot;clprbpri&quot;,&quot;clavgsen&quot;, &quot;clpolpc&quot;, &quot;cltaxpc&quot;, &quot;clmix&quot;) 
+data_panel$prbconv &lt;- as.numeric(as.character(data_panel$prbconv)) 
+#get all years besides 1987 for comparison 
+data_panel_additional &lt;- data_panel[data_panel$year != 87,] 
+#get just the year 1987 for comparison 
+data_panel_87 &lt;- data_panel[data_panel$year == 87,c(&quot;county&quot;, &quot;year&quot;, &quot;crmrte&quot;, &quot;prbarr&quot;, &quot;prbconv&quot;, &quot;prbpris&quot;,&quot;avgsen&quot;, &quot;polpc&quot;,&quot;density&quot;, &quot;taxpc&quot;,&quot;west&quot;, &quot;central&quot;, &quot;urban&quot;, &quot;pctmin80&quot;, &quot;wcon&quot;, &quot;wtuc&quot;, &quot;wtrd&quot;, &quot;wfir&quot;,&quot;wser&quot;, &quot;wmfg&quot;, &quot;wfed&quot;,&quot;wsta&quot;,&quot;wloc&quot;, &quot;mix&quot;, &quot;pctymle&quot;)] 
 
-#Correct mistakes in original (assigned) data set
+
+#compare the assignment data set to the new data set in 1987
+data_check &lt;- data_crmrte[, !(colnames(data_crmrte)==&quot;log_crmrte&quot;)] 
+for (col in 1:ncol(data_check)) {
+   for (row in 1:nrow(data_check)) {
+       val_orig &lt;- data_check[row, col]
+       val_new  &lt;- data_panel_87[row, col]
+       if(abs(val_orig-val_new)&gt;.001){ 
+         print(paste(&quot;county=&quot;,data_check[row, 1], &quot;year=&quot;,data_panel_87[row, 2], 
+                     &quot;column=&quot;,colnames(data_check)[col],&quot;original=&quot;, data_check[row, col], 
+                     &quot;panel=&quot;,data_panel_87[row, col]))
+
+         }
+       }
+ }</code></pre>
+<pre><code>## [1] &quot;county= 173 year= 87 column= density original= 2.03422e-05 panel= 0.2034221&quot;
+## [1] &quot;county= 71 year= 87 column= west original= 1 panel= 0&quot;</code></pre>
+<p>The code above compares the data set given to us to the same data extracted from the panel data. These data sets should match exactly. The print statements above identify two differences. For county 173 the panel data has a rounded value for density of .20342 while the given data set has a rounded value of .00002. Looking at the distribution for all years besides 1987, the minimum density for any county is .1977186 so the value in the given data set seems to be an extreme outlier, and it is much more likely that the value from the panel data set is correct. This value will be corrected below, and the quantiles are shown for evidence. In addition, county 71 is labeled as west in the given data set but for all years in the panel data set it has a zero value for west. This will also be corrected.</p>
+<pre class="r"><code>#Correct mistakes in original (assigned) data set
 data_crmrte[data_crmrte$county==173, &quot;density&quot;] &lt;- .2034221
 data_crmrte[data_crmrte$county==71, &quot;west&quot;] &lt;- 0</code></pre>
 </div>
@@ -580,23 +570,7 @@ data_crmrte[data_crmrte$county==71, &quot;west&quot;] &lt;- 0</code></pre>
 </div>
 <div id="deterrent-data" class="section level1">
 <h1>Deterrent Data</h1>
-<pre class="r"><code>deterrent_data &lt;- data_crmrte[,c(&#39;prbarr&#39;,&#39;prbconv&#39;,&#39;prbpris&#39;,&#39;crmrte&#39;,
-                          &#39;avgsen&#39;,&#39;polpc&#39;)]
-
-ggplot(gather(deterrent_data[,c(&#39;prbarr&#39;,&#39;prbconv&#39;,&#39;prbpris&#39;,
-                                    &#39;avgsen&#39;,&#39;polpc&#39;)]), aes(value)) + 
-geom_histogram(bins = 10) + facet_wrap(~key, scales = &#39;free_x&#39;)</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
-<pre class="r"><code>my_vars1 &lt;- c(&quot;prbarr&quot;,&quot;prbconv&quot;,&quot;prbpris&quot;)
-deterrent_data2 &lt;- deterrent_data[my_vars1]
-my_vars2 &lt;- c(&quot;polpc&quot;)
-deterrent_data3 &lt;- deterrent_data[my_vars2]
-
-boxplot(deterrent_data2, main=&quot;Boxplot of prbarr, prbconv, prbpris&quot;)</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-12-2.png" width="672" /></p>
-<pre class="r"><code>sum</code></pre>
-<pre><code>## function (..., na.rm = FALSE)  .Primitive(&quot;sum&quot;)</code></pre>
-<p><br />
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-14-1.png" width="50%" /><img src="lab_3_master_files/figure-html/unnamed-chunk-14-2.png" width="50%" /><br />
 The first four histograms show right skew while prbpris shows left skew. Given their distributions, these variables are candidates to be transformed. In addition, these variables are more easily changed by a politican, which lends itself to a percent change argument similar to crime rate.<br />
 </p>
 </div>
@@ -610,15 +584,13 @@ wages_data &lt;- data_crmrte[,c(&#39;wcon&#39;,&#39;wtuc&#39;,&#39;wtrd&#39;,&#3
 ggplot(gather(wages_data), aes(value)) + 
   geom_histogram(bins = 10) + 
   facet_wrap(~key, scales = &#39;free_x&#39;)</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
-<!-- ```{r fig.height=4} -->
-<!-- #generate boxplots of just the wage variables -->
-<!-- boxplot(log(wages_data), ylab="log(wage)", xlab="variable") -->
-<!-- #Show outliers for entire 7 years -->
-<!-- boxplot(data_panel$wser) -->
-<!-- ``` -->
-<!-- \ -->
-<p>There is an obvious outlier for wser in data pt 84 (County 185) . The mean services wage across all the counties is $275 ( with a std dev of 206) and 84 has wser of 2177 (~9sd from mean), which seems like a measurement or typographical error. The next highest average weekly wage in any sector is 646 versus the value of 2177. In addition, the above boxplot shows it is an outlier for any type of wage for all counties over the entire panel data set. Therefore, this observation will be corrected. In looking at this county for all years, the average wage appears to be increasing. While it is somewhat of a guess, it appears an extra 7 has been inserted into the value, so it is removed below.</p>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#generate boxplots of just the wage variables
+boxplot(log(wages_data), ylab=&quot;log(wage)&quot;, xlab=&quot;variable&quot;)
+#Show outliers for entire 7 years
+boxplot(data_panel$wser, ylab=&quot;Service Wages&quot;)</code></pre>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-16-1.png" width="50%" /><img src="lab_3_master_files/figure-html/unnamed-chunk-16-2.png" width="50%" /></p>
+<p>There is an obvious outlier for wser in data pt 84 (County 185) . The mean services wage across all the counties is $275 ( with a std dev of 206) and 84 has wser of 2177 (~9sd from mean), which seems like a measurement or typographical error. The next highest average weekly wage in any sector is 646 versus the value of 2177. In addition, the above boxplot shows it is an outlier for any wser for all counties over the entire panel data set; indeed it is an outlier for all sectors. Therefore, this observation will be corrected. In looking at this county for all years, the average wage appears to be increasing. While it is somewhat of a guess, it appears an extra 7 has been inserted into the value, so it is removed below.</p>
 <pre class="r"><code>data_crmrte[data_crmrte$county==185, &quot;wser&quot;] &lt;- 217.068</code></pre>
 </div>
 <div id="region-data" class="section level1">
@@ -630,7 +602,7 @@ dummies_data &lt;- data_crmrte[,c(&#39;west&#39;,&#39;central&#39;)]
 ggplot(gather(dummies_data), aes(value)) + 
   geom_histogram(bins = 2) + 
   facet_wrap(~key)</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>#just a quick check that there is no overlap
 region_check &lt;- data_crmrte[which(data_crmrte$west == 1 &amp;&amp; data_crmrte$central == 1)]
 
@@ -644,8 +616,7 @@ summary(region_check)</code></pre>
 <pre class="r"><code>#plot histograms of just the wage variables
 sum(data_crmrte$urban) # There are only 8 Urban areas out of 90 counties</code></pre>
 <pre><code>## [1] 8</code></pre>
-<pre class="r"><code>hist(data_crmrte$urban)</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-16-1.png" width="672" /> Urban did not fit into a great grouping so we left this variable on its own. A histogram shows that the state has relatively few urban counties, something to keep in mind when analyzing other variables such as density.<br />
+<p>Urban did not fit into a great grouping so we left this variable on its own. A histogram shows that the state has relatively few urban counties, something to keep in mind when analyzing other variables such as density.<br />
 </p>
 </div>
 <div id="demographic-data" class="section level1">
@@ -658,7 +629,7 @@ demographic_data &lt;- data_crmrte[,c(&#39;density&#39;, &#39;taxpc&#39;, &#39;p
 ggplot(gather(demographic_data), aes(value)) + 
   geom_histogram(bins = 10) + 
   facet_wrap(~key, scales = &#39;free_x&#39;)</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-17-1.png" width="672" /> Once again we see a lot of right skewed distributions in the histograms and in the box plots.<br />
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /> Once again we see a lot of right skewed distributions in the histograms and in the box plots.<br />
 </p>
 <p>After exploring all of the variables we decided to tranform the other variables that are potentially under a politican’s control - the deterrent variables. This gives us our final data set and so we can start running regressions.<br />
 </p>
@@ -675,7 +646,7 @@ data_crmrte$log_taxpc &lt;- log(data_crmrte$taxpc)
 ggplot(gather(data_crmrte[,c(&#39;log_prbarr&#39;, &#39;log_prbconv&#39;, &#39;log_prbpris&#39;, &#39;log_avgsen&#39;, &#39;log_polpc&#39;, &#39;log_taxpc&#39;) ]), aes(value)) + 
   geom_histogram(bins = 10) + 
   facet_wrap(~key, scales = &#39;free_x&#39;)</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-18-1.png" width="672" /><br />
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /><br />
 Though the distribution of the variables still exhibits skew, the skew does seem to be reduced.</p>
 </div>
 <div id="log-tranformed-dependent-variable-comparison" class="section level1">
@@ -725,7 +696,7 @@ coeftest(all_in_model, vcov = vcovHC) # HC White SE</code></pre>
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre class="r"><code># Model residuals look normally distributed
 hist(all_in_model$residuals) </code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># plot(all_in_model)
 #The residuals vs Fitted plot for this model quickly tell us 
 #that ZCM ( MLR 4) and Random Sampling (MLR2) is violated for this model.
@@ -771,7 +742,7 @@ coeftest(all_in_model_log_level, vcov = vcovHC)</code></pre>
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre class="r"><code># Model residuals look somwewhat normally distributed
 hist(all_in_model_log_level$residuals) </code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-19-2.png" width="672" /></p>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-22-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># plot(all_in_model_log_level)
 #The residuals vs Fitted plot for this model tell us that 
 #the log transformation has significantly reduced the skew in the residuals 
@@ -820,7 +791,7 @@ coeftest(all_in_model_log_log, vcov = vcovHC)</code></pre>
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre class="r"><code># Model residuals look somwewhat normally distributed with some left skew
 hist(all_in_model_log_log$residuals) </code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-19-3.png" width="672" /></p>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-22-3.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># plot(all_in_model_log_log)
 #The residuals vs Fitted plot for this model tells us that 
 #the log transformation has significantly reduced the skew in the residuals.
@@ -956,13 +927,9 @@ stargazer(all_in_model, all_in_model_log_level,
 <div id="model-1-simple-model" class="section level1">
 <h1>Model 1: Simple Model</h1>
 <p>In order to create a simple model we decided to build using a bottom up approach. We started with a correlation matrix.</p>
-<pre class="r"><code>#cm = round(cor(data_crmrte$log_crmrte,data_crmrte)*100,2) #Corr Matrix as % for reading clarity
-#cm = cm[, -1]
-
-drops &lt;- c(&quot;county&quot;,&quot;year&quot;, &quot;crmrte&quot;, &quot;log_crmrte&quot;)
+<pre class="r"><code>drops &lt;- c(&quot;county&quot;,&quot;year&quot;, &quot;crmrte&quot;, &quot;log_crmrte&quot;)
 cm = cor(data_crmrte[,!(names(data_crmrte) %in% drops)], data_crmrte$log_crmrte) #Corr Matrix as % for reading clarity
-# ggcorrplot(cm, colors = c(&quot;#0000ff&quot;, &quot;#ffffff&quot;, &quot;#ff0000&quot;), tl.cex = 12, outline.color = &quot;white&quot;, legend.title = &quot;Correlation&quot;, method = &quot;square&quot;, lab = TRUE, ) +
-#   theme(legend.position=&quot;top&quot;, legend.direction = &quot;horizontal&quot;, plot.margin = margin(10,10,10,10,&quot;pt&quot;), legend.text=element_text(size=10), legend.title=element_text(size=10),  axis.ticks.y = element_blank(), axis.text.y = element_blank())
+
 corrdf = data.frame(cm)
 corrdf = corrdf[order(-corrdf$cm),,drop = FALSE]
 corrdf$pos = (corrdf$cm) + (ifelse(corrdf$cm&gt;0, 0.05, -0.05))
@@ -973,7 +940,7 @@ ggplot(data = corrdf,
        coord_flip() + 
        theme(legend.position = &quot;none&quot;, panel.grid.minor = element_blank(), panel.grid.major =element_line(size = 1, linetype = &#39;solid&#39;,
                                 colour = &quot;#eeeeee&quot;), panel.background = element_blank()) + ylab(&quot;Correlation with log(crmrte)&quot;) + xlab(&quot;Variable&quot;)</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>In the above correlation matrix, focusing on the correlations between the independent variable log_crmrte and all other variables in the matrix, density has the highest correlation. This variable makes intuitive sense. As a single variable it might encompass a lot of other factors. More opportunities exist for crime to occur in urban areas (especially when it is unknown what times of crimes are represented (ex: criminal/fraud/etc)). Below is the simple regression.</p>
 <pre class="r"><code>simple_regression_model &lt;- lm(log_crmrte ~ density, data = data_crmrte)
 se.simple_regression_model = sqrt(diag(vcovHC(simple_regression_model)))
@@ -991,7 +958,7 @@ AIC(simple_regression_model)</code></pre>
 <pre><code>## [1] 106.5187</code></pre>
 <pre class="r"><code>#The model residuals look normally distributed
 hist(simple_regression_model$residuals)</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>stargazer(simple_regression_model,
           type = &quot;text&quot;, omit.stat = &quot;f&quot;,
           se = list(se.simple_regression_model),
@@ -1210,7 +1177,7 @@ linearHypothesis(all_in_model_log_level,
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"72","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"67","2":"5","3":"3.706389","4":"0.005069108","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>The hypothesis tests below show that of the five groups the only groups that are jointly significant are the deterrent data and the demographic data. These tests measure whether removing all the variables within a group reduces the r-squared by a statistically signficant amount. If it does, then at least one variable, and perhaps all variables, within the group should be retained in the model.</p>
+<p>The hypothesis tests show that of the five groups the only groups that are jointly significant are the deterrent data and the demographic data. These tests measure whether removing all the variables within a group reduces the r-squared by a statistically signficant amount. If it does, then at least one variable, and perhaps all variables, within the group should be retained in the model.</p>
 <p>We will re-run the models with just the deterrent and demographic data added and compare.</p>
 <pre class="r"><code>balanced_model_top_1 &lt;- lm(log_crmrte ~ prbarr + prbconv + prbpris 
                              + avgsen + polpc + density
@@ -1237,7 +1204,7 @@ coeftest(balanced_model_top_1, vcov = vcovHC)</code></pre>
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre class="r"><code># Residuals seem like they might not be normally distributed
 hist(balanced_model_top_1$residuals) </code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># Shapiro test confirm it by rejecting normality
 shapiro.test(balanced_model_top_1$residuals) </code></pre>
 <pre><code>## 
@@ -1340,16 +1307,7 @@ stargazer(all_in_model_log_level, balanced_model_top_1,
 ## Residual Std. Error 0.238 (df = 67) 0.264 (df = 79)
 ## ===================================================
 ## Note:                 *p&lt;0.05; **p&lt;0.01; ***p&lt;0.001</code></pre>
-<p>Our adjusted r-squared has only fallen from 81.2% to 76.9% but we have dropped 12 variables. This is a much more parisimous model. In order to double check wages, we decided to try to one more model that included just the median wage from all industries. The fundamental concept behind this is that the median could capture all opportunity for potential criminals, and it has the benefit of not being affected by the outlier in wser.</p>
-<p>RESULT: Although it was much better, the median wage variable was still not predictive.</p>
-<pre class="r"><code># balanced_model_top_2 &lt;- lm(log_crmrte ~ prbarr + prbconv + prbpris
-#                              + avgsen + polpc + density
-#                              + taxpc + pctmin80 + mix + pctymle
-#                              + median_wage,
-#                              data = data_crmrte)
-# se.balanced_model_top_2 = sqrt(diag(vcovHC(balanced_model_top_2)))
-# coeftest(balanced_model_top_2, vcov = vcovHC)
-# AIC(balanced_model_top_2)</code></pre>
+<p>Our adjusted r-squared has only fallen from 81.2% to 76.9% but we have dropped 12 variables. This is a much more parisimous model.</p>
 <p><br />
 Three of the five groups have been eliminated, with only the deterrent and demographic groups remaining. We will use step wise regression to evaluate.<br />
 </p>
@@ -1366,7 +1324,7 @@ balanced_model_top_3 &lt;- lm(log_crmrte ~ density
 se.balanced_model_top_3 = sqrt(diag(vcovHC(balanced_model_top_3)))
 # Residuals look normally distributed
 hist(balanced_model_top_3$residuals)</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># Shapiro test on residuals confirms normality
 shapiro.test(balanced_model_top_3$residuals) </code></pre>
 <pre><code>## 
@@ -1485,7 +1443,8 @@ AIC(balanced_model_top_3, k=2)</code></pre>
 <h1>Final Model</h1>
 <p><span class="math display">\[
 log(crmrte) = \beta_0 + \beta_1 \cdot prbarr + \beta_2 \cdot prbconv + \beta_3 \cdot polpc + \beta_4 \cdot density + \beta_5 \cdot pctmin80
-\]</span> <span class="math display">\[
+\]</span></p>
+<p><span class="math display">\[
 \begin{aligned}
 \beta_0 &amp;= -3.26\\
 \beta_1 &amp;= -2.276\\
@@ -1497,17 +1456,23 @@ log(crmrte) = \beta_0 + \beta_1 \cdot prbarr + \beta_2 \cdot prbconv + \beta_3 \
 \]</span></p>
 <p>The above equation shows the final model and its coefficients.</p>
 <ul>
-<li>The deterrent variables (prbarr and prbconv) have -ve impact on crime rate indicated by the negative coefficients.</li>
-<li>The demographic variable density and pctmin80 have +ve impact on crime rate</li>
-<li>The demographic variable polpc has an unexpected opposite sign</li>
+<li>The deterrent variables (prbarr and prbconv) have negative impact on crime rate indicated by the negative coefficients. As the prbarr increases by one unit (.01), predicted crime rate decreases by 2.28%. As prbconv increases by one unit (.01), predicted crime decreases by 0.76%.</li>
+<li>The demographic variable density and pctmin80 have a positive impact on crime rate. As density increases by one unit (.01), predicted crime increases by 0.12%. As pctmin80 increases by one unit (.01), predicted crime rate increases by 0.01%.</li>
+<li>The demographic variable polpc has an unexpected opposite sign. As polpc increases by one unit (.01), predicted crime increases by an approximation of 193%. It is worth noting at this high level the approximation doesn’t hold and the actual expected increase in predicted crime rate is 591%.</li>
 </ul>
+<p>Here is a view of the coefficients along with predictions at the 25th percentile, median, mean, and 75th percentile. This gives us both predictions and a sense of the distribution.</p>
+<div class="figure">
+<img src="Predictions.png" alt="Predictions" />
+<p class="caption">Predictions</p>
+</div>
+<p>There are a couple of things to note in looking at this table. First, let’s look at the interquartile ranges to assess practical significance. At first glance, pctmin80 doesn’t appear to be practically significant as a one unit increase only leads to a .01% increase in predicted crime rate. However, a one unit increase is quite small for this variable. polpc has the tightest interquartile range. We view polpc, density, and pctmin80 more as control variables. They are important for making prediction but we don’t view them as part of a political campaign. If we look at prbarr and prbconv, we can realistically hope to improve both variables by 10 units (.10). A ten unit increase in prbarr is similar to going from the 25th to 75th percentile of the existing data set. A ten unit increase in the prbconv is similar to going from the median to the mean. In the event we are able to improve both measures by 10%, we predict crime to fall by 26.17%.</p>
 <div style="page-break-after: always;"></div>
 </div>
 <div id="an-assessment-of-the-clm-assumptions" class="section level1">
 <h1>3. An Assessment of the CLM Assumptions</h1>
 <p>We choose our balanced model for the complete assessment of all 6 classical linear model assumptions.</p>
 <div class="figure">
-<img src="CLM%20Assumptions1.png" alt="" />
+<img src="CLM%20Assumptions1.png" alt="MLR 1-4’" />
 <p class="caption">MLR 1-4’</p>
 </div>
 <div id="mlr.1-the-model-is-linear-in-parameters-and-the-error-term" class="section level3">
@@ -1559,21 +1524,25 @@ round(cor(balanced_model_data)*100,0) # correlations displayed as % for convenie
 <div id="mlr.4-zero-conditional-mean-exogeneity" class="section level3">
 <h3>MLR.4: Zero Conditional Mean / exogeneity</h3>
 <p>ZCM is best analysed by studying the regression plots of the residuals. Let’s start by looking at the regression plots of the balanced model</p>
-<pre class="r"><code>plot(balanced_model_top_3)</code></pre>
-<p><img src="lab_3_master_files/figure-html/unnamed-chunk-31-1.png" width=".49\linewidth" style="display: block; margin: auto;" /><img src="lab_3_master_files/figure-html/unnamed-chunk-31-2.png" width=".49\linewidth" style="display: block; margin: auto;" /><img src="lab_3_master_files/figure-html/unnamed-chunk-31-3.png" width=".49\linewidth" style="display: block; margin: auto;" /><img src="lab_3_master_files/figure-html/unnamed-chunk-31-4.png" width=".49\linewidth" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(balanced_model_top_3, 1)
+plot(balanced_model_top_3, 2)</code></pre>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-33-1.png" width="50%" /><img src="lab_3_master_files/figure-html/unnamed-chunk-33-2.png" width="50%" /></p>
+<pre class="r"><code>plot(balanced_model_top_3, 3)
+plot(balanced_model_top_3, 4)</code></pre>
+<p><img src="lab_3_master_files/figure-html/unnamed-chunk-34-1.png" width="50%" /><img src="lab_3_master_files/figure-html/unnamed-chunk-34-2.png" width="50%" /></p>
 <p><strong>CLM assumptions analysis from plots</strong></p>
 <ul>
 <li>Plot 1. The residuals vs. fitted plot indicates that the zero conditional mean assumption is NOT perfectly satisfied but the red line is close enough to zero, a big improvement compared to some of the other models we tested. The non-uniform thickness of the residuals-especially in the middle- indicates possible heteroskedasticity.</li>
 <li>Plot 2. The Q-Q plot shows that the residuals are not perfectly normally distributed, but the log transform of the crime rate improved the positive skew in the data but has introduced some negative skew</li>
 <li>Plot 3. The scale location plot indicated the presence of heteroskedasticity especially in the middle where the thickness of the band varies and outliers such as ‘50’ and ‘24’ are generating large standardized residuals</li>
-<li>Plot 4. The residuals vs leverage plot shows some of the outliers we had discussed earlier ( observations 51, 25, 84) but the most significantly outlier is observation 51 or county 115 ( having high leverage and Cook’s distance &gt;1). This outlier significantly affects our model estimte and likely increases model error.</li>
+<li>Plot 4. The residuals vs leverage plot shows some of the outliers we had discussed earlier ( observations 51, 25, 84) but the most significantly outlier is observation 51 or county 115 ( having high leverage and Cook’s distance &gt;1). This outlier significantly affects our model estimate and likely increases model error.</li>
 </ul>
 <pre class="r"><code>round(cor(balanced_model_top_3$residuals, balanced_model_data)*100,5)</code></pre>
 <pre><code>##      density polpc pctmin80 prbarr prbconv
 ## [1,]       0     0        0      0       0</code></pre>
-<p>Finally we check the correlation between the X’s and the errors in the model to ensure there is no endogeneity in the model. The zero correlation is a necesseary but not sufficient condition for the presence of omitted variable in the regression. There is a more extensive discussion of omitted variable and their implication on model endogeniety in section 5 of the report.</p>
+<p>Finally we check the correlation between the X’s and the errors in the model to ensure there is no endogeneity in the model. The zero correlation is a necessary but not sufficient condition for the presence of omitted variable in the regression. There is a more extensive discussion of omitted variable and their implication on model endogeniety in section 5 of the report.</p>
 <div class="figure">
-<img src="CLM%20Assumptions2.png" alt="" />
+<img src="CLM%20Assumptions2.png" alt="MLR 5 &amp; 6’" />
 <p class="caption">MLR 5 &amp; 6’</p>
 </div>
 </div>
@@ -1746,19 +1715,27 @@ round(cor(balanced_model_data)*100,0) # correlations displayed as % for convenie
 <p>In our model the presence of omitted variables leads to the error term being correlated with the regressors. - The presence of omitted-variable bias causes the OLS estimator to be biased and inconsistent. - The direction of the bias depends on the estimators as well as the covariance between the regressors and the omitted variables. - A positive covariance of the omitted variable with both a regressor and the dependent variable will lead the OLS estimate of the included regressor’s coefficient to be greater than the true value of that coefficient.</p>
 <p>We’ve identified several key omitted variables that we feel most influence the crime rate but are not represented in the data here.</p>
 <ol style="list-style-type: decimal">
-<li><p>Unemployment Rate - Unemployment is a key indicator for crime rate. We may be able to infer some indication of the frequency of seasonal or part-time work in the construction or service industries from the <code>wcon</code> or <code>wser</code> variables as they shows an average weekly wage which mght indicate how often workers are employed. However, this estimate is likely not accurate enough to be considered meaningful. The unemployment rate among youth 18-30 would also be meaningful as criminal activity among young adults is higher than that of older adults. Unemployment and inflation rate (see below) may be correlated and may have positive bias on one another.</p></li>
-<li><p>Inflation Rate (Consumer Price Index) - Inflation and crime rates are correlated with a positive relationship and the causal link is from inflation and unemployment to crime. <a href="https://www.researchgate.net/publication/236736987_Will_Inflation_Increase_Crime_Rate_New_Evidence_from_Bounds_and_Modified_Wald_Tests">Link</a>. Inﬂation causes the purchasing power to reduce and cost of living to increase, consequently crime rates rise as the inflation rate rises. Because of the lag between price and wage adjustments, inflation lowers the real income of low-skilled labor, but rewards property criminals due to the rising demand and subsequent high profits in the illegal market. Inflation in the year represented, 1987, would not be sufficient though as the reduction in purchasing power does not happen immediately, it takes time for inﬂation to gradually reduce purchasing power. None of the data provided in the study gives us an indication of the inflation rate in a time period before the study. We would expect that this variable would show a positive bias towards crime rate and that it would likely be a large bias. Inflation rate and unemployment may be correlated and may have positive bias on one another.</p></li>
-<li><p>Childhood Blood Lead Levels (with 18 year offset) - The lead–crime hypothesis is the proposed link between elevated blood lead levels in children and increased rates of crime, delinquency, and recidivism later in life. Studies linking blood lead levels (BLL) in children to crime rate typically seek to quantify the BLL 17-18 years before the examined crime rate. One such study used a unique dataset linking preschool blood lead levels (BLLs), birth, school, and detention data for 120,000 children born 1990-2004 in Rhode Island, to estimate the impact of lead on behavior <a href="https://www.nber.org/papers/w23392.pdf">Link</a>. We expect that this variable would show a positive bias and that it would likely be a small bias but still significant for any given year as there may be other underlying phenomena driving crime rate in a particular county. There are no variables in the provided data set that would give any insight into this. Denstiy may have a positive correlation with BLL as urban and more industrialized areas typically had greater levels of lead poisoning in groundwater and street surfaces due to heavier vehicle traffic and industrial emissions in denser areas.</p></li>
-<li><p>Abortion Rates (with 18 year time lag) - Multiple studies have shown a correlation between legalized abortion rates and crime. One study by Donohoe and Leavitt estimated that crime fell roughly 20% between 1997 and 2014 due to legalized abortion. <a href="https://bfi.uchicago.edu/wp-content/uploads/BFI_WP_201975.pdf">Link</a> While it may be difficult to ascertain which counties residents accessing abortion services lived in, we expect that measures of employment and poverty could be correlated to show how a negative bias of abortion rates potentially offset other variables with a positive bias. We estimate that the bias may be small as it could present difficulties in localizing it effectively, but we still believe that it would be significant. There are no variables in the provided data set that would give any insight into this.</p></li>
-<li><p>Income Inequality metrics: There are several measures of income inequaity that could be included in the data: <a href="https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/mld.html">Mean Log Deviation</a> or <a href="https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/theil-index.html">Theil Index</a> or <a href="https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/gini-index.html">Gini Index</a> for each of the counties. Income inequality has been shown to have a significant effect on violent crime in particular. One World Bank report states that inequality predicts about half of the variance in murder rates between American states and between countries around the world. <a href="https://siteresources.worldbank.org/DEC/Resources/Crime%26Inequality.pdf">Link</a> Income inequality measures are often measured as 0 (perfectly equal income distribution) to 1 (perfectly unequal income distribution, or 1 household has all the income). We would thus expect these to have a positive bias, in that an increase in income inequality would lead to an increase in violent crime. We expect that the bias would be somewhat smaller as income inequality is correlated specifically with violent crime less than property crime. There are no variables in the provided data set that would give any insight into this.</p></li>
+<li><p>Unemployment Rate - Unemployment is a key indicator for crime rate. We may be able to infer some indication of the frequency of seasonal or part-time work in the construction or service industries from the <code>wcon</code> or <code>wser</code> variables as they shows an average weekly wage which mght indicate how often workers are employed. However, this estimate is likely not accurate enough to be considered meaningful. Unemployment rates among Americans from minority groups in many locations in the United States are significantly higher than for Americans who identify as white. We can posit that this may have positive bias on <code>pctmin80</code>, the percentage of minority residents in the county, and that it would give it more significance than it may deserve in predicting crime rate.</p></li>
+<li><p>Inflation Rate (Consumer Price Index) - Inflation and crime rates are correlated with a positive relationship and the causal link is from inflation and unemployment to crime. <a href="https://www.researchgate.net/publication/236736987_Will_Inflation_Increase_Crime_Rate_New_Evidence_from_Bounds_and_Modified_Wald_Tests">Link</a>. Inﬂation causes the purchasing power to reduce and cost of living to increase, consequently crime rates rise as the inflation rate rises. Because of the lag between price and wage adjustments, inflation lowers the real income of low-skilled labor, but rewards property criminals due to the rising demand and subsequent high profits in the illegal market. Inflation in the year represented, 1987, would not be sufficient though as the reduction in purchasing power does not happen immediately, it takes time for inﬂation to gradually reduce purchasing power. None of the data provided in the study gives us an indication of the inflation rate in a time period before the study however inflation rate and unemployment may be correlated and may have positive bias on one another. These then also would have a positive bias on the percentage of minority residents in the county in predicting crime rate, biasing <code>pctmin80</code> away from zero.</p></li>
+<li><p>Childhood Blood Lead Levels (with 18 year lag offset) - The lead–crime hypothesis is the proposed link between elevated blood lead levels in children and increased rates of crime, delinquency, and recidivism later in life. Studies linking blood lead levels (BLL) in children to crime rate typically seek to quantify the BLL 17-18 years before the examined crime rate. One such study used a unique dataset linking preschool blood lead levels (BLLs), birth, school, and detention data for 120,000 children born 1990-2004 in Rhode Island, to estimate the impact of lead on behavior <a href="https://www.nber.org/papers/w23392.pdf">Link</a>.</p></li>
 </ol>
+<p>The <code>density</code> varaible would most likely have a positive correlation with BLL as urban and more industrialized areas typically had greater levels of lead poisoning in groundwater and street surfaces due to heavier vehicle traffic and industrial emissions in denser areas. As density had a positive coefficient, we believe that the omitted variable bias is positive away from zero. This may lead ascribing greater significance to <code>density</code> in predicting <code>crmrte</code>, particularly in the period up until 18 years after the phase out of leaded gas, which 1987 was within.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Income Inequality metrics: There are several measures of income inequaity that could be included in the data: <a href="https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/mld.html">Mean Log Deviation</a> or <a href="https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/theil-index.html">Theil Index</a> or <a href="https://www.census.gov/topics/income-poverty/income-inequality/about/metrics/gini-index.html">Gini Index</a> for each of the counties. Income inequality has been shown to have a significant effect on violent crime in particular. One World Bank report states that inequality predicts about half of the variance in murder rates between American states and between countries around the world. <a href="https://siteresources.worldbank.org/DEC/Resources/Crime%26Inequality.pdf">Link</a> Income inequality measures are often measured as 0 (perfectly equal income distribution) to 1 (perfectly unequal income distribution, or 1 household has all the income).</li>
+</ol>
+<p>We would thus expect these to have a positive bias, in that an increase in income inequality would lead to an increase in violent crime. A correlation in American cities between density and income inequality has been shown by <a href="https://scholar.harvard.edu/files/glaeser/files/urban_inequality.pdf">Edward Glaseer</a> leading us to believe that income inequality shows a positive bias on <code>density</code> We believe that the omitted variable bias is positive away from zero and that this plays some role in over-estimating the significance of density in predicting crime rate.</p>
+<p>Summary:</p>
+<p>Unemployment rate is positively correlated with crime rate and positively correlated with percentage of minorities in each county. The coefficient on <code>pctmin80</code> is 0.012099, therefore the omitted variable bias is positive away from zero.</p>
+<p>Inflation rate is also positively correlated with crime rate and positively correlated with percentage of minorities in each county. The coefficient on <code>pctmin80</code> is 0.012099, therefore the omitted variable bias is positive away from zero.</p>
+<p>Childhood BLL is positively correlated with crime rate and positively correlated with density. The coefficient on <code>density</code> is 0.115702, so we surmise that the bias is positive away from zero.</p>
+<p>Income inequality is positively correlated with crime rate and positively correlated with density. The coefficient on <code>density</code> is 0.012099 and we surmise that as density rises that income inequality rises as well, so the bias is positive away from zero.</p>
 <div style="page-break-after: always;"></div>
 </div>
 <div id="a-conclusion" class="section level1">
 <h1>6. A Conclusion</h1>
-<p>Using the 1987 dataset, we were able to identify the key demographic and deterrent variables that affect crime. Our final model shows that arrests (prbarr), convictions (prbconv), and police presence (polpc) are deterrents that affect crime rates. As indicated by the negative coefficients, an increase in arrests and convictions predict a decrease in crime rate, suggesting that these variables are key deterrents in reducing crime. While an increase in police presence predicts an increase in crime rates, it should be noted that this does not indicate that additional police cause an increase in crime. The results suggest that with additional police there will be an increase in apprehension of criminals, resulting in an increase in police reports. In addition, the demographic categories of density, minorities (pctmin80), and offense (mix) are statistically significant variables of crime rate. While the results show a strong statistical relationship with percentage of minorities, this result does not denote a causal effect. This outcome does not indicate that an increase in minorities predicts an increase in crime. Given the complex nature of race relations and criminal justice in the past, the result could also suggest the potential of racial bias within the police force leading to a disproportionate number of minorities being reported and arrested for crimes.</p>
-<p>While the results of this report have shown that the economic data does not hold statistical significance in our analysis, that is not an indication that economic factors are not key determinants on crime. The wage statistics provided in the dataset, while important, do not address issues of poverty and inequality which are traditional drivers of crime. As described in the report, omitted variables such as unemployment rate, inflation rate, and income inequality are key economic factors that have a significant effect on crime and should be examined further.</p>
-<p>Based on the results of our study, we propose a political strategy that will focus on deterrents and demographic factors to address crime. The first recommendation is to increase the police force and focus on increasing police presence in higher density areas. Second, focus resources on increasing arrests and convictions. The increase in police presence will lead to more arrests, which in turn will lead to more convictions. However, it is recommended that punishment for convictions should not be prison sentences unless necessary and justified. Our study suggests that prison sentences are not a significant deterrent of crime, while it also increases overcrowding of the prison system and burdens taxpayers. Lastly, given our first recommendation, increasing the police force too quickly could lead to negative consequences resulting from improper training. To address potential racial bias within the police force, we recommend that implicit bias training be a core aspect of the police academy.</p>
+<p>Using the 1987 dataset, we were able to identify the key demographic and deterrent variables that affect crime. Our final model shows that arrests (prbarr), convictions (prbconv), and police presence (polpc) are deterrents that affect crime rates. As indicated by the negative coefficients, an increase in arrests and convictions predict a decrease in crime rate, suggesting that these variables are key deterrents in reducing crime. While the probability of arrest is statistically significant, it also has high practical significance. Our study shows that crime rate can be reduced by 2.25% by increasing the probability of arrests by 0.01. This is a number that can resonate with voters and we recommend that this headlining statistic lead the campaign. While an increase in police presence predicts an increase in crime rates, it should be noted that this does not indicate that additional police cause an increase in crime. The results suggest that with additional police there will be an initial increase in apprehension of criminals, resulting in an increase in police reports. The actual reduction in committed crimes due to a larger police presence may see a lag effect. The demographic categories of density, minorities (pctmin80), and offense (mix) are statistically significant variables of crime rate. While the results show a strong statistical relationship with crime rates and percentage of minorities, this result does not denote a causal effect. This outcome does not indicate that an increase in minorities predicts an increase in crime. Given the complex nature of race relations and criminal justice in the past, the result could also suggest the potential of racial bias within the police force leading to a disproportionate number of minorities being reported and arrested for crimes.</p>
+<p>While the results of this report have shown that the economic data does not hold statistical significance in our analysis, that is not an indication that economic factors are not key determinants on crime. The wage statistics provided in the dataset, while important, do not address issues of poverty and inequality which are traditional drivers of crime. As described in the report, omitted variables such as unemployment rate, inflation rate, and income inequality are key economic factors that have a significant affect on crime and should be examined further.</p>
+<p>Based on the results of our study, we propose a political strategy that will focus on deterrents and demographic factors to address crime. The first recommendation is to increase the police force and focus on increasing police presence in higher density areas. Second, focus resources on increasing arrests and convictions. The increase in police presence will lead to more arrests. However, it is recommended that punishment for convictions should not be prison sentences unless necessary and justified. Our study suggests that prison sentences are not a significant deterrent of crime, while it also increases overcrowding of the prison system and burdens taxpayers. Lastly, given our first recommendation, increasing the police force too quickly could lead to negative consequences resulting from improper training. To address potential racial bias within the police force, we recommend that implicit bias training be a core aspect of the police academy.</p>
 </div>
 
 
