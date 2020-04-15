@@ -85,7 +85,7 @@ Using this 1987 dataset, our team has conducted a study on the determinants of c
 
 We started by conducting exploratory data analysis. First, we read the original paper [CORNWELL – TRUMBULL (1994)] to get a better understanding of each variable. We defined the variables in the table below and grouped them into five groups (the group construction is discussed in the groupings section below). 
 
-```{r }
+```{r echo=FALSE}
 crime_count <- c(1:25)
 data_variables <- c("county","year","crmrte","prbarr","prbconv","prbpris","avgsen","polpc","density","taxpc","west","central","urban","pctmin80","wcon","wtuc","wtrd","wfir","wser","wmfg","wfed","wsta","wloc","mix","pctymle")
 data_description <- c("county identifier","1987","crimes committed per person","'probability' of arrest","'probability' of conviction","'probability' of prison sentence","avg. sentence, days","police per capita","people per sq. mile","tax revenue per capita","=1 if in western N.C.","=1 if in central N.C.","=1 if in SMSA","perc. minority, 1980","weekly wage, construction","wkly wge, trns, util, commun","wkly wge, whlesle, retail trade","wkly wge, fin, ins, real est","wkly wge, service industry","wkly wge, manufacturing","wkly wge, fed employees","wkly wge, state employees","wkly wge, local gov emps","offense mix: face-to-face/other","percent young male")
@@ -279,10 +279,12 @@ ggplot(gather(wages_data), aes(value)) +
 #generate boxplots of just the wage variables
 boxplot(log(wages_data), ylab="log(wage)", xlab="variable")
 #Show outliers for entire 7 years
-boxplot(data_panel$wser, ylab="Service Wages")
+#boxplot(data_panel$wser, ylab="Service Wages", id=data_panel$county)
+Boxplot(data_panel$wser, ylab="Service Wages", id=list(labels=data_panel$county, n=2, location="avoid"))
+
 ```
 
-There is an obvious outlier for wser in data pt 84 (County 185) . The mean services wage across all the counties is $275 ( with a std dev of  206) and 84 has wser of 2177 (~9sd from mean), which seems like a measurement or typographical error. The next highest average weekly wage in any sector is 646 versus the value of 2177. In addition, the above boxplot shows it is an outlier for any wser for all counties over the entire panel data set; indeed it is an outlier for all sectors. Therefore, this observation will be corrected. In looking at this county for all years, the average wage appears to be increasing. While it is somewhat of a guess, it appears an extra 7 has been inserted into the value, so it is removed below.
+There is an obvious outlier for wser in County 185, (data pt 84 . The mean services wage across all the counties is $275 ( with a std dev of  206) and 84 has wser of 2177 (~9sd from mean), which seems like a measurement or typographical error. The next highest average weekly wage in any sector is 646 versus the value of 2177. In addition, the above boxplot shows it is an outlier for any wser for all counties over the entire panel data set; indeed it is an outlier for all sectors. Therefore, this observation will be corrected. In looking at this county for all years, the average wage appears to be increasing. While it is somewhat of a guess, it appears an extra 7 has been inserted into the value, so it is removed below.
 
 ```{r}
 data_crmrte[data_crmrte$county==185, "wser"] <- 217.068
