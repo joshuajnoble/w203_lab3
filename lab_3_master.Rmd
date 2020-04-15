@@ -49,8 +49,8 @@ knit_hooks$set(output = function(x, options) {
 ```{r echo=FALSE}
 #read in the data
 
-# data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\crime_v2.csv") #josh
-data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
+data <- read.csv(file= "C:\\Users\\winbase\\MIDS\\w203\\w203_lab3\\data\\crime_v2.csv") #josh
+#data <- read.csv(file = 'H:/ROL/MIDS/W203 Stats/lab_3/crime_v2.csv') #Robert
 #data <- read.csv(file = '~/Desktop/W203/w203_lab3-master/crime_v2.csv') #Praveen
 
 
@@ -876,6 +876,15 @@ The `density` varaible would most likely have a positive correlation with BLL as
 
 We would thus expect these to have a positive bias, in that an increase in income inequality would lead to an increase in violent crime. A correlation in American cities between density and income inequality has been shown by [Edward Glaseer](https://scholar.harvard.edu/files/glaeser/files/urban_inequality.pdf) leading us to believe that income inequality shows a positive bias on `density` We believe that the omitted variable bias is positive away from zero and that this plays some role in over-estimating the significance of density in predicting crime rate.
 
+Summary:
+
+Unemployment rate is positively correlated with crime rate and positively correlated with percentage of minorities in each county. The coefficient on `pctmin80` is 0.012099, therefore the omitted variable bias is positive away from zero.
+
+Inflation rate is also positively correlated with crime rate and positively correlated with percentage of minorities in each county. The coefficient on `pctmin80` is 0.012099, therefore the omitted variable bias is positive away from zero.
+
+Childhood BLL is positively correlated with crime rate and positively correlated with density. The coefficient on `density` is 0.115702, so the bias is positive away from zero.
+
+Income inequality is positively correlated with crime rate and positively correlated with density. The coefficient on `density` is 0.012099 and we surmise that as density rises that income inequality rises as well, so the bias is positive away from zero.
 
 
 \pagebreak
